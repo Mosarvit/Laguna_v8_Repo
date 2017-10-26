@@ -17,6 +17,8 @@ import com.activeandroid.Configuration;
 
 public class MainActivity extends AppCompatActivity {
 
+    // Made a change!
+
     private static final int DB_VERSION = 1;
     public static TextView textView;
     public static Button btnStartQuiz, btnSync;
