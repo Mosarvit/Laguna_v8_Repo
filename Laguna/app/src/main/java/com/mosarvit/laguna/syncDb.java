@@ -2,8 +2,6 @@ package com.mosarvit.laguna;
 
 import android.os.AsyncTask;
 
-import com.activeandroid.query.Select;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,12 +12,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.List;
 
-//import com.activeandroid.query.Select;
+/**
+ * Created by Mosarvit on 10/27/2017.
+ */
 
-
-public class fetchData extends AsyncTask<Void, Void, Void> {
+public class syncDb extends AsyncTask<Void, Void, Void> {
 
     String data = "";
     String dataParsed = "";
@@ -34,7 +32,7 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
 
         try {
 
-            URL url = new URL("http://mosar.heliohost.org/get_data.php");
+            URL url = new URL("http://mosar.heliohost.org/get_updated_after.php");
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
             InputStream inputStream = httpURLConnection.getInputStream();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
@@ -50,6 +48,7 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
 
                 JSONObject JO = (JSONObject) JA.get(i);
                 Flashcard fc = new Flashcard(JO.getInt("id"), JO.getString("question"), JO.getLong("duetime"), JO.getLong("updatetime"));
+//                Flashcard fc = new Flashcard();
                 fc.save();
             }
 
