@@ -1,0 +1,17 @@
+
+-------------------------------------------------------------------------------------
+
+Push current branch:
+
+cd /e/Users/Mosarvit/Documents/GitHubRepos/Laguna_v8_Repo
+git add .				// adds all files to tracked AND staged
+git commit -m "Commit message"
+git push -u origin branch_3
+
+-------------------------------------------------------------------------------------
+
+Create a new branch:
+
+cd /e/Users/Mosarvit/Documents/GitHubRepos/Laguna_v8_Repo
+git checkout -b branch_5
+git push -u origin branch_5

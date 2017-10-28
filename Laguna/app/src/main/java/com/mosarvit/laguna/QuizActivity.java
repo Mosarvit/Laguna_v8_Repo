@@ -106,8 +106,7 @@ public class QuizActivity extends AppCompatActivity {
     private void increaseDueTimeAndRefresh(long millis) {
 
         long now = System.currentTimeMillis();
-        currentFc.duetime = now + 300000l;
-        currentFc.updatetime = now;
+        currentFc.setDuetime(now + 300000l);
         currentFc.save();
 
         refreshSession();
@@ -121,7 +120,7 @@ public class QuizActivity extends AppCompatActivity {
 
     private void refreshQuestion() {
 
-        webView.loadData(currentFc.question, "text/html", "UTF-8");
+        webView.loadData(currentFc.getQuestion(), "text/html", "UTF-8");
     }
 
     private void refreshCurrentFc() {

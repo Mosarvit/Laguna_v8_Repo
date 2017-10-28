@@ -28,6 +28,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".SyncSession"
+            android:theme="@style/AppTheme.CustomTheme"
+            />
+
+
         <activity
             android:name=".QuizActivity"
             android:label="@string/title_activity_quiz"

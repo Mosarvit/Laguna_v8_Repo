@@ -1,11 +1,14 @@
 package com.mosarvit.laguna;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,21 +17,7 @@ import android.widget.TextView;
 
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.Configuration;
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import com.activeandroid.query.Select;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     public static TextView textView;
     public static Button btnStartQuiz, btnSync;
 
-    private   RequestQueue requestQueue;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +59,9 @@ public class MainActivity extends AppCompatActivity {
         btnStartQuiz = (Button)findViewById(R.id.btnStartQuiz);
         btnSync = (Button)findViewById(R.id.btnSync);
 
-        requestQueue = Volley.newRequestQueue(getApplicationContext());
+        textView.setMovementMethod(new ScrollingMovementMethod());
+
+
 
         btnStartQuiz.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,61 +73,21 @@ public class MainActivity extends AppCompatActivity {
 
         btnSync.setOnClickListener(new View.OnClickListener() {
 
-
-
             @Override
             public void onClick(View view) {
 
-                long earliestloadtime = 1509042243137l;
+                startActivity(new Intent(MainActivity.this, SyncSession.class));
 
-                StringRequest request = new StringRequest(Request.Method.POST, "http://mosar.heliohost.org/get_updated_after.php", new Response.Listener<String>()
-                {
-                    @Override
-                    public void onResponse(String response) {
-
-                        ArrayList<Flashcard> fcsFromServer = new ArrayList<Flashcard>();
-
-                        JSONArray JA = null;
-                        try {
-                            JA = new JSONArray(response.toString().toString());
-                            for(int i = 0; i<JA.length(); i++) {
-
-                                JSONObject JO = (JSONObject) JA.get(i);
-                                Flashcard fc = new Flashcard(JO.getInt("id"), JO.getLong("updatetime"));
-                                fcsFromServer.add(fc);
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        for (Flashcard fc : fcsFromServer){
-
-                            printLineToMainTextView(fc.toString());
-                        }
-
-                    }
-                },
-                        new Response.ErrorListener()
-                {
-                    @Override
-                    public void onErrorResponse(VolleyError error)
-                    {
-
-                    }
-                }) {
-
-                    @Override
-                    protected Map<String, String> getParams() throws AuthFailureError {
-                        Map<String,String> parameters  = new HashMap<String, String>();
-                        parameters.put("afterthis",Long.toString(1509042243137l));
-
-                        return parameters;
-                    }
-                };
-                requestQueue.add(request);
             }
-
         });
+
+
+        SharedPreferences sharedPreferecnes = getSharedPreferences("SyncStatus", Context.MODE_PRIVATE);
+
+        if (!sharedPreferecnes.getBoolean("lastSyncSuccessful", true)){
+
+            printLineToMainTextView("Some recent sync did not finish properly. Please sync again soon.");
+        }
 
         // DEBUG start
 
@@ -144,7 +95,14 @@ public class MainActivity extends AppCompatActivity {
 //        process.execute();
 //        startActivity(new Intent(MainActivity.this, QuizActivity.class));
 
+//
+//        Flashcard fc = new Select().from(Flashcard.class).where("remote_id = 39").executeSingle();
+//        fc.setQuestion("asdfasdfasdfsad");
+//        fc.save();
+//        printLineToMainTextView(fc.id + " " + fc.updatetimelocal);
+
         // DEBUG end
+
     }
 
     @Override
@@ -171,9 +129,9 @@ public class MainActivity extends AppCompatActivity {
 
     public static void printLineToMainTextView(String str){
 
-        String output = (String) textView.getText();
+        String output = textView.getText().toString();
 
-        if (output.equals("No Output ")){
+        if (output.equals("No Output")){
             output = "";
         }
 

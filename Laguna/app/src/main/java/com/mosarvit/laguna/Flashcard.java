@@ -13,32 +13,88 @@ public class Flashcard extends Model {
     @Column(name = "remote_id", unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
     public int id;
 
+    @Column(name = "status")
+    private short status;        // 0 - default, 9 - to be deleted on the server on the next sync
+
     @Column(name = "question")
-    public String question;
+    private String question;
 
     @Column(name = "duetime")
-    public long duetime;
+    private long duetime;
 
     @Column(name = "loadedtoapptime")
-    public long loadedtoapptime;
+    private long loadedtoapptime;
 
-    @Column(name = "updatetime")
-    public long updatetime;
+    @Column(name = "updatetimelocal")
+    public long updatetimelocal;
+
+    @Column(name = "updatetimewhenloaded")
+    public long updatetimewhenloaded;
+
+    public void setDuetime(long duetime){
+
+        this.updatetimelocal = System.currentTimeMillis();
+        this.duetime = duetime;
+    }
+
+    public void setQuestion(String question){
+
+        this.updatetimelocal = System.currentTimeMillis();
+        this.question = question;
+    }
+
+    public String getQuestion(){
+
+        return this.question;
+    }
+
+    public long getDuetime(){
+
+        return this.duetime;
+    }
+
+    public long getUpdateTimeLocal(){
+
+        return this.updatetimelocal;
+    }
+
+    public long getUpdatetimeWhenLoaded(){
+
+        return this.updatetimewhenloaded;
+    }
+
+    public int getStatus(){
+
+        return this.status;
+    }
+
+
+    public void setToDeleteOnServer(){
+
+        this.loadedtoapptime = System.currentTimeMillis();
+        this.status = 9;
+    }
 
     public Flashcard(){}
 
     public Flashcard(int id, String question, long duetime, long updatetime){
         super();
         this.duetime = duetime;
-        this.loadedtoapptime = System.currentTimeMillis();
-        this.updatetime = updatetime;
+        this.updatetimewhenloaded = updatetime;
+        this.updatetimelocal = updatetime;
         this.id = id;
         this.question = question;
     }
 
     public Flashcard(int id, long updatetime){
         super();
-        this.updatetime = updatetime;
+        this.updatetimewhenloaded = updatetime;
+        this.updatetimelocal = updatetime;
+        this.id = id;
+    }
+
+    public Flashcard(int id){
+        super();
         this.id = id;
     }
 
@@ -62,7 +118,7 @@ public class Flashcard extends Model {
         return "Id: " + this.id +
                 "\nquestion: " + this.question +
                 "\nloadedtoapptime: " + this.loadedtoapptime +
-                "\nupdatetime: " + this.updatetime +
+                "\nupdatetimelocal: " + this.updatetimelocal +
                 "\nduetime: " + this.duetime +
                 "\n\n";
     }
