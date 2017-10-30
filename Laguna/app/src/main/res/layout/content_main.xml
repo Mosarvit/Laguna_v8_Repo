@@ -48,4 +48,14 @@
         app:layout_constraintTop_toTopOf="@+id/txt_Output"
         android:layout_marginTop="155dp" />
 
+    <Button
+        android:id="@+id/btnTest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:text="Test"
+        app:layout_constraintBottom_toBottomOf="@+id/txt_Output"
+        app:layout_constraintLeft_toLeftOf="@+id/txt_Output" />
+
 </android.support.constraint.ConstraintLayout>

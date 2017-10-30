@@ -42,7 +42,7 @@ public class QuizActivity extends AppCompatActivity {
             }
         });
 
-//        questionTextView = (TextView) findViewById(R.id.txt_Question);
+//        questionTextView = (TextView) findViewById(R.remote_id.txt_Question);
         btnTest = (Button)findViewById(R.id.btnTest);
         btnShortest = (Button)findViewById(R.id.btnShortest);
         btnMiddle = (Button)findViewById(R.id.btnMiddle);

@@ -5,16 +5,14 @@ import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
 import com.activeandroid.query.Select;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Table(name = "Flashcards")
 public class Flashcard extends Model {
 
     @Column(name = "remote_id", unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
-    public int id;
-
-    @Column(name = "status")
-    private short status;        // 0 - default, 9 - to be deleted on the server on the next sync
+    public int remote_id;
 
     @Column(name = "question")
     private String question;
@@ -22,24 +20,27 @@ public class Flashcard extends Model {
     @Column(name = "duetime")
     private long duetime;
 
-    @Column(name = "loadedtoapptime")
-    private long loadedtoapptime;
+    @Column(name = "utlocal")
+    public long utlocal;
 
-    @Column(name = "updatetimelocal")
-    public long updatetimelocal;
+    @Column(name = "utwhenloaded")
+    public long utwhenloaded;
 
-    @Column(name = "updatetimewhenloaded")
-    public long updatetimewhenloaded;
+    @Column(name = "newfc")
+    public boolean newfc;
+
+    @Column(name = "toDelete")
+    public boolean toDelete;
 
     public void setDuetime(long duetime){
 
-        this.updatetimelocal = System.currentTimeMillis();
+        this.utlocal = System.currentTimeMillis();
         this.duetime = duetime;
     }
 
     public void setQuestion(String question){
 
-        this.updatetimelocal = System.currentTimeMillis();
+        this.utlocal = System.currentTimeMillis();
         this.question = question;
     }
 
@@ -55,47 +56,55 @@ public class Flashcard extends Model {
 
     public long getUpdateTimeLocal(){
 
-        return this.updatetimelocal;
+        return this.utlocal;
     }
 
     public long getUpdatetimeWhenLoaded(){
 
-        return this.updatetimewhenloaded;
+        return this.utwhenloaded;
     }
 
-    public int getStatus(){
-
-        return this.status;
-    }
 
 
     public void setToDeleteOnServer(){
 
-        this.loadedtoapptime = System.currentTimeMillis();
-        this.status = 9;
+        this.utlocal = System.currentTimeMillis();
     }
 
-    public Flashcard(){}
+    public Flashcard(){
+        super();
+    }
 
-    public Flashcard(int id, String question, long duetime, long updatetime){
+
+    public Flashcard(int remote_id, String question, long duetime, long updatetime, boolean newfc){
         super();
         this.duetime = duetime;
-        this.updatetimewhenloaded = updatetime;
-        this.updatetimelocal = updatetime;
-        this.id = id;
+        this.utwhenloaded = updatetime;
+        this.utlocal = updatetime;
+        this.remote_id = remote_id;
+        this.question = question;
+        this.newfc = newfc;
+    }
+
+    public Flashcard(int remote_id, String question, long duetime, long updatetime){
+        super();
+        this.duetime = duetime;
+        this.utwhenloaded = updatetime;
+        this.utlocal = updatetime;
+        this.remote_id = remote_id;
         this.question = question;
     }
 
-    public Flashcard(int id, long updatetime){
+    public Flashcard(int remote_id, long updatetime){
         super();
-        this.updatetimewhenloaded = updatetime;
-        this.updatetimelocal = updatetime;
-        this.id = id;
+        this.utwhenloaded = updatetime;
+        this.utlocal = updatetime;
+        this.remote_id = remote_id;
     }
 
-    public Flashcard(int id){
+    public Flashcard(int remote_id){
         super();
-        this.id = id;
+        this.remote_id = remote_id;
     }
 
     public static String allToString(){
@@ -115,12 +124,32 @@ public class Flashcard extends Model {
     @Override
     public String toString(){
 
-        return "Id: " + this.id +
+        return "Id: " + this.remote_id +
                 "\nquestion: " + this.question +
-                "\nloadedtoapptime: " + this.loadedtoapptime +
-                "\nupdatetimelocal: " + this.updatetimelocal +
+                "\nutlocal: " + this.utlocal +
                 "\nduetime: " + this.duetime +
                 "\n\n";
+    }
+
+    public static Flashcard getByRemoteId(int id){
+
+        return new Select().from(Flashcard.class).where("remote_id = " + id).executeSingle();
+    }
+
+    public static List<Flashcard> getAll(){
+
+        return new Select().from(Flashcard.class).execute();
+    }
+
+    public static HashMap<Integer, Flashcard> getAllAsHM(){
+
+        HashMap<Integer, Flashcard> hm = new HashMap<Integer, Flashcard>();
+
+        for (Flashcard fc : getAll()){
+            hm.put(fc.remote_id, fc);
+        }
+
+        return hm;
     }
 }
 

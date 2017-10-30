@@ -47,7 +47,7 @@ public class syncDb extends AsyncTask<Void, Void, Void> {
             for(int i = 0; i<JA.length(); i++) {
 
                 JSONObject JO = (JSONObject) JA.get(i);
-                Flashcard fc = new Flashcard(JO.getInt("id"), JO.getString("question"), JO.getLong("duetime"), JO.getLong("updatetime"));
+                Flashcard fc = new Flashcard(JO.getInt("remote_id"), JO.getString("question"), JO.getLong("duetime"), JO.getLong("updatetime"));
 //                Flashcard fc = new Flashcard();
                 fc.save();
             }

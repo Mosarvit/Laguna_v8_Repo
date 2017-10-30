@@ -2,7 +2,6 @@ package com.mosarvit.laguna;
 
 import android.content.Context;
 
-import com.activeandroid.Model;
 import com.activeandroid.query.Select;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -59,7 +58,7 @@ public class SyncSession1 {
                     for(int i = 0; i<JA.length(); i++) {
 
                         JSONObject JO = (JSONObject) JA.get(i);
-                        Flashcard fc = new Flashcard(JO.getInt("id"), JO.getString("question"), JO.getLong("duetime"), JO.getLong("updatetime"));
+                        Flashcard fc = new Flashcard(JO.getInt("remote_id"), JO.getString("question"), JO.getLong("duetime"), JO.getLong("updatetime"));
                         fc.save();
                     }
 
@@ -77,12 +76,12 @@ public class SyncSession1 {
 //                ArrayList<Model> sdf = (ArrayList<Model>) new Select(new String[]{"Id"}).from(Flashcard.class).execute();
 //                ArrayList<Integer> ids = new ArrayList<Integer>();
 //
-//                for (Integer id : ids)
-//                    ids.add(id);
+//                for (Integer remote_id : ids)
+//                    ids.add(remote_id);
 //
 //                for (Flashcard fc : fcsFromServer){
 //
-//                    if (!ids.contains(fc.id)){
+//                    if (!ids.contains(fc.remote_id)){
 //
 //                        MainActivity.printLineToMainTextView("New Flashcards detected: \n" + fc.toString());
 //                        newFcs.add(fc);
@@ -109,7 +108,7 @@ public class SyncSession1 {
                     int i=0;
 
                     for (Flashcard fc : toRequestFcs){
-                        parameters.put("ids[" + i++ + "]",Integer.toString(fc.id));
+                        parameters.put("ids[" + i++ + "]",Integer.toString(fc.remote_id));
                     }
 
                     return parameters;
@@ -139,7 +138,7 @@ public class SyncSession1 {
                     for(int i = 0; i<JA.length(); i++) {
 
                         JSONObject JO = (JSONObject) JA.get(i);
-                        Flashcard fc = new Flashcard(JO.getInt("id"), JO.getLong("updatetime"));
+                        Flashcard fc = new Flashcard(JO.getInt("remote_id"), JO.getLong("updatetime"));
                         fcsFromServer.add(fc);
                     }
                 } catch (JSONException e) {
@@ -150,19 +149,19 @@ public class SyncSession1 {
 
                 // find the new entries
 
-                List<Flashcard> fcs = new Select(new String[]{"id, remote_id"}).from(Flashcard.class).execute();
+                List<Flashcard> fcs = new Select(new String[]{"remote_id, remote_id"}).from(Flashcard.class).execute();
                 ArrayList<Integer> ids = new ArrayList<>();
 
                 for (Flashcard fc : fcs){
 
-                    ids.add(fc.id);
+                    ids.add(fc.remote_id);
                 }
 
                 for (Flashcard fc : fcsFromServer){
 
-                    if (!ids.contains(fc.id)){
+                    if (!ids.contains(fc.remote_id)){
 
-                        MainActivity.printLineToMainTextView("New Flashcards detected: \n"  + fc.id);
+                        MainActivity.printLineToMainTextView("New Flashcards detected: \n"  + fc.remote_id);
                         newFcs.add(fc);
                     }
                 }
@@ -188,7 +187,7 @@ public class SyncSession1 {
 //                    protected Map<String, String> getParams() throws AuthFailureError {
 //
 //                        Map<String,String> parameters  = new HashMap<String, String>();
-//                        parameters.put("id",Integer.toString(16));
+//                        parameters.put("remote_id",Integer.toString(16));
 //
 //                        return parameters;
 //                    }

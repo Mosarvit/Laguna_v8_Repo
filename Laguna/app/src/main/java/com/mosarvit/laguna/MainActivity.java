@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int DB_VERSION = 1;
     public static TextView textView;
-    public static Button btnStartQuiz, btnSync;
+    public static Button btnStartQuiz, btnSync, btnTest;
 
 
 
@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         textView = (TextView) findViewById(R.id.txt_Output);
         btnStartQuiz = (Button)findViewById(R.id.btnStartQuiz);
         btnSync = (Button)findViewById(R.id.btnSync);
+        btnTest = (Button)findViewById(R.id.btnTest);
 
         textView.setMovementMethod(new ScrollingMovementMethod());
 
@@ -81,6 +82,23 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        btnTest.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+
+                Flashcard fc = Flashcard.getAll().get(0);
+                fc.setQuestion("asdfasdfasdfsad");
+                fc.save();
+
+                fc = Flashcard.getAll().get(1);
+                fc.setQuestion("asdfasdfasdfsad");
+                fc.save();
+            }
+        });
+
+
+
 
         SharedPreferences sharedPreferecnes = getSharedPreferences("SyncStatus", Context.MODE_PRIVATE);
 
@@ -96,10 +114,8 @@ public class MainActivity extends AppCompatActivity {
 //        startActivity(new Intent(MainActivity.this, QuizActivity.class));
 
 //
-//        Flashcard fc = new Select().from(Flashcard.class).where("remote_id = 39").executeSingle();
-//        fc.setQuestion("asdfasdfasdfsad");
-//        fc.save();
-//        printLineToMainTextView(fc.id + " " + fc.updatetimelocal);
+
+//        printLineToMainTextView(fc.remote_id + " " + fc.utlocal);
 
         // DEBUG end
 
