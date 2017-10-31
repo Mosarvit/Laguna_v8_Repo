@@ -15,7 +15,7 @@ using System.Windows.Forms;
 
 namespace FlashcardMaker.Controllers
 {
-    public class SyncController
+    public class SyncController : IController
     {
         private SyncView view;
 
@@ -29,8 +29,8 @@ namespace FlashcardMaker.Controllers
         private List<Flashcard> toDeleteHere = new List<Flashcard>();
         private List<Flashcard> toDeleteOnServer = new List<Flashcard>();
 
-        private List<Flashcard> moreRecentHereVersion = new List<Flashcard>();
-        private List<Flashcard> moreRecentServerVersion = new List<Flashcard>();
+        private List<Flashcard> updatedOnlyHereAfterLoading = new List<Flashcard>();
+        private List<Flashcard> updatedOnlyOnServerHereAfterLoading = new List<Flashcard>();
 
         private List<Flashcard> contradictingHereVersion = new List<Flashcard>();
         private List<Flashcard> contradictingServerVersion = new List<Flashcard>();
@@ -119,11 +119,11 @@ namespace FlashcardMaker.Controllers
                         }
                         else if (notNewFcHere.utlocal > notNewFcHere.utserverwhenloaded)
                         {
-                            moreRecentHereVersion.Add(notNewFcHere);
+                            updatedOnlyHereAfterLoading.Add(notNewFcHere);
                         }
                         else if (fcServer.utserverwhenloaded > notNewFcHere.utserverwhenloaded)
                         {
-                            moreRecentServerVersion.Add(fcServer);
+                            updatedOnlyOnServerHereAfterLoading.Add(fcServer);
                         }
 
                     }
@@ -143,8 +143,8 @@ namespace FlashcardMaker.Controllers
                             "\r\ntoInsertHere : " + toInsertHere.Count() +
                             "\r\ncontradictingHereVersion: " + contradictingHereVersion.Count() +
                             "\r\ncontradictingServerVersion: " + contradictingServerVersion.Count() +
-                            "\r\nmoreRecentHereVersion: " + moreRecentHereVersion.Count() +
-                            "\r\nmoreRecentServerVersion: " + moreRecentServerVersion.Count());
+                            "\r\nmoreRecentHereVersion: " + updatedOnlyHereAfterLoading.Count() +
+                            "\r\nmoreRecentServerVersion: " + updatedOnlyOnServerHereAfterLoading.Count());
 
                 if (contradictingHereVersion.Count() > 0)
                 {
@@ -153,7 +153,7 @@ namespace FlashcardMaker.Controllers
 
                 SplitToInsertAndToDeleteOnServer();
 
-                toInsertHere.AddRange(moreRecentServerVersion);
+                toInsertHere.AddRange(updatedOnlyOnServerHereAfterLoading);
 
                 ////DEBUG
                 printLine("\r\ntoDeleteOnServer: " + toDeleteOnServer.Count() +
@@ -165,14 +165,14 @@ namespace FlashcardMaker.Controllers
 
                 DeleteToDeleteHere(db);
 
-                view.printInOutputTextField("done");
+                printLine("done");
 
             }
         }
 
         private void SplitToInsertAndToDeleteOnServer()
         {
-            foreach (Flashcard fcHere in moreRecentHereVersion)
+            foreach (Flashcard fcHere in updatedOnlyHereAfterLoading)
             {
                 if (fcHere.getToDelete())
                 {
@@ -191,11 +191,11 @@ namespace FlashcardMaker.Controllers
 
             if (decision.Equals("DownloadFromServer"))
             {
-                moreRecentServerVersion.AddRange(contradictingServerVersion);
+                updatedOnlyOnServerHereAfterLoading.AddRange(contradictingServerVersion);
             }
             else if (decision.Equals("UploadToServer"))
             {
-                moreRecentHereVersion.AddRange(contradictingHereVersion);
+                updatedOnlyHereAfterLoading.AddRange(contradictingHereVersion);
             }
             else if (decision.Equals("Cancel"))
             {
@@ -426,9 +426,14 @@ namespace FlashcardMaker.Controllers
             throw new NotImplementedException();
         }
 
-        private void printLine(string str)
+        public void printLine(string str)
         {
-            view.printInOutputTextField(str);
+            view.printLine(str);
+        }
+
+        public void printStatusLabel(string str)
+        {
+            view.printStatusLabel(str);
         }
     }
 }

@@ -20,9 +20,10 @@ namespace FlashcardMaker
             Application.SetCompatibleTextRenderingDefault(false);
             MainView mainForm = new MainView();
 
-            ProgramController programController = new ProgramController(mainForm);
-            DataIOController dataIOController = new DataIOController(mainForm);            
-            mainForm.setDataIOController(dataIOController);
+            DataIOController mainFormController = new DataIOController(mainForm);
+            ProgramController programController = new ProgramController(mainForm, mainFormController);
+                       
+            mainForm.setDataIOController(mainFormController);
             mainForm.setProgramController(programController);
             Application.Run(mainForm);
 

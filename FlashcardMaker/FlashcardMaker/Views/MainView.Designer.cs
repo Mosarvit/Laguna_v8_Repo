@@ -51,6 +51,8 @@
             this.txtbxOutput = new System.Windows.Forms.TextBox();
             this.btnDeleteAllFlashCards = new System.Windows.Forms.Button();
             this.btnSync = new System.Windows.Forms.Button();
+            this.btnClearCharacters = new System.Windows.Forms.Button();
+            this.btnClearWords = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnBrowseAddToDatabase
@@ -271,11 +273,33 @@
             this.btnSync.UseVisualStyleBackColor = true;
             this.btnSync.Click += new System.EventHandler(this.btnSync_Click);
             // 
+            // btnClearCharacters
+            // 
+            this.btnClearCharacters.Location = new System.Drawing.Point(721, 77);
+            this.btnClearCharacters.Name = "btnClearCharacters";
+            this.btnClearCharacters.Size = new System.Drawing.Size(116, 23);
+            this.btnClearCharacters.TabIndex = 23;
+            this.btnClearCharacters.Text = "Clear Characters";
+            this.btnClearCharacters.UseVisualStyleBackColor = true;
+            this.btnClearCharacters.Click += new System.EventHandler(this.btnClearCharacters_Click);
+            // 
+            // btnClearWords
+            // 
+            this.btnClearWords.Location = new System.Drawing.Point(721, 103);
+            this.btnClearWords.Name = "btnClearWords";
+            this.btnClearWords.Size = new System.Drawing.Size(116, 23);
+            this.btnClearWords.TabIndex = 24;
+            this.btnClearWords.Text = "Clear Words";
+            this.btnClearWords.UseVisualStyleBackColor = true;
+            this.btnClearWords.Click += new System.EventHandler(this.btnClearWords_Click);
+            // 
             // MainView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1227, 670);
+            this.Controls.Add(this.btnClearWords);
+            this.Controls.Add(this.btnClearCharacters);
             this.Controls.Add(this.btnSync);
             this.Controls.Add(this.btnDeleteAllFlashCards);
             this.Controls.Add(this.txtbxOutput);
@@ -331,6 +355,8 @@
         private System.Windows.Forms.TextBox txtbxOutput;
         private System.Windows.Forms.Button btnDeleteAllFlashCards;
         private System.Windows.Forms.Button btnSync;
+        private System.Windows.Forms.Button btnClearCharacters;
+        private System.Windows.Forms.Button btnClearWords;
     }
 }
 

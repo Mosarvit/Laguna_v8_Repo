@@ -13,19 +13,14 @@ using System.Data;
 using System.Diagnostics;
 using Microsoft.Office.Interop.Excel;
 using MySql.Data.MySqlClient;
+using FlashcardMaker.Views;
+using System.Globalization;
 
 namespace FlashcardMaker.Controllers
 {
-    public class DataIOController
+    public class DataIOController : IController
     {
-        MainView view;
-         
-        public static bool DEBUGGING = true;
-
-        public static int MAX_CHINESE_CHARACTERS_TO_LOAD = 15000;
-        public static int MAX_CHINESE_WORDS_TO_LOAD = 15000;
-        public static int MAX_SUBTITLES_TO_UPDATE = 100;
-        public static int MAX_SUBTITLES_TO_LOAD = 100;
+        private MainView view;
 
         public DataIOController(MainView mainForm)
         {
@@ -34,7 +29,8 @@ namespace FlashcardMaker.Controllers
 
         internal void ReadInFromSubtitleFileToDb(string[] fullFileNames)
         {
-            view.printInMainTextLabel("Adding Subtitles Process begins ");
+            
+            printLine("Adding Subtitles Process begins ");
             AddMoviesToDb(fullFileNames);
             AddSubtitles();
         }
@@ -43,7 +39,7 @@ namespace FlashcardMaker.Controllers
         {
             MyDbContext db = new MyDbContext();
 
-            view.printInMainTextLabel("Adding Subtitles ");
+            printLine("Adding Subtitles ");
 
             var moviesToAdd = from b in db.Movies
                               where b.added.Equals(false)
@@ -55,22 +51,12 @@ namespace FlashcardMaker.Controllers
             {
                 String fullFileName = movie.fullFileName;
 
-                view.printInMainTextLabel("fullFileName: " + fullFileName +
+                printLine("fullFileName: " + fullFileName +
                                                             "\nfileName: " + movie.fileName +
                                                             "\nfileExtention: " + movie.fileExtention +
                                                             "\nadded: " + movie.added +
                                                             "\n isSRT: ");
-
-                if (movie.fileExtention == ".srt")
-                {
-                    view.printInLineInMainTextLabel("yes ");
-                }
-                else
-                {
-                    view.printInLineInMainTextLabel("no ");
-                }
-
-                view.printInMainTextLabel("\n\n");
+                printLine("\n\n");
 
                 int counter = 0;
                 string line;
@@ -87,6 +73,7 @@ namespace FlashcardMaker.Controllers
                     else if (counter % 4 == 1)
                     {
                         subtitleLine.TimeFrameString = line;
+                        saveStartAndEndTime(line, subtitleLine);
                     }
                     else if (counter % 4 == 2)
                     {
@@ -94,12 +81,12 @@ namespace FlashcardMaker.Controllers
                         movie.SubtitleLines.Add(subtitleLine);
                         db.SubtitleLines.AddOrUpdate(p => new { p.MovieFileName, p.Position }, subtitleLine);
                         db.SaveChanges();
-                        view.printInStatusLabel(totalCount++ + " subtitles added");
+                        view.printStatusLabel(totalCount++ + " subtitles added");
                     }
 
                     counter++;
 
-                    if (DEBUGGING == true && totalCount > MAX_SUBTITLES_TO_LOAD)
+                    if (ProgramController.DEBUGGING == true && totalCount > ProgramController.MAX_SUBTITLES_TO_LOAD)
                         break;
                 }
 
@@ -112,14 +99,30 @@ namespace FlashcardMaker.Controllers
 
             view.refresh();
 
-            view.printInMainTextLabel("Done Adding Subtitles ");
+            printLine("Done Adding Subtitles ");
+        }
+
+        private void saveStartAndEndTime(string line, SubtitleLine stl)
+        {
+            string[] startAndEnd = line.Split(new string[] { " --> " }, StringSplitOptions.None);
+
+            stl.starttime = convertTimeStringToLong(startAndEnd[0]);
+            stl.endtime = convertTimeStringToLong(startAndEnd[1]);
+        }
+
+        private static long convertTimeStringToLong(string startString)
+        {
+            DateTime startDateTime = DateTime.ParseExact(startString, "HH:mm:ss,fff",
+                                                    CultureInfo.InvariantCulture);
+            long start = startDateTime.Hour * 3600000 + startDateTime.Minute * 60000 + startDateTime.Second * 1000 + startDateTime.Millisecond;
+            return start;
         }
 
         private void AddMoviesToDb(string[] fullFileNames)
         {
             MyDbContext db = new MyDbContext();
 
-            view.printInMainTextLabel("Adding Movies to Movies Table: ");
+            printLine("Adding Movies to Movies Table: ");
 
             foreach (String fullFileName in fullFileNames)
             {
@@ -137,10 +140,10 @@ namespace FlashcardMaker.Controllers
                 db.Movies.AddOrUpdate(p => p.fileName, movie);
                 db.SaveChanges();
 
-                view.printInMainTextLabel("Added: " + movie.fileName);
+                printLine("Added: " + movie.fileName);
             }
 
-            view.printInMainTextLabel("Done Adding Movies to Movies Table: ");
+            printLine("Done Adding Movies to Movies Table: ");
         }
 
         internal void test()
@@ -172,7 +175,7 @@ namespace FlashcardMaker.Controllers
                 try
                 {
                     int result = db.SaveChanges();
-                    view.printInMainTextLabel("Number of changes executed: " + result);
+                    printLine("Number of changes executed: " + result);
                 }
                 catch (Exception)
                 {
@@ -182,7 +185,7 @@ namespace FlashcardMaker.Controllers
 
             }
 
-            //view.printInMainTextLabel("Trying to connect to db");
+            //printLine("Trying to connect to db");
 
             //MySqlConnection conn = new MySqlConnection();
             //string connString;
@@ -194,29 +197,29 @@ namespace FlashcardMaker.Controllers
             //    conn = new MySqlConnection();
             //    conn.ConnectionString = connString;
             //    conn.Open();
-            //    view.printInMainTextLabel("Connection opened");
+            //    printLine("Connection opened");
 
 
 
             //    conn.Close();
-            //    view.printInMainTextLabel("Connection closed");
+            //    printLine("Connection closed");
             //}
             //catch (MySql.Data.MySqlClient.MySqlException ex)
             //{
-            //    view.printInMainTextLabel(ex.Message);
+            //    printLine(ex.Message);
             //}
             //finally
             //{
             //    if (conn != null)
             //    {
             //        conn.Dispose();
-            //        view.printInMainTextLabel("Disposed connection");
+            //        printLine("Disposed connection");
             //    }
             //}
             
             
 
-            //view.printInMainTextLabel("Finished");
+            //printLine("Finished");
         }
 
         internal void AddExcelDataToDatabase<fieldClass>(string fileName)
@@ -229,7 +232,7 @@ namespace FlashcardMaker.Controllers
         {
             MyDbContext db = new MyDbContext();
 
-            view.printInMainTextLabel("Reading in from " + fileName + "\n");
+            printLine("Reading in from " + fileName + "\n");
 
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
@@ -245,11 +248,11 @@ namespace FlashcardMaker.Controllers
 
             for (int i = 1; i <= rowCount; i++)
             {
-                view.printInStatusLabel("\nReading from Excel. Row: " + i.ToString() + "\nTime elapsed: " + stopWatch.Elapsed);
+                view.printStatusLabel("\nReading from Excel. Row: " + i.ToString() + "\nTime elapsed: " + stopWatch.Elapsed);
 
                 if (typeof(fieldClass) == typeof(ChineseCharacter))
                 {
-                    if (DEBUGGING == true && ++totalCount > MAX_CHINESE_CHARACTERS_TO_LOAD) break;
+                    if (ProgramController.DEBUGGING == true && ++totalCount > ProgramController.MAX_CHINESE_CHARACTERS_TO_LOAD) break;
 
                     var chineseCharacter = new ChineseCharacter { };
 
@@ -270,7 +273,7 @@ namespace FlashcardMaker.Controllers
                 }
                 else if (typeof(fieldClass) == typeof(ChineseWord))
                 {
-                    if (DEBUGGING == true && ++totalCount > MAX_CHINESE_WORDS_TO_LOAD) break;
+                    if (ProgramController.DEBUGGING == true && ++totalCount > ProgramController.MAX_CHINESE_WORDS_TO_LOAD) break;
 
                     var cw = new ChineseWord { };
 
@@ -291,12 +294,12 @@ namespace FlashcardMaker.Controllers
             stopWatch.Stop();
             //view.printInStatusLabel("Done" + "\nTime elapsed: " + stopWatch.Elapsed);
 
-            view.printInMainTextLabel(totalCount - 1 + " items Added\n");
+            printLine(totalCount - 1 + " items Added\n");
         }
 
         internal void DeleteAllFlashcards()
         {
-            view.printInMainTextLabel("Deleting all flashcards");
+            printLine("Deleting all flashcards");
 
             using (MyDbContext db = new MyDbContext())
             {
@@ -304,29 +307,15 @@ namespace FlashcardMaker.Controllers
                 db.SaveChanges();
             }
 
-            view.printInMainTextLabel("All flashcards deleted");
+            printLine("All flashcards deleted");
         }
 
-        internal void CreateFlashcards()
-        {
-            view.printInMainTextLabel("Creating flashCards process begins");
-
-            var db = new MyDbContext();
-
-            UpdateAll(db);
-            CreateSubtitlePacks();
-            List<SubtitleLinePack> tempSortSubtitleLinePackList = SortedSubtitleLinePackList(db);
-
-            view.printInMainTextLabel("Number of stlps: " + tempSortSubtitleLinePackList.Count());
-
-            CreateFlashcards(tempSortSubtitleLinePackList, db);
-
-            view.printInMainTextLabel("Done with creating Flashcards process!\n");
-        }
+        
 
         private void CreateFlashcards(List<SubtitleLinePack> tempSortSubtitleLinePackList, MyDbContext db)
         {
-            view.printInMainTextLabel("Creating Flashcards");
+            string str = "Creating Flashcards";
+            printLine(str);
 
             foreach (var stlp in tempSortSubtitleLinePackList)
             {
@@ -337,126 +326,15 @@ namespace FlashcardMaker.Controllers
 
             db.SaveChanges();
 
-            view.printInMainTextLabel("Done creating Flashcards");
+            printLine("Done creating Flashcards");
         }
 
-        private List<SubtitleLinePack> SortedSubtitleLinePackList(MyDbContext db)
-        {
-            view.printInMainTextLabel("Sorting SubtitlelinePacks");
 
-            var tempStlpList = new List<SubtitleLinePack>();
-
-            UpdateStlps(db);
-
-            SubtitleLinePack mostDenseStlp = db.SubtitleLinePacks.OrderByDescending(c => c.DensityOfToLearnWords).ToList()[0];
-            
-            int counter = 0;
-
-            while (mostDenseStlp.DensityOfToLearnWords > 0 && counter++ < 10)
-            {
-                foreach (var cw in mostDenseStlp.ChineseWords)
-                    cw.AddedToTempSort = true;
-
-                db.SaveChanges();
-
-                tempStlpList.Add(mostDenseStlp);
-
-                UpdateStlps(db);
-
-                db.SaveChanges();
-
-                mostDenseStlp = db.SubtitleLinePacks.OrderByDescending(c => c.DensityOfToLearnWords).ToList()[0]; ;
-            }
-
-            foreach (var cw in db.ChineseWords.ToList())
-                cw.AddedToTempSort = false;
-
-            db.SaveChanges();
-
-            view.printInMainTextLabel("Finished sorting SubtitlelinePacks");
-
-            return tempStlpList;
-        }
-
-        private void CreateSubtitlePacks()
+        public void UpdateCanReadInSubtitleLines()
         {
             MyDbContext db = new MyDbContext();
 
-            view.printInMainTextLabel("Creating SubtitlelinePacks");
-            view.printInMainTextLabel("Number of SubtitlelinePacks: " + db.SubtitleLinePacks.Count());
-
-            foreach (SubtitleLinePack stlp in db.SubtitleLinePacks.ToList())
-            {
-                //view.printInMainTextLabel("Clearing, Id: " + stlp.Id + " " + stlp.NumberOfCharacters + " " + stlp.NumberOfToLearnWords);
-                foreach (var stl in stlp.SubtitleLines.ToList())
-                {
-                    stlp.SubtitleLines.Remove(stl);
-                }
-
-                foreach (var fc in stlp.Flashcards.ToList())
-                {
-                    stlp.Flashcards.Remove(fc);
-                    //db.Flashcards.Remove(fc);
-                }
-
-                db.SubtitleLinePacks.Remove(stlp);
-            }
-            db.SaveChanges();
-
-            db.SubtitleLinePacks.RemoveRange(db.SubtitleLinePacks);
-            db.SaveChanges();
-
-            int totalCount = 0;
-
-            IList<Movie> Movies = db.Movies.ToList();
-
-            foreach (Movie movie in Movies)
-            {
-                IList<SubtitleLine> allSubtitleLineList = movie.SubtitleLines.OrderBy(c => c.Position).ToList();
-                SubtitleLinePack stlp = new SubtitleLinePack { SubtitleLines = new List<SubtitleLine>(), ChineseWords = new List<ChineseWord>(), AddedToFlashcards = false };
-                db.SubtitleLinePacks.Add(stlp);
-                bool firstZero = false;
-
-                foreach (SubtitleLine stl in allSubtitleLineList)
-                {
-                    if (stl.CanRead == 0 && firstZero)
-                    {
-                        db.SubtitleLinePacks.Add(stlp);
-                        stlp = new SubtitleLinePack { SubtitleLines = new List<SubtitleLine>(), ChineseWords = new List<ChineseWord>() };
-                        firstZero = false;
-                    }
-                    else if (stl.CanRead == 1)
-                    {
-                        firstZero = true;
-                        stlp.SubtitleLines.Add(stl);
-                        stlp.ChineseWords.AddRange(stl.ToLearnWords);
-                        stlp.NumberOfCharacters += stl.NumberOfCharacters;
-                    }
-
-                    view.printInStatusLabel("SubtitleLines analyzed: " + totalCount++);
-
-                    if (DEBUGGING == true && totalCount > MAX_SUBTITLES_TO_UPDATE)
-                    {
-                        db.SaveChanges();
-                        return;
-                    }
-                }
-            }
-
-            db.SaveChanges();
-
-            view.printInMainTextLabel("Done Creating SubtitlelinePacks");
-        }
-
-        private void UpdateAll(MyDbContext db)
-        {
-            UpdateCanReadInSubtitleLines(db);
-            UpdateStlps(db);
-        }
-
-        private void UpdateCanReadInSubtitleLines(MyDbContext db)
-        {
-            view.printInMainTextLabel("Updating canRead in SubtitleLines");
+            printLine("Updating canRead in SubtitleLines");
 
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
@@ -517,18 +395,18 @@ namespace FlashcardMaker.Controllers
                         {
                             db.ChineseCharacters.AddOrUpdate(p => p.Chinese, new ChineseCharacter { Chinese = cString, KnowLevel = 0, Rank = db.ChineseCharacters.Max(p => p.Rank) + 1 });
                             db.SaveChanges();
-                            view.printInMainTextLabel("Added to Chinese Characters: \"" + cString + "\"");
+                            printLine("Added to Chinese Characters: \"" + cString + "\"");
                         }
                         else if (answer == "AddToNoneChineseCharacters")
                         {
                             db.NoneChineseCharacters.AddOrUpdate(p => p.Character, new NoneChineseCharacter { Character = cString });
                             db.SaveChanges();
-                            view.printInMainTextLabel("Will add do none-Chinese Characters: " + cString);
+                            printLine("Will add do none-Chinese Characters: " + cString);
 
                         }
                         else if (answer == "Cancel")
                         {
-                            view.printInMainTextLabel("Canceld by user");
+                            printLine("Canceld by user");
                             return;
                         }
 
@@ -544,13 +422,13 @@ namespace FlashcardMaker.Controllers
                 }
                 //else
                 //{
-                //    view.printInMainTextLabel("cant Read : " + stl.Chinese + " iDontKnowCCNumber: " + iDontKnowCCNumber);
+                //    printLine("cant Read : " + stl.Chinese + " iDontKnowCCNumber: " + iDontKnowCCNumber);
                 //}                    
 
                 if (totalCount % 10 == 0)
-                    view.printInStatusLabel("Updating canRead in SubtitleLines: " + totalCount + "\nTime elapsed: " + stopWatch.Elapsed);
+                    view.printStatusLabel("Updating canRead in SubtitleLines: " + totalCount + "\nTime elapsed: " + stopWatch.Elapsed);
 
-                if (totalCount > MAX_SUBTITLES_TO_UPDATE || findingsCount > 10)
+                if (totalCount > ProgramController.MAX_SUBTITLES_TO_UPDATE || findingsCount > 10)
                     break;
             }
 
@@ -558,94 +436,106 @@ namespace FlashcardMaker.Controllers
 
             stopWatch.Stop();
 
-            view.printInMainTextLabel("Done updating canRead in SubtitleLines" + "\nTime elapsed: " + stopWatch.Elapsed);
+            printLine("Done updating canRead in SubtitleLines" + "\nTime elapsed: " + stopWatch.Elapsed);
         }
 
-        private void UpdateStlps(MyDbContext db)
+        public void printLine(string str)
         {
-
-            foreach (SubtitleLinePack stlp in db.SubtitleLinePacks.ToList())
-            {
-                UpdateStlpsNumberOfNotYetInTempSortWords(stlp, db);
-                UpdateStlpsDensity(stlp, db);
-            }
-
-            db.SaveChanges();
+            view.printLine(str);
         }
 
-        private static void UpdateStlpsNumberOfNotYetInTempSortWords(SubtitleLinePack stlp, MyDbContext db)
+        public void printStatusLabel(string str)
         {
-            int notYetCount = 0;
-            
-            foreach (ChineseWord cw in stlp.ChineseWords.ToList())
-            {
-                if (!cw.AddedToTempSort)
-                    notYetCount++;
-            }
-
-            stlp.NumberOfNotYetInTempSortWords = notYetCount;
+            view.printStatusLabel(str);
         }
 
-        private void UpdateStlpsDensity(SubtitleLinePack stlp, MyDbContext db)
-        {
-            if (stlp.NumberOfCharacters != 0)
-            {
-                stlp.DensityOfToLearnWords = (double)stlp.NumberOfNotYetInTempSortWords / (double)stlp.NumberOfCharacters;
-            }
-            else
-            {
-                stlp.DensityOfToLearnWords = 0;
-            }
-        }
+
+
+
+
+
+
+
+
+
+
+
 
         //private void printLineInMainView(StringBuilder stringBuilder, string sdf)
         //{
         //    stringBuilder.Append("\n" + sdf);
-        //    view.printInMainTextLabel(stringBuilder.ToString());
+        //    printLine(stringBuilder.ToString());
         //}
 
         //private static void printInLineInMainView(StringBuilder stringBuilder, string sdf)
         //{
         //    stringBuilder.Append(sdf);
-        //    view.printInMainTextLabel(stringBuilder.ToString());
+        //    printLine(stringBuilder.ToString());
         //}
 
         internal void clearAll()
         {
-            MyDbContext db = new MyDbContext();
+            using (MyDbContext db = new MyDbContext())
+            {
+                printLine("\n");
 
-            view.printInMainTextLabel("\n");
+                clearSubtitles();
 
-            clearSubtitles();
+                ClearCharacters();
 
-            view.printInMainTextLabel("Clearing Table ChineseCharacters\n");
-            db.Database.ExecuteSqlCommand("DELETE FROM [ChineseCharacters]");
+                ClearWords();
 
-            view.printInMainTextLabel("Clearing Table ChineseWords\n");
-            db.Database.ExecuteSqlCommand("DELETE FROM [ChineseWords]");
+                db.SaveChanges();
 
-            db.SaveChanges();
+                printLine("\nDone!\n");
+            }
 
-            view.printInMainTextLabel("\nDone!\n");
+
+        }
+
+        internal void ClearWords()
+        {
+            using (MyDbContext db = new MyDbContext())
+            {
+                printLine("Clearing Table ChineseWords");
+                db.Database.ExecuteSqlCommand("DELETE FROM ChineseWords");
+                printLine("Finished clearing Table ChineseWords");
+            }
+        }
+
+        internal void ClearCharacters()
+        {
+            using (MyDbContext db = new MyDbContext())
+            {
+                printLine("Clearing Table ChineseCharacters");
+                db.Database.ExecuteSqlCommand("DELETE FROM ChineseCharacters");
+                printLine("Finished clearing Table ChineseCharacters");
+            }
+                
         }
 
         internal void clearSubtitles()
         {
-            MyDbContext db = new MyDbContext();
-
-            foreach (Movie movie in db.Movies)
+            using (MyDbContext db = new MyDbContext())
             {
-                movie.SubtitleLines.Clear();
+                foreach (Movie movie in db.Movies.ToList())
+                {
+                    movie.SubtitleLines.Clear();
+                    db.SaveChanges();
+                }
             }
-            db.SaveChanges();
-            db.Database.ExecuteSqlCommand("DELETE FROM [Movies]");
-            view.printInMainTextLabel("Cleared Table Movies");
+            using (MyDbContext db = new MyDbContext())
+            {
+                db.SaveChanges();
+                db.Database.ExecuteSqlCommand("DELETE FROM Movies");
+                printLine("Cleared Table Movies");
 
-            db.Database.ExecuteSqlCommand("DELETE FROM [SubtitleLines]");
-            view.printInMainTextLabel("Cleared Table SubtitleLines");
+                db.Database.ExecuteSqlCommand("DELETE FROM SubtitleLines");
+                printLine("Cleared Table SubtitleLines");
 
-            db.SaveChanges();
-            view.refresh();
+                db.SaveChanges();
+                view.refresh();
+            }
         }
 
         internal void refresh()
@@ -663,7 +553,7 @@ namespace FlashcardMaker.Controllers
 
             int totalCount = 0;
 
-            view.printInMainTextLabel("Refreshing knowLevels\n");
+            printLine("Refreshing knowLevels\n");
 
             foreach (ChineseCharacter cw in db.ChineseCharacters)
             {
@@ -672,7 +562,7 @@ namespace FlashcardMaker.Controllers
 
             foreach (ChineseWord cw in db.ChineseWords.ToList())
             {
-                view.printInStatusLabel("\nUpdating ChineseWords: " + totalCount++.ToString() + "\nTime elapsed: " + stopWatch.Elapsed);
+                view.printStatusLabel("\nUpdating ChineseWords: " + totalCount++.ToString() + "\nTime elapsed: " + stopWatch.Elapsed);
 
                 foreach (ChineseCharacter cc in cw.ChineseCharacters.ToList())
                 {
@@ -682,10 +572,10 @@ namespace FlashcardMaker.Controllers
 
             db.SaveChanges();
 
-            view.printInMainTextLabel("\nDone refreshing knowLevels!\n");
+            printLine("\nDone refreshing knowLevels!\n");
 
             stopWatch.Stop();
-            view.printInStatusLabel("Done refreshing knowLevels" + "\nTime elapsed: " + stopWatch.Elapsed);
+            view.printStatusLabel("Done refreshing knowLevels" + "\nTime elapsed: " + stopWatch.Elapsed);
         }
 
         private void refreshChineseCharactersToChineseWordsReferences()
@@ -697,12 +587,12 @@ namespace FlashcardMaker.Controllers
 
             int totalCount = 0;
 
-            view.printInMainTextLabel("Referrencing ChineseCharacters to ChineseWords\n");
+            printLine("Referrencing ChineseCharacters to ChineseWords\n");
 
             foreach (ChineseWord cw in db.ChineseWords.ToList())
             {
 
-                view.printInStatusLabel("\nUpdating ChineseWords: " + totalCount++.ToString() + "\nTime elapsed: " + stopWatch.Elapsed);
+                view.printStatusLabel("\nUpdating ChineseWords: " + totalCount++.ToString() + "\nTime elapsed: " + stopWatch.Elapsed);
 
                 cw.ChineseCharacters = new List<ChineseCharacter>();
 
@@ -717,10 +607,10 @@ namespace FlashcardMaker.Controllers
 
             db.SaveChanges();
 
-            view.printInMainTextLabel("\nDone Referrencing ChineseCharacters to ChineseWords!\n");
+            printLine("\nDone Referrencing ChineseCharacters to ChineseWords!\n");
 
             stopWatch.Stop();
-            view.printInStatusLabel("Done" + "\nTime elapsed: " + stopWatch.Elapsed);
+            view.printStatusLabel("Done" + "\nTime elapsed: " + stopWatch.Elapsed);
         }
 
         private void checkForDuplicates<fieldClass>()
@@ -728,7 +618,7 @@ namespace FlashcardMaker.Controllers
             MyDbContext db = new MyDbContext();
 
             StringBuilder stringBuilder = new StringBuilder();
-            view.printInMainTextLabel("\nChecing for duplicates:\n");
+            printLine("\nChecing for duplicates:\n");
 
             IQueryable<string> duplicates = null;
 
@@ -748,17 +638,17 @@ namespace FlashcardMaker.Controllers
 
             if (duplicates == null)
             {
-                view.printInMainTextLabel("\n variable duplicates is null for some reason");
+                printLine("\n variable duplicates is null for some reason");
             }
             else if (duplicates.Count() == 0)
             {
-                view.printInMainTextLabel("\nno duplicates found");
+                printLine("\nno duplicates found");
             }
             else
             {
                 foreach (var v in duplicates)
                 {
-                    view.printInMainTextLabel("\n" + v.ToString());
+                    printLine("\n" + v.ToString());
                 }
             }
         }

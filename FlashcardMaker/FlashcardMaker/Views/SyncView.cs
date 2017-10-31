@@ -11,9 +11,10 @@ using System.Windows.Forms;
 
 namespace FlashcardMaker.Views
 {
-    public partial class SyncView : Form
+    public partial class SyncView : Form, ISessionView
     {
         private SyncController syncController;
+        private bool repeatingOutput = false;
 
         public SyncView()
         {
@@ -22,15 +23,15 @@ namespace FlashcardMaker.Views
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            txtOutput.AppendText("a");
-            txtOutput.AppendText(Environment.NewLine);
+            txtbxOutput.AppendText("a");
+            txtbxOutput.AppendText(Environment.NewLine);
             this.Update();
         }
 
         public void printInOutputTextField(string v)
         {
-            txtOutput.AppendText(v);
-            txtOutput.AppendText(Environment.NewLine);
+            txtbxOutput.AppendText(v);
+            txtbxOutput.AppendText(Environment.NewLine);
             this.Update();
         }
 
@@ -47,6 +48,39 @@ namespace FlashcardMaker.Views
             dacv.ShowDialog();
 
             return dacv.answer;
+        }
+
+        public void printLine(string v)
+        {
+            repeatingOutput = false;
+            txtbxOutput.AppendText(v);
+            txtbxOutput.AppendText(Environment.NewLine);
+            this.Update();
+        }
+
+        public void printInLineInMainTextLabel(string v)
+        {
+            repeatingOutput = false;
+            txtbxOutput.AppendText(v);
+            this.Update();
+        }
+
+        public void printStatusLabel(string v)
+        {
+            if (repeatingOutput)
+            {
+                txtbxOutput.Text = txtbxOutput.Text.Remove(txtbxOutput.Text.LastIndexOf(Environment.NewLine));
+                txtbxOutput.AppendText(v);
+                txtbxOutput.AppendText(Environment.NewLine);
+            }
+            else
+            {
+                repeatingOutput = true;
+                txtbxOutput.AppendText(v);
+                txtbxOutput.AppendText(Environment.NewLine);
+            }
+
+            this.Update();
         }
     }
 }

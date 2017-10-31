@@ -56,8 +56,8 @@ public class SyncSession extends Activity {
     private ArrayList<Flashcard> toDeleteHere = new ArrayList<>();
     private ArrayList<Flashcard> toDeleteOnServer = new ArrayList<>();
 
-    private ArrayList<Flashcard> moreRecentHereVersion = new ArrayList<>();
-    private ArrayList<Flashcard> moreRecentServerVersion = new ArrayList<>();
+    private ArrayList<Flashcard> updatedOnlyHereAfterLoading = new ArrayList<>();
+    private ArrayList<Flashcard> updatedOnlyOnServerHereAfterLoading = new ArrayList<>();
 
     private ArrayList<Flashcard> contradictingHereVersion = new ArrayList<>();
     private ArrayList<Flashcard> contradictingServerVersion = new ArrayList<>();
@@ -93,7 +93,7 @@ public class SyncSession extends Activity {
 
         requestQueue = Volley.newRequestQueue(getApplicationContext());
 
-        nextRequest();
+        nextTask();
     }
 
     private void setLastSyncSuccessful(boolean synci) {
@@ -150,7 +150,7 @@ public class SyncSession extends Activity {
                     e.printStackTrace();
                 }
 
-                nextRequest();
+                nextTask();
             }
         },
                 new Response.ErrorListener()
@@ -212,7 +212,7 @@ public class SyncSession extends Activity {
                     badResponse(response);
                 }
 
-                nextRequest();
+                nextTask();
             }
         },
                 new Response.ErrorListener()
@@ -266,7 +266,7 @@ public class SyncSession extends Activity {
                     badResponse(response);
                 }
 
-                nextRequest();
+                nextTask();
             }
         },
                 new Response.ErrorListener()
@@ -358,7 +358,7 @@ public class SyncSession extends Activity {
                     badResponse(response);
                 }
 
-                nextRequest();
+                nextTask();
             }
         },
                 new Response.ErrorListener()
@@ -477,11 +477,11 @@ public class SyncSession extends Activity {
 
                         } else if (  notNewFcHere.getUpdateTimeLocal() > notNewFcHere.getUpdatetimeWhenLoaded()) {
 
-                            moreRecentHereVersion.add(notNewFcHere);
+                            updatedOnlyHereAfterLoading.add(notNewFcHere);
 
                         } else if (  fcServer.getUpdatetimeWhenLoaded() > notNewFcHere.getUpdatetimeWhenLoaded()) {
 
-                            moreRecentServerVersion.add(fcServer);
+                            updatedOnlyOnServerHereAfterLoading.add(fcServer);
                         }
                     }
                 }
@@ -498,8 +498,8 @@ public class SyncSession extends Activity {
                         "\ntoInsertHere.size(): " + toInsertHere.size() +
                         "\ncontradictingHereVersion: " + contradictingHereVersion.size() +
                         "\ncontradictingServerVersion: " + contradictingServerVersion.size() +
-                        "\nmoreRecentHereVersion: " + moreRecentHereVersion.size() +
-                        "\nmoreRecentServerVersion: " + moreRecentServerVersion.size());
+                        "\nupdatedOnlyHereAfterLoading: " + updatedOnlyHereAfterLoading.size() +
+                        "\nupdatedOnlyOnServerHereAfterLoading: " + updatedOnlyOnServerHereAfterLoading.size());
 
                 if (contradictingHereVersion.size()>0){
                     makeADecisionsAboutTheContradictions();
@@ -516,14 +516,14 @@ public class SyncSession extends Activity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
-                            moreRecentServerVersion.addAll(contradictingServerVersion);
+                            updatedOnlyOnServerHereAfterLoading.addAll(contradictingServerVersion);
                             continueFillingUp();
                         }
                     }).setNeutralButton("Upload to Server", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
-                            moreRecentHereVersion.addAll(contradictingHereVersion);
+                            updatedOnlyHereAfterLoading.addAll(contradictingHereVersion);
                             continueFillingUp();
                         }
                     }).setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
@@ -548,7 +548,7 @@ public class SyncSession extends Activity {
             private void continueFillingUp() {
 
                 splitToInsertAndToDeleteOnServer();
-                toInsertHere.addAll(moreRecentServerVersion);
+                toInsertHere.addAll(updatedOnlyOnServerHereAfterLoading);
 
                 ////DEBUG
                 printLine(  "\ntoDeleteOnServer: " + toDeleteOnServer.size() +
@@ -556,7 +556,7 @@ public class SyncSession extends Activity {
                             "\ntoInsertOnServer: " + toInsertOnServer.size() +
                             "\ntoInsertHere: " + toInsertHere.size());
 
-                nextRequest();
+                nextTask();
             }
         },
                 new Response.ErrorListener()
@@ -573,7 +573,7 @@ public class SyncSession extends Activity {
     }
 
     private void splitToInsertAndToDeleteOnServer() {
-        for (Flashcard fc : moreRecentHereVersion){
+        for (Flashcard fc : updatedOnlyHereAfterLoading){
 
             if (fc.toDelete){
 
@@ -675,7 +675,7 @@ public class SyncSession extends Activity {
             fc.delete();
         }
 
-        nextRequest();
+        nextTask();
     }
 
     private ArrayList<Integer> getIds(List<Flashcard> fcsApp) {
@@ -703,7 +703,7 @@ public class SyncSession extends Activity {
         syncTextView.setText(output+str+"\n");
     }
 
-    public void nextRequest(){
+    public void nextTask(){
 
         requestCount++;
 
@@ -717,7 +717,7 @@ public class SyncSession extends Activity {
             if (toInsertHere.size()>0 || toDeleteOnServer.size()>0 || toInsertOnServer.size()>0 )
                 insertDeleteSelectRequest();
             else
-                nextRequest();
+                nextTask();
             return;
 
         }else if (requestCount==3){
@@ -725,7 +725,7 @@ public class SyncSession extends Activity {
             if (toDeleteHere.size()>0)
                 deleteToDeleteHere();
             else
-                nextRequest();
+                nextTask();
             return;
         }else if (requestCount==4){
 
@@ -735,7 +735,7 @@ public class SyncSession extends Activity {
 
     }
 
-//    public void nextRequest(){
+//    public void nextTask(){
 //
 //        requestCount++;
 //
@@ -749,7 +749,7 @@ public class SyncSession extends Activity {
 //            if (toDeleteHere.size()>0)
 //                deleteToDeleteHere();
 //            else
-//                nextRequest();
+//                nextTask();
 //            return;
 //
 //        }else if (requestCount==3){
@@ -757,7 +757,7 @@ public class SyncSession extends Activity {
 //            if (toInsertHere.size()>0)
 //                insertInApp();
 //            else
-//                nextRequest();
+//                nextTask();
 //            return;
 //
 //        }else if (requestCount==4){
@@ -765,7 +765,7 @@ public class SyncSession extends Activity {
 //            if (toInsertOnServer.size()>0)
 //                insertToServer();
 //            else
-//                nextRequest();
+//                nextTask();
 //            return;
 //
 //        }else if (requestCount==5){
@@ -773,7 +773,7 @@ public class SyncSession extends Activity {
 //            if (toDeleteOnServer.size()>0)
 //                deleteOnServer();
 //            else
-//                nextRequest();
+//                nextTask();
 //            return;
 //        }else if (requestCount==6){
 //

@@ -12,11 +12,13 @@ using System.Windows.Forms;
 
 namespace FlashcardMaker
 {
-    public partial class MainView : Form
+    public partial class MainView : Form, ISessionView
     {
         ProgramController programController;
         DataIOController dataIOController;
         OpenFileDialog ofd1 = new OpenFileDialog();
+
+        private bool repeatingOutput = false;
 
         public MainView()
         {
@@ -70,22 +72,24 @@ namespace FlashcardMaker
             printMovieList(stringBuilder2.ToString());
         }
 
-        public void printInMainTextLabel(string v)
+        public void printLine(string v)
         {
+            repeatingOutput = false;
             txtbxOutput.AppendText(v);
             txtbxOutput.AppendText(Environment.NewLine);
             this.Update();
         }
 
-        public void printInLineInMainTextLabel(string v)
-        {
-            txtbxOutput.AppendText(v);
-            this.Update();
-        }
+        //public void printInLineInMainTextLabel(string v)
+        //{
+        //    repeatingOutput = false;
+        //    txtbxOutput.AppendText(v);
+        //    this.Update();
+        //}
 
-        public void printInStatusLabel(string v)
+        public void printStatusLabel(string v)
         {
-            lblStatus.Text = v;
+            this.lblStatus.Text = v;
             this.Update();
         }
 
@@ -170,7 +174,11 @@ namespace FlashcardMaker
 
         private void MainView_Load(object sender, EventArgs e)
         {
-
+            if (ProgramController.DEBUGGING_CREATEFLASHCARDS)
+            {
+                btnCreateFlashcards.PerformClick();
+            }
+            
         }
 
         private void label2_Click_1(object sender, EventArgs e)
@@ -227,7 +235,7 @@ namespace FlashcardMaker
 
         private void btnCreateFlashcards_Click(object sender, EventArgs e)
         {
-            dataIOController.CreateFlashcards();
+            programController.StartCreatingFlashcardsSession();
         }
 
         internal string askIfChineseCharacter(string cString)
@@ -253,6 +261,16 @@ namespace FlashcardMaker
         private void btnSync_Click(object sender, EventArgs e)
         {
             programController.startSyncSession();
+        }
+
+        private void btnClearCharacters_Click(object sender, EventArgs e)
+        {
+            dataIOController.ClearCharacters();
+        }
+
+        private void btnClearWords_Click(object sender, EventArgs e)
+        {
+            dataIOController.ClearWords();
         }
     }
 }

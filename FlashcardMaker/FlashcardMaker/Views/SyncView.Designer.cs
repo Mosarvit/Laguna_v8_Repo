@@ -28,20 +28,20 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.txtOutput = new System.Windows.Forms.TextBox();
+            this.txtbxOutput = new System.Windows.Forms.TextBox();
             this.btnCancel = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // txtOutput
+            // txtbxOutput
             // 
-            this.txtOutput.Location = new System.Drawing.Point(12, 12);
-            this.txtOutput.Multiline = true;
-            this.txtOutput.Name = "txtOutput";
-            this.txtOutput.ReadOnly = true;
-            this.txtOutput.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtOutput.Size = new System.Drawing.Size(733, 352);
-            this.txtOutput.TabIndex = 20;
-            this.txtOutput.WordWrap = false;
+            this.txtbxOutput.Location = new System.Drawing.Point(12, 12);
+            this.txtbxOutput.Multiline = true;
+            this.txtbxOutput.Name = "txtbxOutput";
+            this.txtbxOutput.ReadOnly = true;
+            this.txtbxOutput.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.txtbxOutput.Size = new System.Drawing.Size(733, 352);
+            this.txtbxOutput.TabIndex = 20;
+            this.txtbxOutput.WordWrap = false;
             // 
             // btnCancel
             // 
@@ -59,7 +59,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(757, 421);
             this.Controls.Add(this.btnCancel);
-            this.Controls.Add(this.txtOutput);
+            this.Controls.Add(this.txtbxOutput);
             this.Name = "SyncView";
             this.Text = "SyncView";
             this.ResumeLayout(false);
@@ -69,7 +69,7 @@
 
         #endregion
 
-        private System.Windows.Forms.TextBox txtOutput;
+        private System.Windows.Forms.TextBox txtbxOutput;
         private System.Windows.Forms.Button btnCancel;
     }
 }
