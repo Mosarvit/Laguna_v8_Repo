@@ -53,11 +53,14 @@
             this.btnSync = new System.Windows.Forms.Button();
             this.btnClearCharacters = new System.Windows.Forms.Button();
             this.btnClearWords = new System.Windows.Forms.Button();
+            this.txtbxMediaFolder = new System.Windows.Forms.TextBox();
+            this.btnBrowseMediaFolder = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // btnBrowseAddToDatabase
             // 
-            this.btnBrowseAddToDatabase.Location = new System.Drawing.Point(441, 51);
+            this.btnBrowseAddToDatabase.Location = new System.Drawing.Point(447, 38);
             this.btnBrowseAddToDatabase.Name = "btnBrowseAddToDatabase";
             this.btnBrowseAddToDatabase.Size = new System.Drawing.Size(102, 23);
             this.btnBrowseAddToDatabase.TabIndex = 0;
@@ -67,7 +70,7 @@
             // 
             // btnAddToDatabase
             // 
-            this.btnAddToDatabase.Location = new System.Drawing.Point(549, 51);
+            this.btnAddToDatabase.Location = new System.Drawing.Point(555, 38);
             this.btnAddToDatabase.Name = "btnAddToDatabase";
             this.btnAddToDatabase.Size = new System.Drawing.Size(166, 23);
             this.btnAddToDatabase.TabIndex = 1;
@@ -77,13 +80,13 @@
             // 
             // txtbxAddToDatabase
             // 
-            this.txtbxAddToDatabase.Location = new System.Drawing.Point(12, 51);
+            this.txtbxAddToDatabase.Location = new System.Drawing.Point(18, 40);
             this.txtbxAddToDatabase.Name = "txtbxAddToDatabase";
             this.txtbxAddToDatabase.Size = new System.Drawing.Size(423, 20);
             this.txtbxAddToDatabase.TabIndex = 2;
-            this.txtbxAddToDatabase.Text = "\"E:\\Users\\Mosarvit\\Documents\\SharedFolder\\subtitles\\SRTs\\Caught.in.the.Web.2012.s" +
-    "rt\" ; \"E:\\Users\\Mosarvit\\Documents\\SharedFolder\\subtitles\\SRTs\\Women.Who.Flirt.2" +
-    "014.1080p.BluRay.x264-WiKi.简体.srt\"";
+            this.txtbxAddToDatabase.Text = "\"E:\\Users\\Mosarvit\\Documents\\SharedFolder\\subtitles\\SRTs\\Women.Who.Flirt.2014.108" +
+    "0p.BluRay.x264-WiKi.简体.srt\" ; \"E:\\Users\\Mosarvit\\Documents\\SharedFolder\\subtitle" +
+    "s\\SRTs\\Caught.in.the.Web.2012.srt\"";
             this.txtbxAddToDatabase.TextChanged += new System.EventHandler(this.txtbxAddToDatabase_TextChanged);
             // 
             // label1
@@ -137,7 +140,7 @@
             // 
             // txtbxAddCharactersToDatabase
             // 
-            this.txtbxAddCharactersToDatabase.Location = new System.Drawing.Point(12, 77);
+            this.txtbxAddCharactersToDatabase.Location = new System.Drawing.Point(18, 107);
             this.txtbxAddCharactersToDatabase.Name = "txtbxAddCharactersToDatabase";
             this.txtbxAddCharactersToDatabase.Size = new System.Drawing.Size(423, 20);
             this.txtbxAddCharactersToDatabase.TabIndex = 9;
@@ -146,7 +149,7 @@
             // 
             // btnBrowseAddCharactersToDatabase
             // 
-            this.btnBrowseAddCharactersToDatabase.Location = new System.Drawing.Point(441, 77);
+            this.btnBrowseAddCharactersToDatabase.Location = new System.Drawing.Point(447, 107);
             this.btnBrowseAddCharactersToDatabase.Name = "btnBrowseAddCharactersToDatabase";
             this.btnBrowseAddCharactersToDatabase.Size = new System.Drawing.Size(102, 23);
             this.btnBrowseAddCharactersToDatabase.TabIndex = 10;
@@ -156,7 +159,7 @@
             // 
             // btnAddCharactersToDatabase
             // 
-            this.btnAddCharactersToDatabase.Location = new System.Drawing.Point(549, 77);
+            this.btnAddCharactersToDatabase.Location = new System.Drawing.Point(555, 107);
             this.btnAddCharactersToDatabase.Name = "btnAddCharactersToDatabase";
             this.btnAddCharactersToDatabase.Size = new System.Drawing.Size(166, 23);
             this.btnAddCharactersToDatabase.TabIndex = 11;
@@ -166,7 +169,7 @@
             // 
             // txtbxAddWordsToDatabase
             // 
-            this.txtbxAddWordsToDatabase.Location = new System.Drawing.Point(12, 103);
+            this.txtbxAddWordsToDatabase.Location = new System.Drawing.Point(18, 133);
             this.txtbxAddWordsToDatabase.Name = "txtbxAddWordsToDatabase";
             this.txtbxAddWordsToDatabase.Size = new System.Drawing.Size(423, 20);
             this.txtbxAddWordsToDatabase.TabIndex = 12;
@@ -174,7 +177,7 @@
             // 
             // btnBrowseAddWordsToDatabase
             // 
-            this.btnBrowseAddWordsToDatabase.Location = new System.Drawing.Point(441, 103);
+            this.btnBrowseAddWordsToDatabase.Location = new System.Drawing.Point(447, 133);
             this.btnBrowseAddWordsToDatabase.Name = "btnBrowseAddWordsToDatabase";
             this.btnBrowseAddWordsToDatabase.Size = new System.Drawing.Size(102, 23);
             this.btnBrowseAddWordsToDatabase.TabIndex = 13;
@@ -184,7 +187,7 @@
             // 
             // btnAddWordsToDatabase
             // 
-            this.btnAddWordsToDatabase.Location = new System.Drawing.Point(549, 103);
+            this.btnAddWordsToDatabase.Location = new System.Drawing.Point(555, 133);
             this.btnAddWordsToDatabase.Name = "btnAddWordsToDatabase";
             this.btnAddWordsToDatabase.Size = new System.Drawing.Size(166, 23);
             this.btnAddWordsToDatabase.TabIndex = 14;
@@ -204,7 +207,7 @@
             // 
             // btnRefresh
             // 
-            this.btnRefresh.Location = new System.Drawing.Point(868, 100);
+            this.btnRefresh.Location = new System.Drawing.Point(727, 162);
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(116, 23);
             this.btnRefresh.TabIndex = 16;
@@ -214,7 +217,7 @@
             // 
             // btnClearAll
             // 
-            this.btnClearAll.Location = new System.Drawing.Point(549, 141);
+            this.btnClearAll.Location = new System.Drawing.Point(555, 171);
             this.btnClearAll.Name = "btnClearAll";
             this.btnClearAll.Size = new System.Drawing.Size(116, 23);
             this.btnClearAll.TabIndex = 17;
@@ -234,7 +237,7 @@
             // 
             // btnClearSubtitles
             // 
-            this.btnClearSubtitles.Location = new System.Drawing.Point(721, 51);
+            this.btnClearSubtitles.Location = new System.Drawing.Point(727, 38);
             this.btnClearSubtitles.Name = "btnClearSubtitles";
             this.btnClearSubtitles.Size = new System.Drawing.Size(116, 23);
             this.btnClearSubtitles.TabIndex = 19;
@@ -275,7 +278,7 @@
             // 
             // btnClearCharacters
             // 
-            this.btnClearCharacters.Location = new System.Drawing.Point(721, 77);
+            this.btnClearCharacters.Location = new System.Drawing.Point(727, 107);
             this.btnClearCharacters.Name = "btnClearCharacters";
             this.btnClearCharacters.Size = new System.Drawing.Size(116, 23);
             this.btnClearCharacters.TabIndex = 23;
@@ -285,7 +288,7 @@
             // 
             // btnClearWords
             // 
-            this.btnClearWords.Location = new System.Drawing.Point(721, 103);
+            this.btnClearWords.Location = new System.Drawing.Point(727, 133);
             this.btnClearWords.Name = "btnClearWords";
             this.btnClearWords.Size = new System.Drawing.Size(116, 23);
             this.btnClearWords.TabIndex = 24;
@@ -293,11 +296,43 @@
             this.btnClearWords.UseVisualStyleBackColor = true;
             this.btnClearWords.Click += new System.EventHandler(this.btnClearWords_Click);
             // 
+            // txtbxMediaFolder
+            // 
+            this.txtbxMediaFolder.Location = new System.Drawing.Point(18, 81);
+            this.txtbxMediaFolder.Name = "txtbxMediaFolder";
+            this.txtbxMediaFolder.Size = new System.Drawing.Size(423, 20);
+            this.txtbxMediaFolder.TabIndex = 25;
+            this.txtbxMediaFolder.Text = "\"E:\\Users\\Mosarvit\\Documents\\SharedFolder\\subtitles\\SRTs\\Caught.in.the.Web.2012.s" +
+    "rt\" ; \"E:\\Users\\Mosarvit\\Documents\\SharedFolder\\subtitles\\SRTs\\Women.Who.Flirt.2" +
+    "014.1080p.BluRay.x264-WiKi.简体.srt\"";
+            // 
+            // btnBrowseMediaFolder
+            // 
+            this.btnBrowseMediaFolder.Location = new System.Drawing.Point(447, 79);
+            this.btnBrowseMediaFolder.Name = "btnBrowseMediaFolder";
+            this.btnBrowseMediaFolder.Size = new System.Drawing.Size(102, 23);
+            this.btnBrowseMediaFolder.TabIndex = 26;
+            this.btnBrowseMediaFolder.Text = "Browse...";
+            this.btnBrowseMediaFolder.UseVisualStyleBackColor = true;
+            this.btnBrowseMediaFolder.Click += new System.EventHandler(this.btnBrowseMediaFolder_Click);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(15, 65);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(101, 13);
+            this.label4.TabIndex = 27;
+            this.label4.Text = "Select Media Folder";
+            // 
             // MainView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1227, 670);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.btnBrowseMediaFolder);
+            this.Controls.Add(this.txtbxMediaFolder);
             this.Controls.Add(this.btnClearWords);
             this.Controls.Add(this.btnClearCharacters);
             this.Controls.Add(this.btnSync);
@@ -357,6 +392,9 @@
         private System.Windows.Forms.Button btnSync;
         private System.Windows.Forms.Button btnClearCharacters;
         private System.Windows.Forms.Button btnClearWords;
+        private System.Windows.Forms.TextBox txtbxMediaFolder;
+        private System.Windows.Forms.Button btnBrowseMediaFolder;
+        private System.Windows.Forms.Label label4;
     }
 }
 

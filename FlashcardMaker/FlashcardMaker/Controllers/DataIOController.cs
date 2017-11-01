@@ -15,24 +15,31 @@ using Microsoft.Office.Interop.Excel;
 using MySql.Data.MySqlClient;
 using FlashcardMaker.Views;
 using System.Globalization;
+using FlashcardMaker.Helpers;
 
 namespace FlashcardMaker.Controllers
 {
     public class DataIOController : IController
     {
-        private MainView view;
+        private ISessionView view;
+        private ProgramController programController;
 
-        public DataIOController(MainView mainForm)
+        public DataIOController(ISessionView mainForm, ProgramController programController)
         {
-            this.view = mainForm;
+            view = mainForm;
+            this.programController = programController;
         }
 
         internal void ReadInFromSubtitleFileToDb(string[] fullFileNames)
         {
-            
-            printLine("Adding Subtitles Process begins ");
-            AddMoviesToDb(fullFileNames);
-            AddSubtitles();
+            using (MyDbContext db = new MyDbContext())
+            {
+                printLine("Adding Subtitles Process begins ");
+                AddMoviesToDb(fullFileNames);
+                AddSubtitles();
+                UpdateSubtitleLines(db);
+            }
+
         }
 
         private void AddSubtitles()
@@ -110,11 +117,11 @@ namespace FlashcardMaker.Controllers
             stl.endtime = convertTimeStringToLong(startAndEnd[1]);
         }
 
-        private static long convertTimeStringToLong(string startString)
+        private static int convertTimeStringToLong(string startString)
         {
             DateTime startDateTime = DateTime.ParseExact(startString, "HH:mm:ss,fff",
                                                     CultureInfo.InvariantCulture);
-            long start = startDateTime.Hour * 3600000 + startDateTime.Minute * 60000 + startDateTime.Second * 1000 + startDateTime.Millisecond;
+            int start = startDateTime.Hour * 3600000 + startDateTime.Minute * 60000 + startDateTime.Second * 1000 + startDateTime.Millisecond;
             return start;
         }
 
@@ -136,7 +143,12 @@ namespace FlashcardMaker.Controllers
                     added = result.added;
                 }
 
-                var movie = new Movie { added = added, fullFileName = fullFileName, fileExtention = fileExtention, fileName = fileName, SubtitleLines = new List<SubtitleLine>() };
+                var movie = db.Movies.Create();
+                movie.added = added;
+                movie.fullFileName = fullFileName;
+                movie.fileExtention = fileExtention;
+                movie.fileName = fileName;
+                movie.SubtitleLines = new List<SubtitleLine>();
                 db.Movies.AddOrUpdate(p => p.fileName, movie);
                 db.SaveChanges();
 
@@ -148,42 +160,46 @@ namespace FlashcardMaker.Controllers
 
         internal void test()
         {
-            using (MyDbContext db = new MyDbContext())
-            {
 
-                int remote_id;
+            VideoEditor sv = new VideoEditor(view);
+            sv.test(this);
 
-                if (db.Flashcards.Count() == 0)
-                {
-                    remote_id = 0;
-                }
-                else
-                {
-                    remote_id = db.Flashcards.Max(u => u.remote_id) + 1;
-                }
+            //using (MyDbContext db = new MyDbContext())
+            //{
 
-                var fc = new Flashcard { question = "好", remote_id = remote_id, newFc = true };
-                fc.question = "好";
-                fc.newFc = true;
-                fc.utlocal = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                fc.utserverwhenloaded = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                fc.setToDelete(false);
+            //    int remote_id;
 
-                db.Flashcards.Add(fc);
-                
+            //    if (db.Flashcards.Count() == 0)
+            //    {
+            //        remote_id = 0;
+            //    }
+            //    else
+            //    {
+            //        remote_id = db.Flashcards.Max(u => u.remote_id) + 1;
+            //    }
 
-                try
-                {
-                    int result = db.SaveChanges();
-                    printLine("Number of changes executed: " + result);
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
+            //    var fc = new Flashcard { question = "好", remote_id = remote_id, newFc = true };
+            //    fc.question = "好";
+            //    fc.newFc = true;
+            //    fc.utlocal = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            //    fc.utserverwhenloaded = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            //    fc.setToDelete(false);
+
+            //    db.Flashcards.Add(fc);
 
 
-            }
+            //    try
+            //    {
+            //        int result = db.SaveChanges();
+            //        printLine("Number of changes executed: " + result);
+            //    }
+            //    catch (Exception)
+            //    {
+            //        throw;
+            //    }
+
+
+            //}
 
             //printLine("Trying to connect to db");
 
@@ -216,8 +232,8 @@ namespace FlashcardMaker.Controllers
             //        printLine("Disposed connection");
             //    }
             //}
-            
-            
+
+
 
             //printLine("Finished");
         }
@@ -310,31 +326,28 @@ namespace FlashcardMaker.Controllers
             printLine("All flashcards deleted");
         }
 
-        
 
-        private void CreateFlashcards(List<SubtitleLinePack> tempSortSubtitleLinePackList, MyDbContext db)
+
+        //private void CreateFlashcards(List<SubtitleLinePack> tempSortSubtitleLinePackList, MyDbContext db)
+        //{
+        //    string str = "Creating Flashcards";
+        //    printLine(str);
+
+        //    foreach (var stlp in tempSortSubtitleLinePackList)
+        //    {
+        //        Flashcard fc = new Flashcard { };
+        //        //fc.SubtitleLinePack = stlp;
+        //        db.Flashcards.Add(fc);
+        //    }
+
+        //    db.SaveChanges();
+
+        //    printLine("Done creating Flashcards");
+        //}
+
+        public void UpdateSubtitleLines(MyDbContext db)
         {
-            string str = "Creating Flashcards";
-            printLine(str);
-
-            foreach (var stlp in tempSortSubtitleLinePackList)
-            {
-                Flashcard fc = new Flashcard { };
-                //fc.SubtitleLinePack = stlp;
-                db.Flashcards.Add(fc);
-            }
-
-            db.SaveChanges();
-
-            printLine("Done creating Flashcards");
-        }
-
-
-        public void UpdateCanReadInSubtitleLines()
-        {
-            MyDbContext db = new MyDbContext();
-
-            printLine("Updating canRead in SubtitleLines");
+            printLine("Updating canRead in SubtitleLines : " + db.SubtitleLines.Count());
 
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
@@ -346,13 +359,11 @@ namespace FlashcardMaker.Controllers
                                where t.knowLevel == 0
                                select t;
 
-            IList<SubtitleLine> allSubtitleLineList = db.SubtitleLines.ToList();
-
-            foreach (SubtitleLine stl in allSubtitleLineList)
+            foreach (SubtitleLine stl in db.SubtitleLines.ToList())
             {
                 string subtitleLineChineseCopy = String.Copy(stl.Chinese);
 
-                foreach (NoneChineseCharacter ncc in db.NoneChineseCharacters)
+                foreach (NoneChineseCharacter ncc in db.NoneChineseCharacters.ToList())
                 {
                     subtitleLineChineseCopy = subtitleLineChineseCopy.Replace(ncc.Character, "");
                 }
@@ -389,7 +400,7 @@ namespace FlashcardMaker.Controllers
                     }
                     else if (cInNoneChinese == null)
                     {
-                        string answer = view.askIfChineseCharacter(cString);
+                        string answer = programController.askIfChineseCharacter(cString);
 
                         if (answer == "AddToChineseCharacters")
                         {
@@ -438,6 +449,8 @@ namespace FlashcardMaker.Controllers
 
             printLine("Done updating canRead in SubtitleLines" + "\nTime elapsed: " + stopWatch.Elapsed);
         }
+
+
 
         public void printLine(string str)
         {
@@ -511,7 +524,7 @@ namespace FlashcardMaker.Controllers
                 db.Database.ExecuteSqlCommand("DELETE FROM ChineseCharacters");
                 printLine("Finished clearing Table ChineseCharacters");
             }
-                
+
         }
 
         internal void clearSubtitles()

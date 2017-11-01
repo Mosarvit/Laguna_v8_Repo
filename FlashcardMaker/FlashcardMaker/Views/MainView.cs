@@ -1,4 +1,5 @@
 ﻿using FlashcardMaker.Controllers;
+using FlashcardMaker.Helpers;
 using FlashcardMaker.Models;
 using FlashcardMaker.Views;
 //using FlashcardMaker.Views;
@@ -18,7 +19,7 @@ namespace FlashcardMaker
         DataIOController dataIOController;
         OpenFileDialog ofd1 = new OpenFileDialog();
 
-        private bool repeatingOutput = false;
+        //private bool repeatingOutput = false;
 
         public MainView()
         {
@@ -74,7 +75,7 @@ namespace FlashcardMaker
 
         public void printLine(string v)
         {
-            repeatingOutput = false;
+            //repeatingOutput = false;
             txtbxOutput.AppendText(v);
             txtbxOutput.AppendText(Environment.NewLine);
             this.Update();
@@ -178,7 +179,12 @@ namespace FlashcardMaker
             {
                 btnCreateFlashcards.PerformClick();
             }
-            
+            else if(ProgramController.DEBUGGING_VIDEO_EDITOR)
+            {
+
+                btnCreateFlashcards.PerformClick();
+            }
+
         }
 
         private void label2_Click_1(object sender, EventArgs e)
@@ -238,15 +244,7 @@ namespace FlashcardMaker
             programController.StartCreatingFlashcardsSession();
         }
 
-        internal string askIfChineseCharacter(string cString)
-        {
-            UnknownCharacterView uc = new UnknownCharacterView(cString);
-            uc.StartPosition = FormStartPosition.Manual;
-            uc.Location = new Point(10, 10);
-            uc.ShowDialog();
 
-            return uc.answer;
-        }
 
         private void btnClearSubtitles_Click(object sender, EventArgs e)
         {
@@ -271,6 +269,11 @@ namespace FlashcardMaker
         private void btnClearWords_Click(object sender, EventArgs e)
         {
             dataIOController.ClearWords();
+        }
+
+        private void btnBrowseMediaFolder_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

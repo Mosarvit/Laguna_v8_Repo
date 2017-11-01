@@ -19,6 +19,8 @@ namespace FlashcardMaker
         public MyDbContext()
             : base("name=MyDbContext")
         {
+            this.Configuration.ProxyCreationEnabled = true;
+            this.Configuration.LazyLoadingEnabled = true;
         }
 
 

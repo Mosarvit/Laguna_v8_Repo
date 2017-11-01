@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace FlashcardMaker.Views
 {
-    interface ISessionView
+    public interface ISessionView
     {
         void printLine(string v);
         void printStatusLabel(string v);
+        void refresh();
     }
 }

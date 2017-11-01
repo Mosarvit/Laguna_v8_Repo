@@ -18,53 +18,52 @@ namespace FlashcardMaker.Sortin_Algorithms
             this.controller = controller;
         }
 
-        public List<ILinePack> SortedSubtitleLinePackList()
+        public List<ILinePack> SortedSubtitleLinePackList(MyDbContext db)
         {
-            using(MyDbContext db = new MyDbContext())
+
+            controller.printLine("Sorting SubtitlelinePacks");
+
+            var tempStlpList = new List<ILinePack>();
+
+            UpdateStlps(db);
+
+            List<SubtitleLinePack> stlpList = db.SubtitleLinePacks.OrderByDescending(c => c.DensityOfToLearnWords).ToList();
+
+            if (stlpList.Count() == 0)
             {
-                controller.printLine("Sorting SubtitlelinePacks");
+                controller.printLine("No SubtitlePacks in the Database, please fill contents first.");
+                return tempStlpList;
+            }
 
-                var tempStlpList = new List<ILinePack>();
+            SubtitleLinePack mostDenseStlp = stlpList[0];
 
-                UpdateStlps(db);
+            //int counter = 0;
 
-                List<SubtitleLinePack> stlpList = db.SubtitleLinePacks.OrderByDescending(c => c.DensityOfToLearnWords).ToList();
-
-                if (stlpList.Count() == 0)
-                {
-                    controller.printLine("No SubtitlePacks in the Database, please fill contents first.");
-                    return tempStlpList;
-                }
-
-                SubtitleLinePack mostDenseStlp = stlpList[0];
-
-                int counter = 0;
-
-                while (mostDenseStlp.DensityOfToLearnWords > 0 && counter++ < 10)
-                {
-                    foreach (var cw in mostDenseStlp.ChineseWords)
-                        cw.AddedToTempSort = true;
-
-                    db.SaveChanges();
-
-                    tempStlpList.Add(mostDenseStlp);
-
-                    UpdateStlps(db);
-
-                    db.SaveChanges();
-
-                    mostDenseStlp = db.SubtitleLinePacks.OrderByDescending(c => c.DensityOfToLearnWords).ToList()[0]; ;
-                }
-
-                foreach (var cw in db.ChineseWords.ToList())
-                    cw.AddedToTempSort = false;
+            while (mostDenseStlp.DensityOfToLearnWords > 0 /*&& counter++ < 10*/)
+            {
+                foreach (var cw in mostDenseStlp.ChineseWords)
+                    cw.AddedToTempSort = true;
 
                 db.SaveChanges();
 
-                controller.printLine("Finished sorting SubtitlelinePacks");
+                tempStlpList.Add(mostDenseStlp);
 
-                return tempStlpList;
-            }                 
+                UpdateStlps(db);
+
+                db.SaveChanges();
+
+                mostDenseStlp = db.SubtitleLinePacks.OrderByDescending(c => c.DensityOfToLearnWords).ToList()[0]; ;
+            }
+
+            foreach (var cw in db.ChineseWords.ToList())
+                cw.AddedToTempSort = false;
+
+            db.SaveChanges();
+
+            controller.printLine("Finished sorting SubtitlelinePacks");
+
+            return tempStlpList;
+
         }
 
         private void UpdateStlps(MyDbContext db)

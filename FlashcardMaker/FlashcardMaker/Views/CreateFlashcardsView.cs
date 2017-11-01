@@ -15,7 +15,7 @@ namespace FlashcardMaker.Views
     {
         private CreateFlashcardsController createFlashcardsController;
 
-        private bool repeatingOutput = false;
+        //private bool repeatingOutput = false;
 
         public CreateFlashcardsView()
         {
@@ -36,13 +36,16 @@ namespace FlashcardMaker.Views
             int gapLimit = Convert.ToInt32(nudGap.Value)*1000;
             int beforeLimit = Convert.ToInt32(nudBefore.Value) * 1000;
             int afterLimit = Convert.ToInt32(nudAfter.Value) * 1000;
+            int gapLimitC = Convert.ToInt32(nudGapC.Value);
+            int beforeLimitC = Convert.ToInt32(nudBeforeC.Value);
+            int afterLimitC = Convert.ToInt32(nudAfterC.Value);
 
-            createFlashcardsController.createFlashcards(sortingAlgorithmString, gapLimit, beforeLimit, afterLimit);
+            createFlashcardsController.createFlashcards(sortingAlgorithmString, gapLimit, beforeLimit, afterLimit, gapLimitC, beforeLimitC, afterLimitC);
         }
 
         public void printLine(string v)
         {
-            repeatingOutput = false;
+            //repeatingOutput = false;
             txtbxOutput.AppendText(v);
             txtbxOutput.AppendText(Environment.NewLine);
             this.Update();
@@ -50,7 +53,7 @@ namespace FlashcardMaker.Views
 
         public void printInLineInMainTextLabel(string v)
         {
-            repeatingOutput = false;
+            //repeatingOutput = false;
             txtbxOutput.AppendText(v);
             this.Update();
         }
@@ -68,7 +71,11 @@ namespace FlashcardMaker.Views
             if (ProgramController.DEBUGGING_CREATEFLASHCARDS)
             {
                 btnCreateFlashcards.PerformClick();
-            }            
+            }
+            if (ProgramController.DEBUGGING_VIDEO_EDITOR)
+            {
+                btnCreateMediaFiles.PerformClick();
+            }
         }
 
         private void label2_Click(object sender, EventArgs e)
@@ -84,6 +91,16 @@ namespace FlashcardMaker.Views
         private void label4_Click(object sender, EventArgs e)
         {
 
+        }
+
+        public void refresh()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void btnCreateMediaFiles_Click(object sender, EventArgs e)
+        {
+            ProgramController.startMediaCreationSession(this);
         }
     }
 }

@@ -44,9 +44,20 @@ namespace FlashcardMaker.Views
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
+            this.nudGapC = new System.Windows.Forms.NumericUpDown();
+            this.nudBeforeC = new System.Windows.Forms.NumericUpDown();
+            this.nudAfterC = new System.Windows.Forms.NumericUpDown();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.btnCreateMediaFiles = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.nudBefore)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudAfter)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudGap)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudGapC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBeforeC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAfterC)).BeginInit();
             this.SuspendLayout();
             // 
             // txtbxOutput
@@ -76,13 +87,13 @@ namespace FlashcardMaker.Views
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(45, 37);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(91, 13);
+            this.label1.Size = new System.Drawing.Size(88, 13);
             this.label1.TabIndex = 23;
-            this.label1.Text = "Sorting algorythm:";
+            this.label1.Text = "Sorting algorithm:";
             // 
             // btnCreateFlashcards
             // 
-            this.btnCreateFlashcards.Location = new System.Drawing.Point(280, 187);
+            this.btnCreateFlashcards.Location = new System.Drawing.Point(201, 202);
             this.btnCreateFlashcards.Name = "btnCreateFlashcards";
             this.btnCreateFlashcards.Size = new System.Drawing.Size(133, 23);
             this.btnCreateFlashcards.TabIndex = 24;
@@ -193,11 +204,101 @@ namespace FlashcardMaker.Views
             this.label7.TabIndex = 34;
             this.label7.Text = "seconds";
             // 
+            // nudGapC
+            // 
+            this.nudGapC.Location = new System.Drawing.Point(413, 72);
+            this.nudGapC.Name = "nudGapC";
+            this.nudGapC.Size = new System.Drawing.Size(61, 20);
+            this.nudGapC.TabIndex = 35;
+            this.nudGapC.Value = new decimal(new int[] {
+            35,
+            0,
+            0,
+            0});
+            // 
+            // nudBeforeC
+            // 
+            this.nudBeforeC.Location = new System.Drawing.Point(413, 98);
+            this.nudBeforeC.Name = "nudBeforeC";
+            this.nudBeforeC.Size = new System.Drawing.Size(61, 20);
+            this.nudBeforeC.TabIndex = 36;
+            this.nudBeforeC.Value = new decimal(new int[] {
+            25,
+            0,
+            0,
+            0});
+            // 
+            // nudAfterC
+            // 
+            this.nudAfterC.Location = new System.Drawing.Point(413, 124);
+            this.nudAfterC.Name = "nudAfterC";
+            this.nudAfterC.Size = new System.Drawing.Size(61, 20);
+            this.nudAfterC.TabIndex = 37;
+            this.nudAfterC.Value = new decimal(new int[] {
+            25,
+            0,
+            0,
+            0});
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(480, 74);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(57, 13);
+            this.label8.TabIndex = 38;
+            this.label8.Text = "characters";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(480, 100);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(57, 13);
+            this.label9.TabIndex = 39;
+            this.label9.Text = "characters";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(480, 126);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(57, 13);
+            this.label10.TabIndex = 40;
+            this.label10.Text = "characters";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(358, 100);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(23, 13);
+            this.label11.TabIndex = 41;
+            this.label11.Text = "OR";
+            // 
+            // btnCreateMediaFiles
+            // 
+            this.btnCreateMediaFiles.Location = new System.Drawing.Point(361, 202);
+            this.btnCreateMediaFiles.Name = "btnCreateMediaFiles";
+            this.btnCreateMediaFiles.Size = new System.Drawing.Size(133, 23);
+            this.btnCreateMediaFiles.TabIndex = 42;
+            this.btnCreateMediaFiles.Text = "Create Media Files";
+            this.btnCreateMediaFiles.UseVisualStyleBackColor = true;
+            this.btnCreateMediaFiles.Click += new System.EventHandler(this.btnCreateMediaFiles_Click);
+            // 
             // CreateFlashcardsView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(688, 558);
+            this.Controls.Add(this.btnCreateMediaFiles);
+            this.Controls.Add(this.label11);
+            this.Controls.Add(this.label10);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.nudAfterC);
+            this.Controls.Add(this.nudBeforeC);
+            this.Controls.Add(this.nudGapC);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
@@ -218,6 +319,9 @@ namespace FlashcardMaker.Views
             ((System.ComponentModel.ISupportInitialize)(this.nudBefore)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudAfter)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudGap)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudGapC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBeforeC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAfterC)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -239,5 +343,13 @@ namespace FlashcardMaker.Views
         private Label label5;
         private Label label6;
         private Label label7;
+        private NumericUpDown nudGapC;
+        private NumericUpDown nudBeforeC;
+        private NumericUpDown nudAfterC;
+        private Label label8;
+        private Label label9;
+        private Label label10;
+        private Label label11;
+        private Button btnCreateMediaFiles;
     }
 }

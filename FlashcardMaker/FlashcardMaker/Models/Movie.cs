@@ -19,6 +19,7 @@ namespace FlashcardMaker.Models
         public string fileExtention { get; set; }
         public bool added { get; set; }
         public virtual List<SubtitleLine> SubtitleLines { get; set; }
+        public virtual List<SubtitleLinePack> SubtitleLinePacks { get; set; }
 
         //public ICollection<SubtitleLine> subtitleLines { get; set; }
     }

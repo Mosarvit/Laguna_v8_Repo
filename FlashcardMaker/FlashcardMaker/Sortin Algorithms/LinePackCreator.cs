@@ -15,119 +15,237 @@ namespace FlashcardMaker.Sortin_Algorithms
         public int GapLimit { get; set; }
         public int BeforeLimit { get; set; }
         public int AfterLimit { get; set; }
+        public int GapLimitC { get; set; }
+        public int BeforeLimitC { get; set; }
+        public int AfterLimitC { get; set; }
 
-        internal void CreateLinePacks(MyDbContext db)
+        public bool trimByTime = true;
+        public bool trimByCharacters = true;
+
+
+        internal HashSet<SubtitleLinePack> CreateLinePacks( )
         {
-            HashSet<SubtitleLinePack> readableSubtitleLinePacks = SplitIntorReadableLinePacks(this.Movies, db);
-            HashSet<SubtitleLinePack> trimmedSubtitleLinePacks = trimAccordingToBeforeAfterAndGapLimits(readableSubtitleLinePacks);
+            HashSet<List<SubtitleLine>> readableSubtitleLinePacks = SplitInReadableLinePacks(this.Movies);
+
+            HashSet<SubtitleLinePack> trimmedSubtitleLinePacks = trimAccordingToLimits(readableSubtitleLinePacks);
+
+            int totalNumberOfstls = 0;
 
             foreach (SubtitleLinePack stlp in trimmedSubtitleLinePacks)
             {
-                printLine("next");
+                ////DEBUG
+                printLine("stlp.SubtitleLines.Count(): " + stlp.SubtitleLines.Count());
 
-                foreach (SubtitleLine spl in stlp.SubtitleLines)
+                foreach (SubtitleLine stl in stlp.SubtitleLines)
                 {
-                    printLine(spl.Position + " " + spl.TimeFrameString + " " + spl.NumberOfToLearnWords);
+                    ////DEBUG
+                    printLine(stl.Position + " " + stl.TimeFrameString + " " + stl.NumberOfToLearnWords);
+                    stlp.NumberOfCharacters += stl.NumberOfCharacters;
+                    stlp.NumberOfToLearnWords += stl.NumberOfToLearnWords;
+                    stlp.ChineseWords.AddRange(stl.ToLearnWords);
+                    stlp.Movie = stl.Movie;
+                    
                 }
+
+                //db.SubtitleLinePacks.Add(stlp);
+                totalNumberOfstls += stlp.SubtitleLines.Count();
             }
 
+            //db.SaveChanges();
 
-            trimmedSubtitleLinePacks.Count();
+            double averageNumberOfStls = totalNumberOfstls / trimmedSubtitleLinePacks.Count();
 
+            printLine("trimmedSubtitleLinePacks.Count(): " + trimmedSubtitleLinePacks.Count());
+            printLine("totalNumberOfStls: " + totalNumberOfstls);
 
+            printLine("averageNumberOfStls: " + averageNumberOfStls);
+
+            return trimmedSubtitleLinePacks;
         }
-
-        private HashSet<SubtitleLinePack> trimAccordingToBeforeAfterAndGapLimits(HashSet<SubtitleLinePack> readableSubtitleLinePacks)
+        
+        private HashSet<SubtitleLinePack> trimAccordingToLimits(HashSet<List<SubtitleLine>> readableStlLists)
         {
             HashSet<SubtitleLinePack> trimmedSubtitleLinePacks = new HashSet<SubtitleLinePack>();
 
-            foreach (SubtitleLinePack stlp in readableSubtitleLinePacks)
+            foreach (List<SubtitleLine> stlList1 in readableStlLists)
             {
-                SortedSet<SubtitleLine> relevantStls = new SortedSet<SubtitleLine>();
-                List<SubtitleLine> stls = stlp.SubtitleLines;
-                SubtitleLinePack stlp2 = new SubtitleLinePack { SubtitleLines = new List<SubtitleLine>() };
+                HashSet<List<SubtitleLine>> stlLists = new HashSet<List<SubtitleLine>>();
+                List<SubtitleLine> stlList = new List<SubtitleLine>();
 
-                long largestEndTime = 0;
                 int largestI = 0;
+                int smallestI = 0;
+                int localBeforeLimitC = BeforeLimitC;
+                int localAfterLimitC = AfterLimitC;
+                int localBeforeLimitT = BeforeLimit;
+                int localAfterLimit = AfterLimit;
                 bool firstOne = true;
+                int numberOfChars = 0;
 
-                for (int i = 0; i < stls.Count(); i++)
+                for (int i = 0; i < stlList1.Count(); i++)
                 {
-                    SubtitleLine stl = stls[i];
+                    SubtitleLine stl = stlList1[i];
 
-                    printLine("Position : " + stl.Position);
+                    //DEBUG
+                    //printLine("Position : " + stl.Position);
 
                     if (stl.NumberOfToLearnWords > 0)
                     {
-                        if (firstOne)
+                        numberOfChars += stl.NumberOfCharacters;
+
+                        if (firstOne
+                            || (trimByCharacters && numberOfChars >= GapLimitC)
+                            || (trimByTime && stl.starttime - stlList1[largestI].endtime >= GapLimit))
                         {
-                            firstOne = false;
+                            if (firstOne)
+                                firstOne = false;
 
-                            relevantStls.Add(stl);
-                            // add All to Fill up the BeforeLimit
-                            int j = i;
-                            while (stl.starttime - stls[j].starttime > BeforeLimit && j >= 0)
-                            {
-                                relevantStls.Add(stls[j]);
-                                j--;
-                            }
+                            // Create the next LinePack
 
-                            stlp2 = new SubtitleLinePack { SubtitleLines = new List<SubtitleLine>() };
-                            trimmedSubtitleLinePacks.Add(stlp2);
-                            stlp2.SubtitleLines.Add(stl);
+                            //DEBUG
+
+                            //printLine("new");
+                            stlList = new List<SubtitleLine>();
+                            stlList.Add(stl);
+                            printLine("added as new " + stl.Position);
+                            stlLists.Add(stlList);
+                            numberOfChars = stl.NumberOfCharacters;
+
+                            smallestI = i;
                         }
                         else
                         {
-                            if (stl.starttime - largestEndTime <= GapLimit)
-                            {
-                                // Add all Lines inside the gap
+                            // fill up the Gap 
 
-                                printLine("Fill gap");
-                                for (int k = largestI + 1; k < i; k++)
-                                {
-                                    relevantStls.Add(stls[k]);
-                                }
-
-                                stlp2.SubtitleLines.Add(stl);
-                                printLine(relevantStls.Count() + "");
-                            }
-                            else
+                            //DEBUG
+                            //printLine("Filling gap");
+                            for (int k = largestI + 1; k <= i; k++)
                             {
-                                // Create the next LinePack
-                                stlp2 = new SubtitleLinePack { SubtitleLines = new List<SubtitleLine>() };
-                                trimmedSubtitleLinePacks.Add(stlp2);
-                                stlp2.SubtitleLines.Add(stl);
+                                //DEBUG
+                                stlList.Add(stlList1[k]);
+                                printLine("added to fill gap : " + stlList1[k].Position);
                             }
                         }
 
-                        largestEndTime = stl.endtime;
                         largestI = i;
                     }
                     else
                     {
-                        if (stl.endtime - largestEndTime <= AfterLimit)
-                        {
-                            stlp2.SubtitleLines.Add(stl);
-                        }
+                        numberOfChars += stl.NumberOfCharacters;
                     }
                 }
+
+                ////DEBUG
+                //foreach (SubtitleLine stl in stlList1)
+                //{
+                //    printLine("Position: " + stl.Position + " index: " + stlList1.FindIndex(x => x == stl));
+                //}
+
+                foreach (List<SubtitleLine> stlList2 in stlLists)
+                {
+                    int lastIndex = stlList2.Count() - 1;
+                    numberOfChars = 0;
+
+                    foreach (SubtitleLine stl in stlList2)
+                    {
+                        numberOfChars += stl.NumberOfCharacters;
+                    }
+
+                    // fill Up Before and After limits
+
+                    // measure total time
+
+                    int leftOverForBeforeAndAfterC = GapLimitC - numberOfChars;
+                    localBeforeLimitC = leftOverForBeforeAndAfterC * BeforeLimitC / (BeforeLimitC + AfterLimitC);
+                    localAfterLimitC = leftOverForBeforeAndAfterC * AfterLimitC / (BeforeLimitC + AfterLimitC);
+
+                    int length = stlList2[lastIndex].endtime - stlList2[0].starttime;
+                    int leftOverForBeforeAndAfter = GapLimit - length;
+                    localBeforeLimitT = leftOverForBeforeAndAfter * BeforeLimit / (BeforeLimit + AfterLimit);
+                    localAfterLimit = leftOverForBeforeAndAfter * AfterLimit / (BeforeLimit + AfterLimit);
+
+                    ////DEBUG
+                    //printLine("localBeforeLimit: " + localBeforeLimitC);
+
+                    //fill Up localBeforeLimit
+
+                    int numberOfCharsBefore = 0;
+
+                    int j = stlList1.FindIndex(x => x == stlList2[0]) - 1;
+
+                    while (j >= 0)
+                    {
+                        //    DEBUG
+                        //printLine("Filling up before, position: " + stlList1[j].Position);
+                        numberOfCharsBefore += stlList1[j].NumberOfCharacters;
+
+                        if ((trimByCharacters && numberOfCharsBefore > localBeforeLimitC)
+                            || (trimByTime && stlList2[0].starttime - stlList1[j].starttime > localBeforeLimitT))
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            stlList2.Add(stlList1[j]);
+                            printLine("added before : " + stlList1[j].Position);
+                        }
+
+                        j--;
+                    }
+
+                    //// fill Up localAfterLimit                                
+
+                    int numberOfCharsAfter = 0;
+                    stlList2.Sort();
+                    
+                    j = stlList1.FindIndex(x => x == stlList2[lastIndex]) + 1;
+
+                    while (j < stlList1.Count())
+                    {
+                        //    DEBUG
+                        //printLine("Filling up after, position: " + stlList1[j].Position);
+                        numberOfCharsAfter += stlList1[j].NumberOfCharacters;
+
+                        if (    (trimByCharacters   && numberOfCharsBefore > localAfterLimitC)
+                            ||  (trimByTime         && stlList1[j].endtime - stlList2[lastIndex].endtime > localBeforeLimitT))
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            stlList2.Add(stlList1[j]);
+                            printLine("added after : " + stlList1[j].Position);
+                        }
+
+                        j++;
+                    }
+
+                }
+
+
+
+                foreach (List<SubtitleLine> stlList2 in stlLists)
+                {
+                    SubtitleLinePack stlp2 = new SubtitleLinePack { SubtitleLines = stlList2 };
+                    trimmedSubtitleLinePacks.Add(stlp2);
+                }
             }
+
+
 
             return trimmedSubtitleLinePacks;
         }
 
-        private HashSet<SubtitleLinePack> SplitIntorReadableLinePacks(List<Movie> Movies, MyDbContext db)
+        private HashSet<List<SubtitleLine>> SplitInReadableLinePacks(List<Movie> Movies)
         {
-            HashSet<SubtitleLinePack> readableStlps = new HashSet<SubtitleLinePack>();
+            HashSet<List<SubtitleLine>> readableStlps = new HashSet<List<SubtitleLine>>();
 
             int totalCount = 0;
             string str = "Splitting SubtitlelinePacks";
             printLine(str);
-            printLine("Number of SubtitlelinePacks ind Database: " + db.SubtitleLinePacks.Count());
 
             foreach (Movie movie in Movies)
             {
-                SubtitleLinePack stlp = new SubtitleLinePack();
+                List<SubtitleLine> stlList = new List<SubtitleLine>();
                 bool firstOne = true;
 
                 printLine("movie.SubtitleLines.Count() : " + movie.SubtitleLines.Count());
@@ -142,13 +260,12 @@ namespace FlashcardMaker.Sortin_Algorithms
                     {
                         if (firstOne)
                         {
-                            stlp = new SubtitleLinePack { SubtitleLines = new List<SubtitleLine>(), ChineseWords = new List<ChineseWord>() };
-                            readableStlps.Add(stlp);
+                            stlList = new List<SubtitleLine>();
+                            readableStlps.Add(stlList);
                         }
 
-                        stlp.SubtitleLines.Add(stl);
-                        stlp.ChineseWords.AddRange(stl.ToLearnWords);
-                        stlp.NumberOfCharacters += stl.NumberOfCharacters;
+                        
+                        stlList.Add(stl);
 
                         firstOne = false;
                     }
@@ -166,6 +283,8 @@ namespace FlashcardMaker.Sortin_Algorithms
 
             return readableStlps;
         }
+
+
 
         private void printLine(string str)
         {

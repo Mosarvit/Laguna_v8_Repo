@@ -82,5 +82,10 @@ namespace FlashcardMaker.Views
 
             this.Update();
         }
+
+        public void refresh()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
