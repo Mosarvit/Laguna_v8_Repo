@@ -40,15 +40,7 @@ namespace FlashcardMaker.Views
             this.syncController = syncController;
         }
 
-        internal string decideAboutConradictions()
-        {
-            DecisionAboutContradictionsView dacv = new DecisionAboutContradictionsView();
-            dacv.StartPosition = FormStartPosition.Manual;
-            dacv.Location = new Point(10, 10);
-            dacv.ShowDialog();
 
-            return dacv.answer;
-        }
 
         public void printLine(string v)
         {
@@ -86,6 +78,11 @@ namespace FlashcardMaker.Views
         public void refresh()
         {
             throw new NotImplementedException();
+        }
+
+        private void SyncView_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

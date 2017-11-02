@@ -36,11 +36,13 @@ namespace FlashcardMaker.Views
             int gapLimit = Convert.ToInt32(nudGap.Value)*1000;
             int beforeLimit = Convert.ToInt32(nudBefore.Value) * 1000;
             int afterLimit = Convert.ToInt32(nudAfter.Value) * 1000;
+            int paddingBefore = Convert.ToInt32(nudPaddingBefore.Value) * 1000;
+            int paddingAfter = Convert.ToInt32(nudPaddingAfter.Value) * 1000;
             int gapLimitC = Convert.ToInt32(nudGapC.Value);
             int beforeLimitC = Convert.ToInt32(nudBeforeC.Value);
             int afterLimitC = Convert.ToInt32(nudAfterC.Value);
 
-            createFlashcardsController.createFlashcards(sortingAlgorithmString, gapLimit, beforeLimit, afterLimit, gapLimitC, beforeLimitC, afterLimitC);
+            createFlashcardsController.createFlashcards(sortingAlgorithmString, gapLimit, beforeLimit, afterLimit, gapLimitC, beforeLimitC, afterLimitC, paddingBefore, paddingAfter);
         }
 
         public void printLine(string v)

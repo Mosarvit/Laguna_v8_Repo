@@ -15,12 +15,11 @@ namespace FlashcardMaker.Controllers
     {
         public static bool DEBUGGING = true;
         public static bool DEBUGGING_CREATEFLASHCARDS = false;
-        public static bool DEBUGGING_VIDEO_EDITOR = true;
+        public static bool DEBUGGING_VIDEO_EDITOR = false;
 
         public static int MAX_CHINESE_CHARACTERS_TO_LOAD = 15000;
         public static int MAX_CHINESE_WORDS_TO_LOAD = 15000;
-        public static int MAX_SUBTITLES_TO_UPDATE = 100;
-        public static int MAX_SUBTITLES_TO_LOAD = 100;
+        public static int MAX_SUBTITLES_TO_LOAD = 50;
         public static int MAX_SUBTITLES_TO_UPDATE_TO_USE_FOR_PACKS = 500;
 
         private ISessionView view;
@@ -34,14 +33,14 @@ namespace FlashcardMaker.Controllers
         public void startSyncSession()
         {
             SyncView syncView = new SyncView();
-            SyncController syncController = new SyncController(syncView);
+            SyncController syncController = new SyncController(syncView, this);
             syncView.setSyncController(syncController);
 
             syncView.StartPosition = FormStartPosition.Manual;
             syncView.Location = new Point(10, 10);
             syncView.Show();
 
-            syncController.sync();
+            syncController.syncronize();
         }
 
         internal void StartCreatingFlashcardsSession()
@@ -74,6 +73,16 @@ namespace FlashcardMaker.Controllers
         {
             MediaFilesController mediaFilesController = new MediaFilesController(view = view);
             mediaFilesController.creatMediaFiles();
+        }
+
+        internal static string decideAboutConradictions()
+        {
+            DecisionAboutContradictionsView dacv = new DecisionAboutContradictionsView();
+            dacv.StartPosition = FormStartPosition.Manual;
+            dacv.Location = new Point(10, 10);
+            dacv.ShowDialog();
+
+            return dacv.answer;
         }
     }
 }

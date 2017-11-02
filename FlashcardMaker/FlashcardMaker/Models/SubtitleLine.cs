@@ -9,9 +9,8 @@ using System.Threading.Tasks;
 
 namespace FlashcardMaker.Models
 {
-    public class SubtitleLine : ILine, IComparable<SubtitleLine>
-    {
-        public int Id { get; set; }
+    public class SubtitleLine : Model, ILine, IComparable<SubtitleLine>
+    { 
 
         [Index("IX_FirstAndSecond", 1, IsUnique = true)]
         public int Position { get; set; }
@@ -19,7 +18,7 @@ namespace FlashcardMaker.Models
         [Index("IX_FirstAndSecond", 2, IsUnique = true)]
         [MaxLength(100)]
         public String MovieFileName { get; set; }
-        public Movie Movie { get; set; }
+        public virtual Movie Movie { get; set; }
 
         public string Chinese { get; set; }
         public string TimeFrameString { get; set; }

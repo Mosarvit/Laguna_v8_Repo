@@ -8,10 +8,8 @@ using System.Threading.Tasks;
 
 namespace FlashcardMaker.Models
 {
-    public class ChineseWord
+    public class ChineseWord : Model
     {
-        public int id { get; set; }
-
         //[Index(IsUnique = true)]
         public int position { get; set; }
         

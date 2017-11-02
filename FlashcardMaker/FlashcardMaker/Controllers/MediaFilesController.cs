@@ -7,6 +7,7 @@ using FlashcardMaker.Views;
 using FlashcardMaker.Models;
 using FlashcardMaker.Helpers;
 using System.IO;
+using System.Data.Entity.Migrations;
 
 namespace FlashcardMaker.Controllers
 {
@@ -76,8 +77,8 @@ namespace FlashcardMaker.Controllers
 
                     view.printLine("mediaFileNameToProcess : " + inputFileName);
 
-                    int starttime = stlp.SubtitleLines[0].starttime;
-                    int endtime = stlp.SubtitleLines[stlp.SubtitleLines.Count() - 1].endtime;
+                    int starttime = stlp.StartTime;
+                    int endtime = stlp.EndTime;
 
                     string outputFileName = Path.Combine(outputFileFolder, starttime + "-" + endtime + Path.GetExtension(inputFileName));
 
@@ -86,11 +87,35 @@ namespace FlashcardMaker.Controllers
                     view.printLine("outputFileName : " + outputFileName);
 
 
-                    VideoEditor ve = new VideoEditor(view = view);
+                    VideoEditor ve = new VideoEditor(view);
 
                     if (!File.Exists(outputFileName))
                     {
                         ve.splitVideo(inputFileName, outputFileName, starttime, endtime);
+
+                        int remote_id;
+
+                        if (db.MediaFileSegments.Count() == 0)
+                        {
+                            remote_id = 0;
+                        }
+                        else
+                        {
+                            remote_id = db.MediaFileSegments.Max(u => u.remote_id) + 1;
+                        }
+
+                        MediaFileSegment mfs = new MediaFileSegment
+                        {
+                            MediaFileName = movieNameWithoutExtention,
+                            remote_id = remote_id,
+                            isNew = true
+                        };
+                        mfs.utlocal = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                        mfs.utserverwhenloaded = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                        mfs.toDelete = false;
+
+                        db.MediaFileSegments.AddOrUpdate(p => p.remote_id, mfs);
+                        db.SaveChanges();
                     }
 
                     //break;

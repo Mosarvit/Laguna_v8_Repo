@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace FlashcardMaker.Models
 {
-    public class SubtitleLinePack : ILinePack
-    {
-        public int Id { get; set; }
+    public class SubtitleLinePack : Model, ILinePack
+    { 
         public virtual List<SubtitleLine> SubtitleLines { get; set; } = new List<SubtitleLine>();
         public virtual List<ChineseWord> ChineseWords { get; set; } = new List<ChineseWord>();
         public virtual List<Flashcard> Flashcards { get; set; } = new List<Flashcard>();
@@ -19,5 +18,7 @@ namespace FlashcardMaker.Models
         public double DensityOfToLearnWords { get; set; }
         public bool AddedToFlashcards { get; set; }
         public virtual Movie Movie { get; set; }
+        public int EndTime { get; set; }
+        public int StartTime { get; set; }
     }
 }

@@ -8,11 +8,8 @@ using System.Threading.Tasks;
 
 namespace FlashcardMaker.Models
 {
-    public class ChineseCharacter
-    {
-        public int id { get; set; }
-        
-        
+    public class ChineseCharacter : Model
+    {   
         public string Chinese { get; set; }
 
         public int Rank { get; set; }

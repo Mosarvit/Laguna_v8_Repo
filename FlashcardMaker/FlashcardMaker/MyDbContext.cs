@@ -15,6 +15,8 @@ namespace FlashcardMaker
         public DbSet<ChineseWord> ChineseWords { get; set; }
         public DbSet<SubtitleLinePack> SubtitleLinePacks { get; set; }
         public DbSet<Flashcard> Flashcards { get; set; }
+        public DbSet<MediaFileSegment> MediaFileSegments { get; set; }
+        public DbSet<MediaFile> MediaFiles { get; set; }
 
         public MyDbContext()
             : base("name=MyDbContext")

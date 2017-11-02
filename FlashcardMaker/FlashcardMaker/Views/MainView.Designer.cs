@@ -84,9 +84,9 @@
             this.txtbxAddToDatabase.Name = "txtbxAddToDatabase";
             this.txtbxAddToDatabase.Size = new System.Drawing.Size(423, 20);
             this.txtbxAddToDatabase.TabIndex = 2;
-            this.txtbxAddToDatabase.Text = "\"E:\\Users\\Mosarvit\\Documents\\SharedFolder\\subtitles\\SRTs\\Women.Who.Flirt.2014.108" +
-    "0p.BluRay.x264-WiKi.简体.srt\" ; \"E:\\Users\\Mosarvit\\Documents\\SharedFolder\\subtitle" +
-    "s\\SRTs\\Caught.in.the.Web.2012.srt\"";
+            this.txtbxAddToDatabase.Text = "\"E:\\Users\\Mosarvit\\Documents\\SharedFolder\\subtitles\\SRTs\\Caught.in.the.Web.2012.s" +
+    "rt\" ; \"E:\\Users\\Mosarvit\\Documents\\SharedFolder\\subtitles\\SRTs\\Women.Who.Flirt.2" +
+    "014.1080p.BluRay.x264-WiKi.简体.srt\"";
             this.txtbxAddToDatabase.TextChanged += new System.EventHandler(this.txtbxAddToDatabase_TextChanged);
             // 
             // label1
@@ -302,9 +302,7 @@
             this.txtbxMediaFolder.Name = "txtbxMediaFolder";
             this.txtbxMediaFolder.Size = new System.Drawing.Size(423, 20);
             this.txtbxMediaFolder.TabIndex = 25;
-            this.txtbxMediaFolder.Text = "\"E:\\Users\\Mosarvit\\Documents\\SharedFolder\\subtitles\\SRTs\\Caught.in.the.Web.2012.s" +
-    "rt\" ; \"E:\\Users\\Mosarvit\\Documents\\SharedFolder\\subtitles\\SRTs\\Women.Who.Flirt.2" +
-    "014.1080p.BluRay.x264-WiKi.简体.srt\"";
+            this.txtbxMediaFolder.Text = "E:\\Users\\Mosarvit\\Documents\\SharedFolder\\subtitles\\Media";
             // 
             // btnBrowseMediaFolder
             // 

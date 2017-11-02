@@ -8,10 +8,8 @@ using System.Threading.Tasks;
 
 namespace FlashcardMaker.Models
 {
-    public class Movie
-    {
-        public int id { get; set; }
-
+    public class Movie : Model
+    { 
         //[Index(IsUnique = true)]
         [MaxLength(100)]
         public string fileName { get; set; }

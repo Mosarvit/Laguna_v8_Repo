@@ -5,5 +5,17 @@
     <Setting Name="MediaFolder" Type="System.String" Scope="User">
       <Value Profile="(Default)">E:\Users\Mosarvit\Documents\SharedFolder\subtitles\Media</Value>
     </Setting>
+    <Setting Name="ExtraPaddingCut" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">30</Value>
+    </Setting>
+    <Setting Name="HostName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ricky.heliohost.org</Value>
+    </Setting>
+    <Setting Name="UserName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">mosar</Value>
+    </Setting>
+    <Setting Name="Password" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Fahrenheit</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

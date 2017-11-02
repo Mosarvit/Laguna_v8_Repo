@@ -8,10 +8,8 @@ using System.Threading.Tasks;
 
 namespace FlashcardMaker.Models
 {
-    public class NoneChineseCharacter
-    {
-        public int id { get; set; }
-
+    public class NoneChineseCharacter : Model
+    { 
         //[Index(IsUnique = true)]
         [MaxLength(10)]
         public string Character { get; set; }

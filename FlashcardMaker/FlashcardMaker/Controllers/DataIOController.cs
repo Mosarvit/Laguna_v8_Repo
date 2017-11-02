@@ -16,6 +16,7 @@ using MySql.Data.MySqlClient;
 using FlashcardMaker.Views;
 using System.Globalization;
 using FlashcardMaker.Helpers;
+using System.Net;
 
 namespace FlashcardMaker.Controllers
 {
@@ -52,26 +53,28 @@ namespace FlashcardMaker.Controllers
                               where b.added.Equals(false)
                               select b;
 
-            int totalCount = 0;
+
 
             foreach (Movie movie in moviesToAdd.ToList())
             {
                 String fullFileName = movie.fullFileName;
 
                 printLine("fullFileName: " + fullFileName +
-                                                            "\nfileName: " + movie.fileName +
-                                                            "\nfileExtention: " + movie.fileExtention +
-                                                            "\nadded: " + movie.added +
-                                                            "\n isSRT: ");
+                            "\nfileName: " + movie.fileName +
+                            "\nfileExtention: " + movie.fileExtention +
+                            "\nadded: " + movie.added +
+                            "\n isSRT: ");
+
                 printLine("\n\n");
 
+                int totalCount = 0;
                 int counter = 0;
                 string line;
 
-                System.IO.StreamReader file = new System.IO.StreamReader(fullFileName);
+                StreamReader file = new StreamReader(fullFileName);
                 SubtitleLine subtitleLine = new SubtitleLine { };
 
-                while ((line = file.ReadLine()) != null)
+                while ((line = file.ReadLine()) != null && totalCount < ProgramController.MAX_SUBTITLES_TO_LOAD)
                 {
                     if (counter % 4 == 0)
                     {
@@ -88,13 +91,11 @@ namespace FlashcardMaker.Controllers
                         movie.SubtitleLines.Add(subtitleLine);
                         db.SubtitleLines.AddOrUpdate(p => new { p.MovieFileName, p.Position }, subtitleLine);
                         db.SaveChanges();
-                        view.printStatusLabel(totalCount++ + " subtitles added");
+                        view.printStatusLabel(totalCount + " subtitles added");
+                        totalCount++;
                     }
 
                     counter++;
-
-                    if (ProgramController.DEBUGGING == true && totalCount > ProgramController.MAX_SUBTITLES_TO_LOAD)
-                        break;
                 }
 
                 movie.added = true;
@@ -161,77 +162,114 @@ namespace FlashcardMaker.Controllers
         internal void test()
         {
 
-            VideoEditor sv = new VideoEditor(view);
-            sv.test(this);
+            //VideoEditor sv = new VideoEditor(view);
+            //sv.test(this);
 
-            //using (MyDbContext db = new MyDbContext())
-            //{
+            using (MyDbContext db = new MyDbContext())
+            {
 
-            //    int remote_id;
+                //int remote_id;
 
-            //    if (db.Flashcards.Count() == 0)
-            //    {
-            //        remote_id = 0;
-            //    }
-            //    else
-            //    {
-            //        remote_id = db.Flashcards.Max(u => u.remote_id) + 1;
-            //    }
+                //if (db.Flashcards.Count() == 0)
+                //{
+                //    remote_id = 0;
+                //    printLine("setting to 0");
+                //}
+                //else
+                //{
+                //    remote_id = db.Flashcards.Max(u => u.remote_id) + 1;
+                //}
 
-            //    var fc = new Flashcard { question = "好", remote_id = remote_id, newFc = true };
-            //    fc.question = "好";
-            //    fc.newFc = true;
-            //    fc.utlocal = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-            //    fc.utserverwhenloaded = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-            //    fc.setToDelete(false);
+                //var fc = new Flashcard { question = "好", remote_id = remote_id, isNew = true };
+                //fc.question = "好";
+                //fc.isNew = true;
+                //fc.utlocal = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                //fc.utserverwhenloaded = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                //fc.setToDelete(false);
 
-            //    db.Flashcards.Add(fc);
-
-
-            //    try
-            //    {
-            //        int result = db.SaveChanges();
-            //        printLine("Number of changes executed: " + result);
-            //    }
-            //    catch (Exception)
-            //    {
-            //        throw;
-            //    }
-
-
-            //}
-
-            //printLine("Trying to connect to db");
-
-            //MySqlConnection conn = new MySqlConnection();
-            //string connString;
-
-            //connString = "server=mosarvit.heliohost.org;DATABASE=mosarvit_flashcards_db;UID=mosarvit_1;PASSWORD=Fahrenheit;";
-
-            //try
-            //{
-            //    conn = new MySqlConnection();
-            //    conn.ConnectionString = connString;
-            //    conn.Open();
-            //    printLine("Connection opened");
+                //db.Flashcards.Add(fc);
 
 
 
-            //    conn.Close();
-            //    printLine("Connection closed");
-            //}
-            //catch (MySql.Data.MySqlClient.MySqlException ex)
-            //{
-            //    printLine(ex.Message);
-            //}
-            //finally
-            //{
-            //    if (conn != null)
-            //    {
-            //        conn.Dispose();
-            //        printLine("Disposed connection");
-            //    }
-            //}
+
+
+                //// create a mediafile in db
+
+                //MediaFileSegment mfs1 = Factory.CreateMediaFileSegment(db, view, "mediaFileName", "fileName");
+
+
+
+                using (OurWebClient client = new OurWebClient())
+                {
+
+                    byte[] serverResponse = new byte[0];
+                    printLine("Starting");
+                    try
+                    {
+                        client.Credentials = new NetworkCredential(Properties.Settings.Default.UserName, Properties.Settings.Default.Password);
+                        serverResponse = client.UploadFile("ftp://mosar.heliohost.org/xczx.php", "STOR", @"E:\Users\Mosarvit\Google Drive\_CODING\PHP\get_data.php");
+
+                    }
+                    catch (WebException)
+                    {
+                        //throw;
+
+                        printLine("Time out");
+                        return;
+                    }
+
+                    var response = Encoding.UTF8.GetString(serverResponse);
+
+                    printLine("response:" + response + "end");
+
+
+
+
+                    // downloading 
+
+
+                    string remoteUri = "ftp://mosar.heliohost.org/";
+                    string fileName = "xczx.php", myStringWebResource = null;
+
+                    printLine("Starting");
+                    try
+                    {
+                        //client.Credentials = new NetworkCredential(Properties.Settings.Default.UserName, Properties.Settings.Default.Password);                        
+                        myStringWebResource = remoteUri + fileName;
+                        client.DownloadFile(myStringWebResource, fileName);
+                        printLine("done");
+
+                    }
+                    catch (WebException)
+                    {
+                        //throw;
+
+                        printLine("Time out");
+                        return;
+                    }                                        
+
+
+
+                    // deleting
+
+                    //FtpWebRequest request = (FtpWebRequest)WebRequest.Create("ftp://mosar.heliohost.org/xczx.php");
+
+                    ////If you need to use network credentials
+                    //request.Credentials = new NetworkCredential(Properties.Settings.Default.UserName, Properties.Settings.Default.Password);
+                    ////additionally, if you want to use the current user's network credentials, just use:
+                    ////System.Net.CredentialCache.DefaultNetworkCredentials
+
+                    //request.Method = WebRequestMethods.Ftp.DeleteFile;
+                    //FtpWebResponse response2 = (FtpWebResponse)request.GetResponse();
+                    //printLine("Delete status: " +  response2.StatusDescription);
+                    //response2.Close();
+
+                    // downloading
+
+
+
+                }
+            }
 
 
 
@@ -353,7 +391,6 @@ namespace FlashcardMaker.Controllers
             stopWatch.Start();
 
             int totalCount = 0;
-            int findingsCount = 0;
 
             var wordsToLearn = from t in db.ChineseWords
                                where t.knowLevel == 0
@@ -439,8 +476,6 @@ namespace FlashcardMaker.Controllers
                 if (totalCount % 10 == 0)
                     view.printStatusLabel("Updating canRead in SubtitleLines: " + totalCount + "\nTime elapsed: " + stopWatch.Elapsed);
 
-                if (totalCount > ProgramController.MAX_SUBTITLES_TO_UPDATE || findingsCount > 10)
-                    break;
             }
 
             db.SaveChanges();
@@ -534,6 +569,7 @@ namespace FlashcardMaker.Controllers
                 foreach (Movie movie in db.Movies.ToList())
                 {
                     movie.SubtitleLines.Clear();
+                    movie.SubtitleLinePacks.Clear();
                     db.SaveChanges();
                 }
             }

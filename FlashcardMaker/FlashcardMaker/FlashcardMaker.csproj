@@ -87,45 +87,19 @@
     <Compile Include="Controllers\MediaFilesController.cs" />
     <Compile Include="Controllers\ProgramController.cs" />
     <Compile Include="Helpers\Converter.cs" />
+    <Compile Include="Helpers\Factory.cs" />
     <Compile Include="Helpers\FlashcardCreator.cs" />
+    <Compile Include="Helpers\Syncronizer.cs" />
     <Compile Include="Helpers\VideoEditor.cs" />
     <Compile Include="Interfaces\ILine.cs" />
     <Compile Include="Interfaces\ILinePack.cs" />
-    <Compile Include="MyDbContextMigrations\201710300028064_Initial.cs" />
-    <Compile Include="MyDbContextMigrations\201710300028064_Initial.Designer.cs">
-      <DependentUpon>201710300028064_Initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MyDbContextMigrations\201710301722476_Initial1.cs" />
-    <Compile Include="MyDbContextMigrations\201710301722476_Initial1.Designer.cs">
-      <DependentUpon>201710301722476_Initial1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MyDbContextMigrations\201710302158541_Initial2.cs" />
-    <Compile Include="MyDbContextMigrations\201710302158541_Initial2.Designer.cs">
-      <DependentUpon>201710302158541_Initial2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MyDbContextMigrations\201710302211555_Initial3.cs" />
-    <Compile Include="MyDbContextMigrations\201710302211555_Initial3.Designer.cs">
-      <DependentUpon>201710302211555_Initial3.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MyDbContextMigrations\201710311301060_Initial4.cs" />
-    <Compile Include="MyDbContextMigrations\201710311301060_Initial4.Designer.cs">
-      <DependentUpon>201710311301060_Initial4.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MyDbContextMigrations\201710312254329_Initial5.cs" />
-    <Compile Include="MyDbContextMigrations\201710312254329_Initial5.Designer.cs">
-      <DependentUpon>201710312254329_Initial5.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MyDbContextMigrations\201711010105228_Initial6.cs" />
-    <Compile Include="MyDbContextMigrations\201711010105228_Initial6.Designer.cs">
-      <DependentUpon>201711010105228_Initial6.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MyDbContextMigrations\201711010153189_Initial7.cs" />
-    <Compile Include="MyDbContextMigrations\201711010153189_Initial7.Designer.cs">
-      <DependentUpon>201711010153189_Initial7.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MyDbContextMigrations\201711010154217_Initial8.cs" />
-    <Compile Include="MyDbContextMigrations\201711010154217_Initial8.Designer.cs">
-      <DependentUpon>201711010154217_Initial8.cs</DependentUpon>
+    <Compile Include="Models\MediaFile.cs" />
+    <Compile Include="Models\MediaFileSegment.cs" />
+    <Compile Include="Models\Model.cs" />
+    <Compile Include="Models\OnServerModel.cs" />
+    <Compile Include="MyDbContextMigrations\201711020005131_Initial.cs" />
+    <Compile Include="MyDbContextMigrations\201711020005131_Initial.Designer.cs">
+      <DependentUpon>201711020005131_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="MyDbContextMigrations\Configuration.cs" />
     <Compile Include="OtherClasses\OurWebClient.cs">
@@ -185,32 +159,8 @@
     <Compile Include="Views\UnknownCharacterView.designer.cs">
       <DependentUpon>UnknownCharacterView.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="MyDbContextMigrations\201710300028064_Initial.resx">
-      <DependentUpon>201710300028064_Initial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MyDbContextMigrations\201710301722476_Initial1.resx">
-      <DependentUpon>201710301722476_Initial1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MyDbContextMigrations\201710302158541_Initial2.resx">
-      <DependentUpon>201710302158541_Initial2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MyDbContextMigrations\201710302211555_Initial3.resx">
-      <DependentUpon>201710302211555_Initial3.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MyDbContextMigrations\201710311301060_Initial4.resx">
-      <DependentUpon>201710311301060_Initial4.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MyDbContextMigrations\201710312254329_Initial5.resx">
-      <DependentUpon>201710312254329_Initial5.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MyDbContextMigrations\201711010105228_Initial6.resx">
-      <DependentUpon>201711010105228_Initial6.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MyDbContextMigrations\201711010153189_Initial7.resx">
-      <DependentUpon>201711010153189_Initial7.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MyDbContextMigrations\201711010154217_Initial8.resx">
-      <DependentUpon>201711010154217_Initial8.cs</DependentUpon>
+    <EmbeddedResource Include="MyDbContextMigrations\201711020005131_Initial.resx">
+      <DependentUpon>201711020005131_Initial.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

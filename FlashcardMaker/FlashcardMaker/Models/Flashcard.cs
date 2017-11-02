@@ -8,12 +8,8 @@ using System.Threading.Tasks;
 
 namespace FlashcardMaker.Models
 {
-    public class Flashcard
+    public class Flashcard : OnServerModel
     {
-        public int id { get; set; }
-        
-        public int remote_id { get; set; }
-
         //[Column(TypeName = "NVARCHAR")]
         //[StringLength(255)]
         private string _question { get; set; }
@@ -26,12 +22,6 @@ namespace FlashcardMaker.Models
                 utlocal = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                 _duetime = value; } }
 
-        public long utserverwhenloaded { get; set; }
-
-        public long utlocal { get; set; }
-
-        public bool toDelete { get; set; }
-
         public void setToDelete(bool toDelete)
         {
             utlocal = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
@@ -42,8 +32,6 @@ namespace FlashcardMaker.Models
         {
             return toDelete;
         }
-
-        public bool newFc { get; set; }
 
         //[Column(TypeName = "NVARCHAR")]
         //[StringLength(255)]
@@ -57,7 +45,7 @@ namespace FlashcardMaker.Models
 
         public override string ToString()
         {
-            return  "\r\nid : " + id +
+            return  "\r\nid : " + Id +
                     "\r\nquestion : " + question +
                     "\r\nduetime : " + duetime +
                     "\r\nutserverwhenloaded : " + utserverwhenloaded +

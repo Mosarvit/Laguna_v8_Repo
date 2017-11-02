@@ -4,7 +4,7 @@
 Push current branch:
 
 cd /e/Users/Mosarvit/Documents/GitHubRepos/Laguna_v8_Repo
-git add .				// adds all files to tracked AND staged
+git add .				 
 git commit -m "Commit message"
 git push -u origin branch_3
 

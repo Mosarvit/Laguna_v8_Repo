@@ -26,9 +26,9 @@ namespace FlashcardMaker.Controllers
             this.programController = programController;
         }
 
-        internal void createFlashcards(string sortingAlgorithmString, int gapLimit, int beforeLimit, int afterLimit, int gapLimitC, int beforeLimitC, int afterLimitC)
+        internal void createFlashcards(string sortingAlgorithmString, int gapLimit, int beforeLimit, int afterLimit, int gapLimitC, int beforeLimitC, int afterLimitC, int paddingBefore, int paddingAfter)
         {
-            
+
             using (var db = new MyDbContext())
             {
                 view.printLine("Creating flashCards process begins");
@@ -50,7 +50,30 @@ namespace FlashcardMaker.Controllers
 
                 view.printLine("Done deleting all SubtitleLinePacks");
 
-                linePackCreator = new LinePackCreator { GapLimit = gapLimit, BeforeLimit = beforeLimit, AfterLimit = afterLimit, GapLimitC = gapLimitC, BeforeLimitC = beforeLimitC, AfterLimitC = afterLimitC, Movies = db.Movies.ToList(), Controller = this };
+                var allMovies = db.Movies;
+
+                var relevantStls = (from SubtitleLine in db.SubtitleLines
+                                    where allMovies.Contains(SubtitleLine.Movie)
+                                    select SubtitleLine).ToList();
+
+
+                linePackCreator = new LinePackCreator
+                {
+                    GapLimit = gapLimit,
+                    BeforeLimit = beforeLimit,
+                    AfterLimit = afterLimit,
+
+                    GapLimitC = gapLimitC,
+                    BeforeLimitC = beforeLimitC,
+                    AfterLimitC = afterLimitC,
+
+                    PaddingBefore = paddingBefore,
+                    PaddingAfter = paddingAfter,
+
+                    Movies = allMovies.ToList(),
+                    SubtitleLines = relevantStls,
+                    Controller = this
+                };
                 HashSet<SubtitleLinePack> newSuptitleLinePacks = linePackCreator.CreateLinePacks();
 
                 //foreach(SubtitleLinePack stlp1 in newSuptitleLinePacks)
@@ -80,9 +103,9 @@ namespace FlashcardMaker.Controllers
         //private void CreateSubtitlePacks()
         //{
 
-            
 
-            
+
+
 
         //    int totalCount = 0;
 
@@ -175,7 +198,7 @@ namespace FlashcardMaker.Controllers
         {
             view.printStatusLabel(str);
         }
-        
+
 
         //void IController.printLine(string str)
         //{
