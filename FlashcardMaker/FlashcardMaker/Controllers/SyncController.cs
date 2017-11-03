@@ -29,12 +29,16 @@ namespace FlashcardMaker.Controllers
 
         internal void syncronize()
         {
-            Syncronizer<Flashcard> sfc = new Syncronizer<Flashcard>(view);
-            sfc.syncronize();
-            Syncronizer<MediaFileSegment> smfs = new Syncronizer<MediaFileSegment>(view);
-            smfs.syncronize();
+            using (MyDbContext db = new MyDbContext())
+            {
+                //Syncronizer<Flashcard> sfc = new Syncronizer<Flashcard>(view, db);
+                //sfc.syncronize();
 
-            //smfs.syncronizeMediaFiles();
+                Syncronizer<MediaFileSegment> smfs = new Syncronizer<MediaFileSegment>(view, db);
+                smfs.syncronize();
+            }
+
+
         }
 
         public void printLine(string str)

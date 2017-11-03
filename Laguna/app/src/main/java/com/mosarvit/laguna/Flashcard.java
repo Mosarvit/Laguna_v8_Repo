@@ -1,6 +1,5 @@
 package com.mosarvit.laguna;
 
-import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
 import com.activeandroid.query.Select;
@@ -9,10 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @Table(name = "Flashcards")
-public class Flashcard extends Model {
-
-    @Column(name = "remote_id", unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
-    public int remote_id;
+public class Flashcard extends OnServerModel {
 
     @Column(name = "question")
     private String question;
@@ -20,27 +16,15 @@ public class Flashcard extends Model {
     @Column(name = "duetime")
     private long duetime;
 
-    @Column(name = "utlocal")
-    public long utlocal;
-
-    @Column(name = "utwhenloaded")
-    public long utwhenloaded;
-
-    @Column(name = "newfc")
-    public boolean newfc;
-
-    @Column(name = "toDelete")
-    public boolean toDelete;
-
     public void setDuetime(long duetime){
 
-        this.utlocal = System.currentTimeMillis();
+        this.updatetime = System.currentTimeMillis();
         this.duetime = duetime;
     }
 
     public void setQuestion(String question){
 
-        this.utlocal = System.currentTimeMillis();
+        this.updatetime = System.currentTimeMillis();
         this.question = question;
     }
 
@@ -56,7 +40,7 @@ public class Flashcard extends Model {
 
     public long getUpdateTimeLocal(){
 
-        return this.utlocal;
+        return this.updatetime;
     }
 
     public long getUpdatetimeWhenLoaded(){
@@ -68,7 +52,7 @@ public class Flashcard extends Model {
 
     public void setToDeleteOnServer(){
 
-        this.utlocal = System.currentTimeMillis();
+        this.updatetime = System.currentTimeMillis();
     }
 
     public Flashcard(){
@@ -80,17 +64,17 @@ public class Flashcard extends Model {
         super();
         this.duetime = duetime;
         this.utwhenloaded = updatetime;
-        this.utlocal = updatetime;
+        this.updatetime = updatetime;
         this.remote_id = remote_id;
         this.question = question;
-        this.newfc = newfc;
+        this.isNew = newfc;
     }
 
     public Flashcard(int remote_id, String question, long duetime, long updatetime){
         super();
         this.duetime = duetime;
         this.utwhenloaded = updatetime;
-        this.utlocal = updatetime;
+        this.updatetime = updatetime;
         this.remote_id = remote_id;
         this.question = question;
     }
@@ -98,7 +82,7 @@ public class Flashcard extends Model {
     public Flashcard(int remote_id, long updatetime){
         super();
         this.utwhenloaded = updatetime;
-        this.utlocal = updatetime;
+        this.updatetime = updatetime;
         this.remote_id = remote_id;
     }
 
@@ -126,7 +110,7 @@ public class Flashcard extends Model {
 
         return "Id: " + this.remote_id +
                 "\nquestion: " + this.question +
-                "\nutlocal: " + this.utlocal +
+                "\nupdatetime: " + this.updatetime +
                 "\nduetime: " + this.duetime +
                 "\n\n";
     }
@@ -141,9 +125,9 @@ public class Flashcard extends Model {
         return new Select().from(Flashcard.class).execute();
     }
 
-    public static HashMap<Integer, Flashcard> getAllAsHM(){
+    public static HashMap<Integer, OnServerModel> getAllAsHM(){
 
-        HashMap<Integer, Flashcard> hm = new HashMap<Integer, Flashcard>();
+        HashMap<Integer, OnServerModel> hm = new HashMap<Integer, OnServerModel>();
 
         for (Flashcard fc : getAll()){
             hm.put(fc.remote_id, fc);

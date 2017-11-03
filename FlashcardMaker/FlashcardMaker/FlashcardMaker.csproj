@@ -88,8 +88,10 @@
     <Compile Include="Controllers\ProgramController.cs" />
     <Compile Include="Helpers\Converter.cs" />
     <Compile Include="Helpers\Factory.cs" />
+    <Compile Include="Helpers\FileManagementHelper.cs" />
     <Compile Include="Helpers\FlashcardCreator.cs" />
     <Compile Include="Helpers\Syncronizer.cs" />
+    <Compile Include="Helpers\Updater.cs" />
     <Compile Include="Helpers\VideoEditor.cs" />
     <Compile Include="Interfaces\ILine.cs" />
     <Compile Include="Interfaces\ILinePack.cs" />
@@ -102,6 +104,7 @@
       <DependentUpon>201711020005131_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="MyDbContextMigrations\Configuration.cs" />
+    <Compile Include="OtherClasses\myDbSet.cs" />
     <Compile Include="OtherClasses\OurWebClient.cs">
       <SubType>Component</SubType>
     </Compile>

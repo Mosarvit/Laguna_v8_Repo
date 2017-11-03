@@ -83,7 +83,16 @@ namespace FlashcardMaker.Sortin_Algorithms
 
             //db.SaveChanges();
 
-            double averageNumberOfStls = totalNumberOfstls / trimmedSubtitleLinePacks.Count();
+            double averageNumberOfStls = 0;
+
+            if (trimmedSubtitleLinePacks.Count() > 0)
+            {
+                averageNumberOfStls = totalNumberOfstls / trimmedSubtitleLinePacks.Count();
+            }
+            else
+            {
+                averageNumberOfStls = 0;
+            }            
 
             printLine("trimmedSubtitleLinePacks.Count(): " + trimmedSubtitleLinePacks.Count());
             printLine("totalNumberOfStls: " + totalNumberOfstls);

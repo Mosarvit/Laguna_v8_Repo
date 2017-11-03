@@ -164,7 +164,7 @@ namespace FlashcardMaker.Controllers
 
             //VideoEditor sv = new VideoEditor(view);
             //sv.test(this);
-
+            using (OurWebClient client = new OurWebClient())
             using (MyDbContext db = new MyDbContext())
             {
 
@@ -198,77 +198,167 @@ namespace FlashcardMaker.Controllers
                 //MediaFileSegment mfs1 = Factory.CreateMediaFileSegment(db, view, "mediaFileName", "fileName");
 
 
+                //MediaFileSegment mfs3 = db.MediaFileSegments.Where(c => c.remote_id == 12).SingleOrDefault();
 
-                using (OurWebClient client = new OurWebClient())
-                {
-
-                    byte[] serverResponse = new byte[0];
-                    printLine("Starting");
-                    try
-                    {
-                        client.Credentials = new NetworkCredential(Properties.Settings.Default.UserName, Properties.Settings.Default.Password);
-                        serverResponse = client.UploadFile("ftp://mosar.heliohost.org/xczx.php", "STOR", @"E:\Users\Mosarvit\Google Drive\_CODING\PHP\get_data.php");
-
-                    }
-                    catch (WebException)
-                    {
-                        //throw;
-
-                        printLine("Time out");
-                        return;
-                    }
-
-                    var response = Encoding.UTF8.GetString(serverResponse);
-
-                    printLine("response:" + response + "end");
+                //printLine(mfs1.remote_id + " " + mfs1.MediaFileName + " " + mfs1.MediaFile.FileName);
 
 
 
+                byte[] serverResponse = new byte[0];
 
-                    // downloading 
-
-
-                    string remoteUri = "ftp://mosar.heliohost.org/";
-                    string fileName = "xczx.php", myStringWebResource = null;
-
-                    printLine("Starting");
-                    try
-                    {
-                        //client.Credentials = new NetworkCredential(Properties.Settings.Default.UserName, Properties.Settings.Default.Password);                        
-                        myStringWebResource = remoteUri + fileName;
-                        client.DownloadFile(myStringWebResource, fileName);
-                        printLine("done");
-
-                    }
-                    catch (WebException)
-                    {
-                        //throw;
-
-                        printLine("Time out");
-                        return;
-                    }                                        
+                string userName = Properties.Settings.Default.UserName;
+                string password = Properties.Settings.Default.Password;
+                //var response = "";
 
 
 
-                    // deleting
+                //printLine("Starting");
+                //try
+                //{
+                //    client.Credentials = new NetworkCredential(Properties.Settings.Default.UserName, Properties.Settings.Default.Password);
+                //    serverResponse = client.UploadFile("ftp://mosar.heliohost.org/mediafiles/xczx.php", "STOR", @"E:\Users\Mosarvit\Google Drive\_CODING\PHP\get_data.php");
 
-                    //FtpWebRequest request = (FtpWebRequest)WebRequest.Create("ftp://mosar.heliohost.org/xczx.php");
+                //}
+                //catch (WebException)
+                //{
+                //    //throw;
 
-                    ////If you need to use network credentials
-                    //request.Credentials = new NetworkCredential(Properties.Settings.Default.UserName, Properties.Settings.Default.Password);
-                    ////additionally, if you want to use the current user's network credentials, just use:
-                    ////System.Net.CredentialCache.DefaultNetworkCredentials
+                //    printLine("Time out");
+                //    return;
+                //}
 
-                    //request.Method = WebRequestMethods.Ftp.DeleteFile;
-                    //FtpWebResponse response2 = (FtpWebResponse)request.GetResponse();
-                    //printLine("Delete status: " +  response2.StatusDescription);
-                    //response2.Close();
+                //response = Encoding.UTF8.GetString(serverResponse);
 
-                    // downloading
-
+                //printLine("response:" + response + "end");
 
 
-                }
+
+
+
+
+
+
+                //string ftpHost = Properties.Settings.Default.FtpHost;
+                ////string filePathFtp = @"E: \Users\Mosarvit\Documents\GitHubRepos\Laguna_v8_Repo\FlashcardMaker\FlashcardMaker\MediaFiles\Caught.in.the.Web.2012\15280 - 22429.mp4";
+                //string filePathFtp = @"ftp://mosar.heliohost.org/mediafiles/test/xczx.mp4";
+                //string fileToUpload = @"E:\Users\Mosarvit\Documents\GitHubRepos\Laguna_v8_Repo\FlashcardMaker\FlashcardMaker\MediaFiles\Caught.in.the.Web.2012\15280-22429.mp4";
+
+                //printLine("fileToUpload : " + fileToUpload);
+                //printLine("filePathFtp : " + filePathFtp);
+
+                //serverResponse = new byte[0];
+                //try
+                //{
+                //    client.Credentials = new NetworkCredential(userName, password);
+                //    serverResponse = client.UploadFile(filePathFtp, "STOR", fileToUpload);
+
+                //}
+                //catch (WebException)
+                //{
+                //    printLine("Time out");
+                //}
+
+                //response = Encoding.UTF8.GetString(serverResponse);
+
+                //printLine("response:" + response + "end");
+
+
+
+                //string userName = Properties.Settings.Default.UserName;
+                //string password = Properties.Settings.Default.Password;
+
+                //printLine("response:" + response + "end");
+
+                //FtpWebRequest request = (FtpWebRequest)WebRequest.Create("ftp://mosar.heliohost.org/mediafiles/test");
+                //request.Method = WebRequestMethods.Ftp.MakeDirectory;
+                //request.Credentials = new NetworkCredential(userName, password);
+                //request.KeepAlive = true;
+                //request.UseBinary = true;
+                //using (var resp = (FtpWebResponse)request.GetResponse())
+                //{
+                //    printLine(resp.StatusCode.ToString());
+                //}
+
+
+
+                //FtpWebRequest ftpRequest = (FtpWebRequest)WebRequest.Create("ftp://mosar.heliohost.org/mediafiles");
+                //ftpRequest.Credentials = new NetworkCredential(userName, password);
+                //ftpRequest.Method = WebRequestMethods.Ftp.ListDirectoryDetails;
+                //FtpWebResponse response = (FtpWebResponse)ftpRequest.GetResponse();
+                //StreamReader streamReader = new StreamReader(response.GetResponseStream());
+
+                //List<string> dirInfos = new List<string>();
+
+                //string line = streamReader.ReadLine();
+                //while (!string.IsNullOrEmpty(line))
+                //{
+                //    dirInfos.Add(line);
+                //    line = streamReader.ReadLine();
+                //}
+
+                //streamReader.Close();
+
+                //foreach (string dirInfo in dirInfos)
+                //{
+                //    if (dirInfo.StartsWith("d"))
+                //    {
+                //        string dir = dirInfo.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries)[8];
+                //        if (!dir.Equals(".") && !dir.Equals(".."))
+                //        {
+                //            printLine(dir);
+                //        }
+                //    }
+                //}
+
+
+
+
+
+
+
+                //    // downloading 
+
+
+                //    string remoteUri = "ftp://mosar.heliohost.org/";
+                //    string fileName = "xczx.php", myStringWebResource = null;
+
+                //    printLine("Starting");
+                //    try
+                //    {
+                //        //client.Credentials = new NetworkCredential(Properties.Settings.Default.UserName, Properties.Settings.Default.Password);                        
+                //        myStringWebResource = remoteUri + fileName;
+                //        client.DownloadFile(myStringWebResource, fileName);
+                //        printLine("done");
+
+                //    }
+                //    catch (WebException)
+                //    {
+                //        //throw;
+
+                //        printLine("Time out");
+                //        return;
+                //    }
+
+
+                //    // deleting
+
+                //    FtpWebRequest request = (FtpWebRequest)WebRequest.Create("ftp://mosar.heliohost.org/xczx.php");
+
+                //    //If you need to use network credentials
+                //    request.Credentials = new NetworkCredential(Properties.Settings.Default.UserName, Properties.Settings.Default.Password);
+                //    //additionally, if you want to use the current user's network credentials, just use:
+                //    //System.Net.CredentialCache.DefaultNetworkCredentials
+
+                //    request.Method = WebRequestMethods.Ftp.DeleteFile;
+                //    FtpWebResponse response2 = (FtpWebResponse)request.GetResponse();
+                //    printLine("Delete status: " + response2.StatusDescription);
+                //    response2.Close();
+
+                //    //downloading
+
+
+
+                //}
             }
 
 

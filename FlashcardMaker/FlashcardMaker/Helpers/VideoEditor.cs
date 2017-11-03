@@ -49,8 +49,9 @@ namespace FlashcardMaker.Helpers
             controller.printLine("Done");
         }
 
-        public void splitVideo(string inputFile, string outputFile, int start, int end)
+        public bool splitVideo(string inputFile, string outputFile, int start, int end)
         {
+            bool result = true;
             int interval = end - start;
             string startString = TimeSpan.FromMilliseconds(start).ToString();
             startString = startString.Substring(0, startString.Length - 4);
@@ -78,16 +79,20 @@ namespace FlashcardMaker.Helpers
             if (!proc.Start())
             {
                 view.printLine("Error starting");
-                return;
+                return false;
             }
             StreamReader reader = proc.StandardError;
             string line;
             while ((line = reader.ReadLine()) != null)
             {
                 view.printLine(line);
+                if (line.StartsWith("Error"))
+                    result = false;
+                else
+                    result = true;
             }
             proc.Close();
-            
+            return result;
         }
  
 

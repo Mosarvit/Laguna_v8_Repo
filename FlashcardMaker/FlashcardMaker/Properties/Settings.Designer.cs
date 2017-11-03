@@ -26,12 +26,12 @@ namespace FlashcardMaker.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("E:\\Users\\Mosarvit\\Documents\\SharedFolder\\subtitles\\Media")]
-        public string MediaFolder {
+        public string UsersMediaFolder {
             get {
-                return ((string)(this["MediaFolder"]));
+                return ((string)(this["UsersMediaFolder"]));
             }
             set {
-                this["MediaFolder"] = value;
+                this["UsersMediaFolder"] = value;
             }
         }
         
@@ -80,6 +80,31 @@ namespace FlashcardMaker.Properties {
             }
             set {
                 this["Password"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("E:\\Users\\Mosarvit\\Documents\\GitHubRepos\\Laguna_v8_Repo\\FlashcardMaker\\FlashcardMa" +
+            "ker\\MediaFiles")]
+        public string ApplicationsMediaFolder {
+            get {
+                return ((string)(this["ApplicationsMediaFolder"]));
+            }
+            set {
+                this["ApplicationsMediaFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("ftp://mosar.heliohost.org/mediafiles")]
+        public string FtpMediaFolder {
+            get {
+                return ((string)(this["FtpMediaFolder"]));
+            }
+            set {
+                this["FtpMediaFolder"] = value;
             }
         }
     }

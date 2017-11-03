@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
 
 //
 
-//        printLineToMainTextView(fc.remote_id + " " + fc.utlocal);
+//        printLineToMainTextView(fc.remote_id + " " + fc.updatetime);
 
         // DEBUG end
 

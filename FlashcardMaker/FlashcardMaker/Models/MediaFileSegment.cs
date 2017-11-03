@@ -10,6 +10,6 @@ namespace FlashcardMaker.Models
     {
         public string MediaFileName { get; set; }
         public string FileName { get; set; }
-        public MediaFile MediaFile { get; set; }
+        public virtual MediaFile MediaFile { get; set; }
     }
 }

@@ -25,9 +25,14 @@ namespace FlashcardMaker.Controllers
             using (MyDbContext db = new MyDbContext())
             {
                 view.printLine("Starting creating Mediafiles");
+                Updater.updateDbMediaFiles(db, view);
+                int totalCount = 0;
 
                 foreach (SubtitleLinePack stlp in db.SubtitleLinePacks.ToList())
                 {
+                    if (totalCount++ >= ProgramController.MAX_MEDIA_FILES_TO_CREATE && ProgramController.DEBUGGING_MEDIA_FILES)
+                        break;
+
                     //foreach (SubtitleLine stl in stlp.SubtitleLines)
                     //{
                     //    view.printLine("Position: " + stl.Position);
@@ -38,24 +43,41 @@ namespace FlashcardMaker.Controllers
                     // TO-DO What if duplicate fileNames?
 
                     string movieNameWithoutExtention = Path.GetFileNameWithoutExtension(stlp.Movie.fileName);
-
-                    string mediaFolder = Properties.Settings.Default.MediaFolder;
+                    string usersMediaFolder = Properties.Settings.Default.UsersMediaFolder;
 
                     string inputFileName = "";
 
-                    foreach (string mediaFileName in Directory.GetFiles(path: mediaFolder))
+                    foreach (string mediaFileName in Directory.GetFiles(path: usersMediaFolder))
                     {
                         if (movieNameWithoutExtention.Equals(Path.GetFileNameWithoutExtension(mediaFileName)))
                         {
-                            inputFileName = Path.Combine(mediaFolder, mediaFileName);
+                            inputFileName = mediaFileName;
                         }
                     }
+
+                    int starttime = stlp.StartTime;
+                    int endtime = stlp.EndTime;
+                    string outpuFileName = starttime + "-" + endtime + Path.GetExtension(inputFileName);
 
                     if (inputFileName.Equals(""))
                     {
                         view.printLine("No file found for : " + movieNameWithoutExtention);
                         break;
                     }
+
+                    // check if maybe such file already exists in db
+
+                    var mf = db.MediaFiles.Where(c => c.FileName.Equals(movieNameWithoutExtention)).SingleOrDefault();
+                    if (mf != null)
+                    {
+                        var mfs = mf.MediaFileSegments.Where(c => c.FileName.Equals(outpuFileName)).SingleOrDefault();
+                        if (mfs != null)
+                        {
+                            continue;
+                        }
+                    }                  
+
+                    
 
                     // create mediaFiles Folder
 
@@ -75,48 +97,30 @@ namespace FlashcardMaker.Controllers
                         Directory.CreateDirectory(outputFileFolder);
                     }
 
+                    string inputFileFullPath = Path.Combine(usersMediaFolder, inputFileName);
+
                     view.printLine("mediaFileNameToProcess : " + inputFileName);
 
-                    int starttime = stlp.StartTime;
-                    int endtime = stlp.EndTime;
 
-                    string outputFileName = Path.Combine(outputFileFolder, starttime + "-" + endtime + Path.GetExtension(inputFileName));
+
+
+                    string outputFileFullPath = Path.Combine(outputFileFolder, outpuFileName);
 
 
                     view.printLine("inputFileName : " + inputFileName);
-                    view.printLine("outputFileName : " + outputFileName);
+                    view.printLine("outputFileName : " + outputFileFullPath);
 
 
                     VideoEditor ve = new VideoEditor(view);
 
-                    if (!File.Exists(outputFileName))
+                    if (ve.splitVideo(inputFileName, outputFileFullPath, starttime, endtime))
                     {
-                        ve.splitVideo(inputFileName, outputFileName, starttime, endtime);
-
-                        int remote_id;
-
-                        if (db.MediaFileSegments.Count() == 0)
-                        {
-                            remote_id = 0;
-                        }
-                        else
-                        {
-                            remote_id = db.MediaFileSegments.Max(u => u.remote_id) + 1;
-                        }
-
-                        MediaFileSegment mfs = new MediaFileSegment
-                        {
-                            MediaFileName = movieNameWithoutExtention,
-                            remote_id = remote_id,
-                            isNew = true
-                        };
-                        mfs.utlocal = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                        mfs.utserverwhenloaded = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                        mfs.toDelete = false;
-
-                        db.MediaFileSegments.AddOrUpdate(p => p.remote_id, mfs);
-                        db.SaveChanges();
+                        Factory.InsertMediaFileSegment(db, view, outpuFileName, movieNameWithoutExtention);
                     }
+                        
+
+                        
+                        
 
                     //break;
                 }

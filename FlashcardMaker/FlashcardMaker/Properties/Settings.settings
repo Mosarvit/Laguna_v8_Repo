@@ -2,7 +2,7 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="FlashcardMaker.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="MediaFolder" Type="System.String" Scope="User">
+    <Setting Name="UsersMediaFolder" Type="System.String" Scope="User">
       <Value Profile="(Default)">E:\Users\Mosarvit\Documents\SharedFolder\subtitles\Media</Value>
     </Setting>
     <Setting Name="ExtraPaddingCut" Type="System.Int32" Scope="User">
@@ -16,6 +16,12 @@
     </Setting>
     <Setting Name="Password" Type="System.String" Scope="User">
       <Value Profile="(Default)">Fahrenheit</Value>
+    </Setting>
+    <Setting Name="ApplicationsMediaFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)">E:\Users\Mosarvit\Documents\GitHubRepos\Laguna_v8_Repo\FlashcardMaker\FlashcardMaker\MediaFiles</Value>
+    </Setting>
+    <Setting Name="FtpMediaFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ftp://mosar.heliohost.org/mediafiles</Value>
     </Setting>
   </Settings>
 </SettingsFile>
