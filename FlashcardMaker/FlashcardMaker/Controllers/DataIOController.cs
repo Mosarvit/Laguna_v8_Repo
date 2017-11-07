@@ -357,9 +357,22 @@ namespace FlashcardMaker.Controllers
                 //    //downloading
 
 
+                //foreach (SubtitleLinePack stlp in db.SubtitleLinePacks.ToList())
+                //{
 
+                //    printLine("id:" + stlp.Id);
+
+                //    if (stlp.MediaFileSegments_remote_id != null)
+                //    {
+                //        printLine(stlp.MediaFileSegments[0].FileName);
+                //    }
+                //    else
+                //    {
+                //        printLine("no");
+                //    }
                 //}
             }
+
 
 
 

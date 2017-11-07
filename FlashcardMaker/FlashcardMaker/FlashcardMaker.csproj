@@ -99,9 +99,9 @@
     <Compile Include="Models\MediaFileSegment.cs" />
     <Compile Include="Models\Model.cs" />
     <Compile Include="Models\OnServerModel.cs" />
-    <Compile Include="MyDbContextMigrations\201711020005131_Initial.cs" />
-    <Compile Include="MyDbContextMigrations\201711020005131_Initial.Designer.cs">
-      <DependentUpon>201711020005131_Initial.cs</DependentUpon>
+    <Compile Include="MyDbContextMigrations\201711070239195_Initial.cs" />
+    <Compile Include="MyDbContextMigrations\201711070239195_Initial.Designer.cs">
+      <DependentUpon>201711070239195_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="MyDbContextMigrations\Configuration.cs" />
     <Compile Include="OtherClasses\myDbSet.cs" />
@@ -162,8 +162,8 @@
     <Compile Include="Views\UnknownCharacterView.designer.cs">
       <DependentUpon>UnknownCharacterView.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="MyDbContextMigrations\201711020005131_Initial.resx">
-      <DependentUpon>201711020005131_Initial.cs</DependentUpon>
+    <EmbeddedResource Include="MyDbContextMigrations\201711070239195_Initial.resx">
+      <DependentUpon>201711070239195_Initial.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -33,7 +33,7 @@ namespace FlashcardMaker.Views
             this.txtbxOutput = new System.Windows.Forms.TextBox();
             this.cbSortinAlgorythm = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.btnCreateFlashcards = new System.Windows.Forms.Button();
+            this.btnCreateSubtitleLinePacks = new System.Windows.Forms.Button();
             this.lblStatus = new System.Windows.Forms.Label();
             this.nudBefore = new System.Windows.Forms.NumericUpDown();
             this.nudAfter = new System.Windows.Forms.NumericUpDown();
@@ -57,6 +57,7 @@ namespace FlashcardMaker.Views
             this.nudPaddingAfter = new System.Windows.Forms.NumericUpDown();
             this.label13 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
+            this.btnCreateFlashcards = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.nudBefore)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudAfter)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudGap)).BeginInit();
@@ -98,15 +99,15 @@ namespace FlashcardMaker.Views
             this.label1.TabIndex = 23;
             this.label1.Text = "Sorting algorithm:";
             // 
-            // btnCreateFlashcards
+            // btnCreateSubtitleLinePacks
             // 
-            this.btnCreateFlashcards.Location = new System.Drawing.Point(220, 298);
-            this.btnCreateFlashcards.Name = "btnCreateFlashcards";
-            this.btnCreateFlashcards.Size = new System.Drawing.Size(133, 23);
-            this.btnCreateFlashcards.TabIndex = 24;
-            this.btnCreateFlashcards.Text = "Create Flashcards";
-            this.btnCreateFlashcards.UseVisualStyleBackColor = true;
-            this.btnCreateFlashcards.Click += new System.EventHandler(this.btnCreateFlashcards_Click);
+            this.btnCreateSubtitleLinePacks.Location = new System.Drawing.Point(136, 298);
+            this.btnCreateSubtitleLinePacks.Name = "btnCreateSubtitleLinePacks";
+            this.btnCreateSubtitleLinePacks.Size = new System.Drawing.Size(175, 23);
+            this.btnCreateSubtitleLinePacks.TabIndex = 24;
+            this.btnCreateSubtitleLinePacks.Text = "Create SubtitleLinePacks";
+            this.btnCreateSubtitleLinePacks.UseVisualStyleBackColor = true;
+            this.btnCreateSubtitleLinePacks.Click += new System.EventHandler(this.btnCreateSubtitleLinePacks_Click);
             // 
             // lblStatus
             // 
@@ -117,7 +118,6 @@ namespace FlashcardMaker.Views
             this.lblStatus.Size = new System.Drawing.Size(35, 13);
             this.lblStatus.TabIndex = 25;
             this.lblStatus.Text = "label2";
-            this.lblStatus.Click += new System.EventHandler(this.label2_Click);
             // 
             // nudBefore
             // 
@@ -160,7 +160,6 @@ namespace FlashcardMaker.Views
             this.label3.Size = new System.Drawing.Size(159, 13);
             this.label3.TabIndex = 29;
             this.label3.Text = "Max extra time after relevant line";
-            this.label3.Click += new System.EventHandler(this.label3_Click);
             // 
             // nudGap
             // 
@@ -182,7 +181,6 @@ namespace FlashcardMaker.Views
             this.label4.Size = new System.Drawing.Size(157, 13);
             this.label4.TabIndex = 31;
             this.label4.Text = "Max gap between relevant lines";
-            this.label4.Click += new System.EventHandler(this.label4_Click);
             // 
             // label5
             // 
@@ -285,9 +283,9 @@ namespace FlashcardMaker.Views
             // 
             // btnCreateMediaFiles
             // 
-            this.btnCreateMediaFiles.Location = new System.Drawing.Point(380, 298);
+            this.btnCreateMediaFiles.Location = new System.Drawing.Point(317, 298);
             this.btnCreateMediaFiles.Name = "btnCreateMediaFiles";
-            this.btnCreateMediaFiles.Size = new System.Drawing.Size(133, 23);
+            this.btnCreateMediaFiles.Size = new System.Drawing.Size(175, 23);
             this.btnCreateMediaFiles.TabIndex = 42;
             this.btnCreateMediaFiles.Text = "Create Media Files";
             this.btnCreateMediaFiles.UseVisualStyleBackColor = true;
@@ -344,11 +342,22 @@ namespace FlashcardMaker.Views
             this.label14.TabIndex = 47;
             this.label14.Text = "After";
             // 
+            // btnCreateFlashcards
+            // 
+            this.btnCreateFlashcards.Location = new System.Drawing.Point(498, 298);
+            this.btnCreateFlashcards.Name = "btnCreateFlashcards";
+            this.btnCreateFlashcards.Size = new System.Drawing.Size(175, 23);
+            this.btnCreateFlashcards.TabIndex = 48;
+            this.btnCreateFlashcards.Text = "Create Flashcards";
+            this.btnCreateFlashcards.UseVisualStyleBackColor = true;
+            this.btnCreateFlashcards.Click += new System.EventHandler(this.btnCreateFlashcards_Click_1);
+            // 
             // CreateFlashcardsView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(830, 810);
+            this.Controls.Add(this.btnCreateFlashcards);
             this.Controls.Add(this.label14);
             this.Controls.Add(this.label13);
             this.Controls.Add(this.nudPaddingAfter);
@@ -372,7 +381,7 @@ namespace FlashcardMaker.Views
             this.Controls.Add(this.nudAfter);
             this.Controls.Add(this.nudBefore);
             this.Controls.Add(this.lblStatus);
-            this.Controls.Add(this.btnCreateFlashcards);
+            this.Controls.Add(this.btnCreateSubtitleLinePacks);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.cbSortinAlgorythm);
             this.Controls.Add(this.txtbxOutput);
@@ -397,7 +406,7 @@ namespace FlashcardMaker.Views
         private System.Windows.Forms.TextBox txtbxOutput;
         private ComboBox cbSortinAlgorythm;
         private Label label1;
-        private Button btnCreateFlashcards;
+        private Button btnCreateSubtitleLinePacks;
         private Label lblStatus;
         private NumericUpDown nudBefore;
         private NumericUpDown nudAfter;
@@ -421,5 +430,6 @@ namespace FlashcardMaker.Views
         private NumericUpDown nudPaddingAfter;
         private Label label13;
         private Label label14;
+        private Button btnCreateFlashcards;
     }
 }

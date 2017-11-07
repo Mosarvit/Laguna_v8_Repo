@@ -32,6 +32,8 @@ namespace FlashcardMaker.Models
         {
             return toDelete;
         }
+         
+        public int MediaFileSegment_remote_id { get; set; }
 
         //[Column(TypeName = "NVARCHAR")]
         //[StringLength(255)]

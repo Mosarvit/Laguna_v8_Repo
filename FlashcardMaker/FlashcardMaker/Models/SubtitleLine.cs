@@ -12,6 +12,7 @@ namespace FlashcardMaker.Models
     public class SubtitleLine : Model, ILine, IComparable<SubtitleLine>
     { 
 
+
         [Index("IX_FirstAndSecond", 1, IsUnique = true)]
         public int Position { get; set; }
 

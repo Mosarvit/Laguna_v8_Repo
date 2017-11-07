@@ -31,8 +31,8 @@ namespace FlashcardMaker.Controllers
         {
             using (MyDbContext db = new MyDbContext())
             {
-                //Syncronizer<Flashcard> sfc = new Syncronizer<Flashcard>(view, db);
-                //sfc.syncronize();
+                Syncronizer<Flashcard> sfc = new Syncronizer<Flashcard>(view, db);
+                sfc.syncronize();
 
                 Syncronizer<MediaFileSegment> smfs = new Syncronizer<MediaFileSegment>(view, db);
                 smfs.syncronize();

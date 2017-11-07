@@ -30,8 +30,15 @@ namespace FlashcardMaker.Controllers
 
                 foreach (SubtitleLinePack stlp in db.SubtitleLinePacks.ToList())
                 {
-                    if (totalCount++ >= ProgramController.MAX_MEDIA_FILES_TO_CREATE && ProgramController.DEBUGGING_MEDIA_FILES)
+                    view.printLine("stlp: " + stlp.StartTime);
+
+                    if (++totalCount > ProgramController.MAX_MEDIA_FILES_TO_CREATE && ProgramController.DEBUGGING_MEDIA_FILES)
+                    {
+                        view.printLine("achieved MAX_MEDIA_FILES_TO_CREATE");
                         break;
+                    }
+
+                        
 
                     //foreach (SubtitleLine stl in stlp.SubtitleLines)
                     //{
@@ -73,6 +80,7 @@ namespace FlashcardMaker.Controllers
                         var mfs = mf.MediaFileSegments.Where(c => c.FileName.Equals(outpuFileName)).SingleOrDefault();
                         if (mfs != null)
                         {
+                            view.printLine("continue");
                             continue;
                         }
                     }                  
@@ -115,7 +123,9 @@ namespace FlashcardMaker.Controllers
 
                     if (ve.splitVideo(inputFileName, outputFileFullPath, starttime, endtime))
                     {
-                        Factory.InsertMediaFileSegment(db, view, outpuFileName, movieNameWithoutExtention);
+                        MediaFileSegment mfs = Factory.InsertMediaFileSegment(db, view, outpuFileName, movieNameWithoutExtention, true);
+                        stlp.MediaFileSegments_remote_id = mfs.remote_id;
+                        db.SaveChanges();
                     }
                         
 

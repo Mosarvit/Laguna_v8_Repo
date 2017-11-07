@@ -17,21 +17,32 @@ import android.widget.TextView;
 
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.Configuration;
-import com.activeandroid.query.Select;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity  implements ViewActivity {
 
 
     private static final int DB_VERSION = 1;
     public static TextView textView;
     public static Button btnStartQuiz, btnSync, btnTest;
+    public MainActivity ma = this;
+
+
 
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+
+
         setContentView(R.layout.activity_main);
+
+
+        setPreferences();
+        setSharedData();
+
 
         Configuration dbConfig =
                 new Configuration
@@ -87,13 +98,96 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Flashcard fc = Flashcard.getAll().get(0);
-                fc.setQuestion("asdfasdfasdfsad");
-                fc.save();
+//                Flashcard fc = Flashcard.getAll().get(0);
+//                fc.setQuestion("asdfasdfasdfsad");
+//                fc.save();
+//
+//                fc = Flashcard.getAll().get(1);
+//                fc.setQuestion("asdfasdfasdfsad");
+//                fc.save();
 
-                fc = Flashcard.getAll().get(1);
-                fc.setQuestion("asdfasdfasdfsad");
-                fc.save();
+//                new DownloadFromFtpTask().execute();
+
+//
+//                try {
+//                    File root = new File(Environment.getRootDirectory(), "Notes");
+//                    if (!root.exists()) {
+//                        root.mkdirs();
+//                    }
+//                    File gpxfile = new File(root, "file.txt");
+//                    FileWriter writer = new FileWriter(gpxfile);
+//                    writer.append("some text");
+//                    writer.flush();
+//                    writer.close();
+//
+//                    printLine("Done");
+////                    Toast.makeText(context, "Saved", Toast.LENGTH_SHORT).show();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+
+
+//                String FILENAME = getFilesDir().toString() + "/hello_file";
+//                String string = "hello world!";
+//
+//                File file = this.getFileStreamPath(getFilesDir().toString() + "/hello_file");
+//                if(file.exists()){
+//                    Toast.makeText(getActivity(), "File exists in /mnt", Toast.LENGTH_SHORT);
+//                }
+//
+//
+//
+//
+//                FileOutputStream fos = null;
+//                try {
+//
+//                    printLine(getFilesDir().toString());
+//
+//                    fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
+//                    fos.write(string.getBytes());
+//                    fos.close();
+//
+//                    printLine("Done");
+//
+//                } catch (FileNotFoundException e) {
+//                    e.printStackTrace();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+
+
+
+                for (MediaFileSegment mfs : MediaFileSegment.getAll()){
+                    mfs.delete();
+
+//                    if (mfs.remote_id>1){
+//                        mfs.delete();
+//                    }
+                }
+
+                for (Flashcard fc : Flashcard.getAll()){
+                    fc.delete();
+//
+//                    if (mfs.remote_id>1){
+//                        mfs.delete();
+//                    }
+                }
+
+
+
+
+
+//                printLine(new Select().from(MediaFileSegment.class).count()+"");
+//
+//                List<MediaFileSegment> mediaFileNames = new Select().from(MediaFileSegment.class).groupBy("mediafileName").execute();
+//
+//                printLine(mediaFileNames.size()+"");
+//
+//                for (MediaFileSegment mfs : mediaFileNames){
+//                    printLine(mfs.toString());
+//                }
+
+
             }
         });
 
@@ -104,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (!sharedPreferecnes.getBoolean("lastSyncSuccessful", true)){
 
-            printLineToMainTextView("Some recent sync did not finish properly. Please sync again soon.");
+            printLine("Some recent sync did not finish properly. Please sync again soon.");
         }
 
         // DEBUG start
@@ -115,10 +209,29 @@ public class MainActivity extends AppCompatActivity {
 
 //
 
-//        printLineToMainTextView(fc.remote_id + " " + fc.updatetime);
+//        printLine(fc.remote_id + " " + fc.updatetime);
 
         // DEBUG end
 
+    }
+
+    private void setSharedData() {
+        SharedPreferences prefs = getSharedPreferences("FTP_PREFS", MODE_PRIVATE);
+        SharedData.FTP_USERNAME = prefs.getString("FtpUserName", null);
+        SharedData.FTP_PASSWORD = prefs.getString("FtpPassword", null);
+        SharedData.FTP_MEDIA_FOLDER = prefs.getString("FtpMediaFolder", null);
+        SharedData.FTP_PORT_NUMBER = prefs.getInt("FtpPortNumber", 0);
+        SharedData.ROOT_FOLDER = getFilesDir().toString();
+        SharedData.LOCAL_MEDIA_FOLDER = getFilesDir().toString() + "/mediafiles";
+    }
+
+    private void setPreferences() {
+        SharedPreferences.Editor editor = getSharedPreferences("FTP_PREFS", MODE_PRIVATE).edit();
+        editor.putString("FtpUserName", "mosar");
+        editor.putString("FtpPassword", "Fahrenheit");
+        editor.putString("FtpMediaFolder", "/home/mosar/mediafiles");
+        editor.putInt("FtpPortNumber", 1312);
+        editor.apply();
     }
 
     @Override
@@ -143,7 +256,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public static void printLineToMainTextView(String str){
+    public void printLine(String str){
 
         String output = textView.getText().toString();
 
@@ -152,10 +265,5 @@ public class MainActivity extends AppCompatActivity {
         }
 
         textView.setText(output+str+"\n");
-    }
-
-    public static void syncFinished() {
-
-        MainActivity.printLineToMainTextView(Flashcard.allToString() + "\nDone");
     }
 }

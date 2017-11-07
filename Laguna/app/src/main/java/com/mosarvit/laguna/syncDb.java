@@ -64,7 +64,7 @@ public class syncDb extends AsyncTask<Void, Void, Void> {
     protected void onPostExecute(Void aVoid){
 
         super.onPostExecute(aVoid);
-        MainActivity.syncFinished();
+//        MainActivity.syncFinished();
 
 
     }

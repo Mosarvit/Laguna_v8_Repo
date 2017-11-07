@@ -30,7 +30,7 @@ namespace FlashcardMaker.Views
             this.createFlashcardsController = createFlashcardsController;
         }
 
-        private void btnCreateFlashcards_Click(object sender, EventArgs e)
+        private void btnCreateSubtitleLinePacks_Click(object sender, EventArgs e)
         {
             string sortingAlgorithmString = cbSortinAlgorythm.Text;
             int gapLimit = Convert.ToInt32(nudGap.Value)*1000;
@@ -42,7 +42,7 @@ namespace FlashcardMaker.Views
             int beforeLimitC = Convert.ToInt32(nudBeforeC.Value);
             int afterLimitC = Convert.ToInt32(nudAfterC.Value);
 
-            createFlashcardsController.createFlashcards(sortingAlgorithmString, gapLimit, beforeLimit, afterLimit, gapLimitC, beforeLimitC, afterLimitC, paddingBefore, paddingAfter);
+            createFlashcardsController.createSubtitleLinePacks(sortingAlgorithmString, gapLimit, beforeLimit, afterLimit, gapLimitC, beforeLimitC, afterLimitC, paddingBefore, paddingAfter);
         }
 
         public void printLine(string v)
@@ -72,7 +72,7 @@ namespace FlashcardMaker.Views
         {
             if (ProgramController.DEBUGGING_CREATEFLASHCARDS)
             {
-                btnCreateFlashcards.PerformClick();
+                btnCreateSubtitleLinePacks.PerformClick();
             }
             if (ProgramController.DEBUGGING_VIDEO_EDITOR)
             {
@@ -80,20 +80,6 @@ namespace FlashcardMaker.Views
             }
         }
 
-        private void label2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label3_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label4_Click(object sender, EventArgs e)
-        {
-
-        }
 
         public void refresh()
         {
@@ -103,6 +89,11 @@ namespace FlashcardMaker.Views
         private void btnCreateMediaFiles_Click(object sender, EventArgs e)
         {
             ProgramController.startMediaCreationSession(this);
+        }
+
+        private void btnCreateFlashcards_Click_1(object sender, EventArgs e)
+        {
+            createFlashcardsController.createFlashcards(this);
         }
     }
 }

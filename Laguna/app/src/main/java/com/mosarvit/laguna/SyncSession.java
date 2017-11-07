@@ -3,6 +3,7 @@ package com.mosarvit.laguna;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.method.ScrollingMovementMethod;
@@ -10,7 +11,7 @@ import android.util.DisplayMetrics;
 import android.widget.TextView;
 
 
-public class SyncSession extends Activity {
+public class SyncSession extends Activity  implements ViewActivity {
 
 
     public Synchronizer<MediaFileSegment> sM;
@@ -24,6 +25,11 @@ public class SyncSession extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        SharedPreferences prefs = getSharedPreferences("FTP_PREFS", MODE_PRIVATE);
+
+
+
 
 
         setContentView(R.layout.sync_seesion_pop_up_layout);
@@ -42,9 +48,10 @@ public class SyncSession extends Activity {
         printLine("Starting the sync process");
 
 
-        sM = new Synchronizer(this, MediaFileSegment.class);
+        sM = new Synchronizer<>(this, MediaFileSegment.class);
 
         sM.synchronize();
+
 
 //        nextTask();
     }
@@ -59,7 +66,7 @@ public class SyncSession extends Activity {
 
     public void makeADecisionsAboutTheContradictions() {
         AlertDialog.Builder alert_builder = new AlertDialog.Builder(SyncSession.this);
-        alert_builder.setMessage("There were some conradictions, how should we act in contradictory cases?").setCancelable(true)
+        alert_builder.setMessage("There were some contradictions, how should we act in contradictory cases?").setCancelable(true)
                 .setNegativeButton(
                         "Download from Server", new DialogInterface.OnClickListener() {
                             @Override
@@ -103,51 +110,4 @@ public class SyncSession extends Activity {
         syncTextView.setText(output + str + "\n");
     }
 
-//    public void nextTask(){
-//
-//        requestCount++;
-//
-//        if (requestCount==1){
-//
-//            fillUpCollections();
-//            return;
-//
-//        }else if (requestCount==2){
-//
-//            if (toDeleteHere.size()>0)
-//                deleteToDeleteHere();
-//            else
-//                nextTask();
-//            return;
-//
-//        }else if (requestCount==3){
-//
-//            if (toInsertHere.size()>0)
-//                insertInApp();
-//            else
-//                nextTask();
-//            return;
-//
-//        }else if (requestCount==4){
-//
-//            if (toInsertOnServer.size()>0)
-//                insertToServer();
-//            else
-//                nextTask();
-//            return;
-//
-//        }else if (requestCount==5){
-//
-//            if (toDeleteOnServer.size()>0)
-//                deleteOnServer();
-//            else
-//                nextTask();
-//            return;
-//        }else if (requestCount==6){
-//
-//            finishSync();
-//            return;
-//        }
-//
-//    }
 }

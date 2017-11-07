@@ -16,6 +16,15 @@ public class Flashcard extends OnServerModel {
     @Column(name = "duetime")
     private long duetime;
 
+    @Column(name = "mediaFileSegmentRemoteId")
+    public int mediaFileSegmentRemoteId;
+
+    @Column(name = "mediaFileSegment", onDelete = Column.ForeignKeyAction.CASCADE)
+    public MediaFileSegment mediaFileSegment;
+
+
+
+
     public void setDuetime(long duetime){
 
         this.updatetime = System.currentTimeMillis();
@@ -55,20 +64,8 @@ public class Flashcard extends OnServerModel {
         this.updatetime = System.currentTimeMillis();
     }
 
-    public Flashcard(){
-        super();
-    }
+    public Flashcard(){}
 
-
-    public Flashcard(int remote_id, String question, long duetime, long updatetime, boolean newfc){
-        super();
-        this.duetime = duetime;
-        this.utwhenloaded = updatetime;
-        this.updatetime = updatetime;
-        this.remote_id = remote_id;
-        this.question = question;
-        this.isNew = newfc;
-    }
 
     public Flashcard(int remote_id, String question, long duetime, long updatetime){
         super();
@@ -77,6 +74,18 @@ public class Flashcard extends OnServerModel {
         this.updatetime = updatetime;
         this.remote_id = remote_id;
         this.question = question;
+    }
+
+    public Flashcard(int remote_id, String question, long duetime, long updatetime, int mediaFileSegmentRemoteId,boolean b){
+        super();
+        this.duetime = duetime;
+        this.utwhenloaded = updatetime;
+        this.updatetime = updatetime;
+        this.isNew = b;
+        this.remote_id = remote_id;
+        this.question = question;
+        this.mediaFileSegmentRemoteId = mediaFileSegmentRemoteId;
+
     }
 
     public Flashcard(int remote_id, long updatetime){
@@ -91,28 +100,14 @@ public class Flashcard extends OnServerModel {
         this.remote_id = remote_id;
     }
 
-    public static String allToString(){
-
-        String str = "";
-
-        List<Flashcard> allFcs = new Select().from(Flashcard.class).execute();
-
-        for (Flashcard fc : allFcs){
-
-            str +=  fc.toString();
-        }
-
-        return str;
-    }
-
     @Override
     public String toString(){
 
-        return "Id: " + this.remote_id +
-                "\nquestion: " + this.question +
+        return "remote_id: " + this.remote_id +
                 "\nupdatetime: " + this.updatetime +
+//                "\nmediaFileSegment.remote_id: " + this.mediaFileSegment.remote_id +
                 "\nduetime: " + this.duetime +
-                "\n\n";
+                "\nquestion:\n " + this.question;
     }
 
     public static Flashcard getByRemoteId(int id){
@@ -134,6 +129,17 @@ public class Flashcard extends OnServerModel {
         }
 
         return hm;
+    }
+
+    public static String allToString(){
+
+        StringBuilder sb = new StringBuilder();
+
+        for (Flashcard fs : getAll()){
+            sb.append(fs.toString()+"\n\n");
+        }
+
+        return sb.toString();
     }
 }
 

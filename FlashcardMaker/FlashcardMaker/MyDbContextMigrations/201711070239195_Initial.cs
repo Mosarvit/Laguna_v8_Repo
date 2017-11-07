@@ -47,6 +47,7 @@ namespace FlashcardMaker.MyDbContextMigrations
                         AddedToFlashcards = c.Boolean(nullable: false),
                         EndTime = c.Int(nullable: false),
                         StartTime = c.Int(nullable: false),
+                        MediaFileSegments_remote_id = c.Int(nullable: false),
                         Movie_Id = c.Int(),
                     })
                 .PrimaryKey(t => t.Id)
@@ -60,6 +61,7 @@ namespace FlashcardMaker.MyDbContextMigrations
                         Id = c.Int(nullable: false, identity: true),
                         question = c.String(unicode: false),
                         duetime = c.Long(nullable: false),
+                        MediaFileSegment_remote_id = c.Int(nullable: false),
                         remote_id = c.Int(nullable: false),
                         utserverwhenloaded = c.Long(nullable: false),
                         utlocal = c.Long(nullable: false),
@@ -70,39 +72,6 @@ namespace FlashcardMaker.MyDbContextMigrations
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.SubtitleLinePacks", t => t.SubtitleLinePack_Id)
                 .Index(t => t.SubtitleLinePack_Id);
-            
-            CreateTable(
-                "dbo.MediaFileSegments",
-                c => new
-                    {
-                        Id = c.Int(nullable: false, identity: true),
-                        MediaFileName = c.String(unicode: false),
-                        FileName = c.String(unicode: false),
-                        remote_id = c.Int(nullable: false),
-                        utserverwhenloaded = c.Long(nullable: false),
-                        utlocal = c.Long(nullable: false),
-                        toDelete = c.Boolean(nullable: false),
-                        isNew = c.Boolean(nullable: false),
-                        MediaFile_Id = c.Int(),
-                        MediaFileSegment_Id = c.Int(),
-                        Flashcard_Id = c.Int(),
-                    })
-                .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.MediaFiles", t => t.MediaFile_Id)
-                .ForeignKey("dbo.MediaFileSegments", t => t.MediaFileSegment_Id)
-                .ForeignKey("dbo.Flashcards", t => t.Flashcard_Id)
-                .Index(t => t.MediaFile_Id)
-                .Index(t => t.MediaFileSegment_Id)
-                .Index(t => t.Flashcard_Id);
-            
-            CreateTable(
-                "dbo.MediaFiles",
-                c => new
-                    {
-                        Id = c.Int(nullable: false, identity: true),
-                        FileName = c.String(unicode: false),
-                    })
-                .PrimaryKey(t => t.Id);
             
             CreateTable(
                 "dbo.Movies",
@@ -138,6 +107,37 @@ namespace FlashcardMaker.MyDbContextMigrations
                 .ForeignKey("dbo.SubtitleLinePacks", t => t.SubtitleLinePack_Id)
                 .Index(t => new { t.Position, t.MovieFileName }, unique: true, name: "IX_FirstAndSecond")
                 .Index(t => t.Movie_Id)
+                .Index(t => t.SubtitleLinePack_Id);
+            
+            CreateTable(
+                "dbo.MediaFiles",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        FileName = c.String(unicode: false),
+                    })
+                .PrimaryKey(t => t.Id);
+            
+            CreateTable(
+                "dbo.MediaFileSegments",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        MediaFileName = c.String(maxLength: 100, storeType: "nvarchar"),
+                        FileName = c.String(maxLength: 100, storeType: "nvarchar"),
+                        remote_id = c.Int(nullable: false),
+                        utserverwhenloaded = c.Long(nullable: false),
+                        utlocal = c.Long(nullable: false),
+                        toDelete = c.Boolean(nullable: false),
+                        isNew = c.Boolean(nullable: false),
+                        MediaFile_Id = c.Int(),
+                        SubtitleLinePack_Id = c.Int(),
+                    })
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.MediaFiles", t => t.MediaFile_Id)
+                .ForeignKey("dbo.SubtitleLinePacks", t => t.SubtitleLinePack_Id)
+                .Index(t => new { t.MediaFileName, t.FileName }, unique: true, name: "IX_FirstAndSecond")
+                .Index(t => t.MediaFile_Id)
                 .Index(t => t.SubtitleLinePack_Id);
             
             CreateTable(
@@ -192,15 +192,14 @@ namespace FlashcardMaker.MyDbContextMigrations
         
         public override void Down()
         {
+            DropForeignKey("dbo.MediaFileSegments", "SubtitleLinePack_Id", "dbo.SubtitleLinePacks");
+            DropForeignKey("dbo.MediaFileSegments", "MediaFile_Id", "dbo.MediaFiles");
             DropForeignKey("dbo.SubtitleLines", "SubtitleLinePack_Id", "dbo.SubtitleLinePacks");
             DropForeignKey("dbo.SubtitleLineChineseWords", "ChineseWord_Id", "dbo.ChineseWords");
             DropForeignKey("dbo.SubtitleLineChineseWords", "SubtitleLine_Id", "dbo.SubtitleLines");
             DropForeignKey("dbo.SubtitleLines", "Movie_Id", "dbo.Movies");
             DropForeignKey("dbo.SubtitleLinePacks", "Movie_Id", "dbo.Movies");
             DropForeignKey("dbo.Flashcards", "SubtitleLinePack_Id", "dbo.SubtitleLinePacks");
-            DropForeignKey("dbo.MediaFileSegments", "Flashcard_Id", "dbo.Flashcards");
-            DropForeignKey("dbo.MediaFileSegments", "MediaFileSegment_Id", "dbo.MediaFileSegments");
-            DropForeignKey("dbo.MediaFileSegments", "MediaFile_Id", "dbo.MediaFiles");
             DropForeignKey("dbo.SubtitleLinePackChineseWords", "ChineseWord_Id", "dbo.ChineseWords");
             DropForeignKey("dbo.SubtitleLinePackChineseWords", "SubtitleLinePack_Id", "dbo.SubtitleLinePacks");
             DropForeignKey("dbo.ChineseWordChineseCharacters", "ChineseCharacter_Id", "dbo.ChineseCharacters");
@@ -211,22 +210,22 @@ namespace FlashcardMaker.MyDbContextMigrations
             DropIndex("dbo.SubtitleLinePackChineseWords", new[] { "SubtitleLinePack_Id" });
             DropIndex("dbo.ChineseWordChineseCharacters", new[] { "ChineseCharacter_Id" });
             DropIndex("dbo.ChineseWordChineseCharacters", new[] { "ChineseWord_Id" });
+            DropIndex("dbo.MediaFileSegments", new[] { "SubtitleLinePack_Id" });
+            DropIndex("dbo.MediaFileSegments", new[] { "MediaFile_Id" });
+            DropIndex("dbo.MediaFileSegments", "IX_FirstAndSecond");
             DropIndex("dbo.SubtitleLines", new[] { "SubtitleLinePack_Id" });
             DropIndex("dbo.SubtitleLines", new[] { "Movie_Id" });
             DropIndex("dbo.SubtitleLines", "IX_FirstAndSecond");
-            DropIndex("dbo.MediaFileSegments", new[] { "Flashcard_Id" });
-            DropIndex("dbo.MediaFileSegments", new[] { "MediaFileSegment_Id" });
-            DropIndex("dbo.MediaFileSegments", new[] { "MediaFile_Id" });
             DropIndex("dbo.Flashcards", new[] { "SubtitleLinePack_Id" });
             DropIndex("dbo.SubtitleLinePacks", new[] { "Movie_Id" });
             DropTable("dbo.SubtitleLineChineseWords");
             DropTable("dbo.SubtitleLinePackChineseWords");
             DropTable("dbo.ChineseWordChineseCharacters");
             DropTable("dbo.NoneChineseCharacters");
+            DropTable("dbo.MediaFileSegments");
+            DropTable("dbo.MediaFiles");
             DropTable("dbo.SubtitleLines");
             DropTable("dbo.Movies");
-            DropTable("dbo.MediaFiles");
-            DropTable("dbo.MediaFileSegments");
             DropTable("dbo.Flashcards");
             DropTable("dbo.SubtitleLinePacks");
             DropTable("dbo.ChineseWords");

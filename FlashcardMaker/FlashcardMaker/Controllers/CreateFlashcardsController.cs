@@ -26,7 +26,7 @@ namespace FlashcardMaker.Controllers
             this.programController = programController;
         }
 
-        internal void createFlashcards(string sortingAlgorithmString, int gapLimit, int beforeLimit, int afterLimit, int gapLimitC, int beforeLimitC, int afterLimitC, int paddingBefore, int paddingAfter)
+        internal void createSubtitleLinePacks(string sortingAlgorithmString, int gapLimit, int beforeLimit, int afterLimit, int gapLimitC, int beforeLimitC, int afterLimitC, int paddingBefore, int paddingAfter)
         {
 
             using (var db = new MyDbContext())
@@ -100,60 +100,29 @@ namespace FlashcardMaker.Controllers
             }
         }
 
-        //private void CreateSubtitlePacks()
-        //{
+        internal void createFlashcards(CreateFlashcardsView createFlashcardsView)
+        {
+            using (MyDbContext db = new MyDbContext())
+            {
+                foreach (SubtitleLinePack stlp in db.SubtitleLinePacks.ToList())
+                {
+                    StringBuilder sb = new StringBuilder();
+                    foreach (SubtitleLine stl in stlp.SubtitleLines)
+                    {
+                        sb.Append(stl.Chinese + "\n");
+                    }
+                    String question = sb.ToString();
 
-
-
-
-
-        //    int totalCount = 0;
-
-        //    using (MyDbContext db = new MyDbContext())
-        //    {
-        //        printLine("Creating SubtitlelinePacks");
-        //        printLine("Number of SubtitlelinePacks: " + db.SubtitleLinePacks.Count());
-
-        //        foreach (Movie movie in db.Movies.ToList())
-        //        {
-        //            IList<SubtitleLine> allSubtitleLineList = movie.SubtitleLines.OrderBy(c => c.Position).ToList();
-        //            SubtitleLinePack stlp = new SubtitleLinePack { SubtitleLines = new List<SubtitleLine>(), ChineseWords = new List<ChineseWord>(), AddedToFlashcards = false };
-        //            db.SubtitleLinePacks.Add(stlp);
-        //            bool firstZero = false;
-
-        //            foreach (SubtitleLine stl in allSubtitleLineList)
-        //            {
-        //                if (stl.CanRead == 0 && firstZero)
-        //                {
-        //                    db.SubtitleLinePacks.Add(stlp);
-        //                    stlp = new SubtitleLinePack { SubtitleLines = new List<SubtitleLine>(), ChineseWords = new List<ChineseWord>() };
-        //                    firstZero = false;
-        //                }
-        //                else if (stl.CanRead == 1)
-        //                {
-        //                    firstZero = true;
-        //                    stlp.SubtitleLines.Add(stl);
-        //                    stlp.ChineseWords.AddRange(stl.ToLearnWords);
-        //                    stlp.NumberOfCharacters += stl.NumberOfCharacters;
-        //                }
-
-        //                view.printStatusLabel("SubtitleLines analyzed: " + totalCount++);
-
-        //                if (ProgramController.DEBUGGING == true && totalCount > ProgramController.MAX_SUBTITLES_TO_UPDATE)
-        //                {
-        //                    db.SaveChanges();
-        //                    return;
-        //                }
-        //            }
-        //        }
-
-        //        db.SaveChanges();
-        //    }
-
-
-
-        //    printLine("Done Creating SubtitlelinePacks");
-        //}
+                    Flashcard fc = Factory.InsertFlashcard(db, view, question, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(), true);
+                    if (stlp.MediaFileSegments_remote_id != null)
+                    {
+                        fc.MediaFileSegment_remote_id = stlp.MediaFileSegments_remote_id;
+                        fc.MediaFileSegment_remote_id = stlp.MediaFileSegments_remote_id;
+                    }
+                }
+            }
+            
+        }        
 
         private static void DeleteAllSubtitleLinePacksInDb()
         {

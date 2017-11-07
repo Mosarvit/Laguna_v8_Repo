@@ -12,11 +12,27 @@ import java.util.List;
 
 public class MediaFileSegment extends OnServerModel
 {
+    public MediaFileSegment(){}
+
+    public MediaFileSegment(int remote_id, long updatetime, String filename, String mediaFileName, boolean b){
+        super();
+        this.utwhenloaded = updatetime;
+        this.updatetime = updatetime;
+        this.remote_id = remote_id;
+        this.fileName = fileName;
+        this.mediaFileName = mediaFileName;
+        this.isNew = b;
+    }
+
     @Column(name = "fileName")
     public String fileName;
 
     @Column(name = "mediafileName")
     public String mediaFileName;
+
+    @Column(name = "flashcard", onDelete = Column.ForeignKeyAction.CASCADE)
+    public Flashcard flashcard;
+
 
     public static List<MediaFileSegment> getAll(){
 
@@ -32,5 +48,27 @@ public class MediaFileSegment extends OnServerModel
         }
 
         return hm;
+    }
+
+    @Override
+    public String toString(){
+
+        return "remote_id: " + this.remote_id +
+                "\nfileName: " + this.fileName +
+                "\nmediaFileName: " + this.mediaFileName +
+                "\nupdatetime: " + this.updatetime +
+                "\nutwhenloaded: " + this.utwhenloaded;
+    }
+
+
+    public static String allToString(){
+
+        StringBuilder sb = new StringBuilder();
+
+        for (MediaFileSegment mfs : getAll()){
+            sb.append(mfs.toString()+"\n\n");
+        }
+
+        return sb.toString();
     }
 }

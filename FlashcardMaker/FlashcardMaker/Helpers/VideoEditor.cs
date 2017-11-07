@@ -18,10 +18,10 @@ namespace FlashcardMaker.Helpers
     {
 
         private IController controller;
-        private int StartTime = 30;
-        private int EndTime = 32;
-        private string SourceFile = "E:\\Users\\Mosarvit\\Downloads\\Nick Sibicky Go Lecture #71 - 4-4 Joseki Workshop.mp4";
-        private string DestinationFile = "E:\\Users\\Mosarvit\\Downloads\\Nick Sibicky Go Lecture #71 - 4-4 Joseki Workshop9.mp4";
+        //private int StartTime = 30;
+        //private int EndTime = 32;
+        //private string SourceFile = "E:\\Users\\Mosarvit\\Downloads\\Nick Sibicky Go Lecture #71 - 4-4 Joseki Workshop.mp4";
+        //private string DestinationFile = "E:\\Users\\Mosarvit\\Downloads\\Nick Sibicky Go Lecture #71 - 4-4 Joseki Workshop9.mp4";
         private ISessionView view;
 
         public VideoEditor(ISessionView view)
@@ -126,7 +126,8 @@ namespace FlashcardMaker.Helpers
             oInfo.RedirectStandardError = true;
 
             //Create the output and streamreader to get the output
-            string output = null; StreamReader srOutput = null;
+            string output = null;
+            /* StreamReader srOutput = null;*/
 
 
 

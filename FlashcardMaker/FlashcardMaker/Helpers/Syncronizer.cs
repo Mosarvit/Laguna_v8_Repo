@@ -25,8 +25,9 @@ namespace FlashcardMaker.Helpers
     {
         private ISessionView view;
 
-        private List<OnServerModel> newFcsHere = new List<OnServerModel>();
-        private Dictionary<int, OnServerModel> notNewFcsHere = new Dictionary<int, OnServerModel>();
+        //private List<OnServerModel> newFcsHere = new List<OnServerModel>();
+        private Dictionary<int, OnServerModel> allFcsHere = new Dictionary<int, OnServerModel>();
+        //private Dictionary<int, OnServerModel> notNewFcsHere = new Dictionary<int, OnServerModel>();
         private Dictionary<int, OnServerModel> fcsServer = new Dictionary<int, OnServerModel>();
 
         private List<OnServerModel> toRequestFromServer = new List<OnServerModel>();
@@ -49,9 +50,7 @@ namespace FlashcardMaker.Helpers
         private string usersMediaFolder = Properties.Settings.Default.UsersMediaFolder;
         private string applicationsMediaFolder = Properties.Settings.Default.ApplicationsMediaFolder;
 
-        private MyDbContext db;
-
-        private int largestRemoteIdOnServer;
+        private MyDbContext db;        
 
         public bool dbSyncSuccessful = true;
         public bool mediaSyncSuccessful = true;
@@ -83,7 +82,8 @@ namespace FlashcardMaker.Helpers
 
                     if (success)
                     {
-                        syncronizeMediaFiles();
+                        if (typeof(T) == typeof(MediaFileSegment))
+                            SyncronizeMediaFiles();
 
                         if (success)
                         {
@@ -105,10 +105,6 @@ namespace FlashcardMaker.Helpers
 
             printLine("done");
         }
-
-
-
-
 
         private void FillUpCollections()
         {
@@ -132,19 +128,31 @@ namespace FlashcardMaker.Helpers
                 else if (typeof(T) == typeof(MediaFileSegment))
                 {
                     parameters.Add("mediafilesegment[0]", "1");
-                }
-                try
-                {
-                    serverResponse = client.UploadValues("http://mosar.heliohost.org/get_to_check_for_sync.php", parameters);
-                    printLine("Response received");
+                }                
 
-                }
-                catch (WebException)
+                int tries = 5;
+                while (true)
                 {
-                    //throw;
-                    success = false;
-                    printLine("Time out");
-                    return;
+                    try
+                    {
+                        serverResponse = client.UploadValues("http://mosar.heliohost.org/get_to_check_for_sync.php", parameters);
+                        printLine("Response received");
+                        break;
+                    }
+                    catch (WebException)
+                    {
+                        printLine("Failure 11, Time out");
+                        if (--tries == 0)
+                        {
+                            success = false;
+                            printLine("Achieved number of retries");
+                            break;
+                        }
+                        else
+                        {
+                            printLine("retrying");
+                        }
+                    }
                 }
 
                 response = Encoding.UTF8.GetString(serverResponse);
@@ -152,51 +160,51 @@ namespace FlashcardMaker.Helpers
                 //printLine("response3: " + response);
 
                 fillUpFcsServer(response);
-
-                largestRemoteIdOnServer = GetLargestRemoteId();
-
-                printLine("largestRemoteIdOnServer : " + largestRemoteIdOnServer);
+                
                 printLine("fcsServer.Count() : " + fcsServer.Count());
 
-                SplitNewAndNotNew();
+                FillAllFcsHere();
 
-                AssignRemoteIdsOfTheNewFcs();
+                //AssignRemoteIdsOfTheNewFcs();
+                
 
-                toInsertOnServer.AddRange(newFcsHere);
-
-                foreach (T notNewFcHere in notNewFcsHere.Values)
+                foreach (T tHere in allFcsHere.Values)
                 {
                     OnServerModel fcServer;
 
-                    if (!fcsServer.Keys.Contains(notNewFcHere.remote_id))
+                    if (!fcsServer.Keys.Contains(tHere.remote_id))
                     {
-                        printLine("notNewFcHere.remote_id : " + notNewFcHere.remote_id);
-                        printLine("have to delete");
-                        
-                        toDeleteHere.Add(notNewFcHere);
+                        if (tHere.isNew)
+                        {
+                            toInsertOnServer.Add(tHere);
+                        }
+                        else
+                        {
+                            toDeleteHere.Add(tHere);
+                        }                        
                     }
                     else
                     {
-                        fcServer = fcsServer[notNewFcHere.remote_id];
+                        fcServer = fcsServer[tHere.remote_id];
 
                         ////debug
-                        printLine("\r\nremote_id : " + notNewFcHere.remote_id +
-                                    "\r\nfcHere.updatetimelocal : " + notNewFcHere.utlocal +
-                                    "\r\nfcHere.toDelete : " + notNewFcHere.toDelete +
-                                    "\r\nfcHere.updatetimewhenloaded : " + notNewFcHere.utserverwhenloaded +
+                        printLine("\r\nremote_id : " + tHere.remote_id +
+                                    "\r\nfcHere.updatetimelocal : " + tHere.utlocal +
+                                    "\r\nfcHere.toDelete : " + tHere.toDelete +
+                                    "\r\nfcHere.updatetimewhenloaded : " + tHere.utserverwhenloaded +
                                     "\r\nfcServer.updatetimewhenloaded : " + fcServer.utserverwhenloaded
                                  );
-                        if (notNewFcHere.utlocal > notNewFcHere.utserverwhenloaded
-                            && fcServer.utserverwhenloaded > notNewFcHere.utserverwhenloaded)
+                        if (tHere.utlocal > tHere.utserverwhenloaded
+                            && fcServer.utserverwhenloaded > tHere.utserverwhenloaded)
                         {
-                            contradictingHereVersion.Add(notNewFcHere);
+                            contradictingHereVersion.Add(tHere);
                             contradictingServerVersion.Add(fcServer);
                         }
-                        else if (notNewFcHere.utlocal > notNewFcHere.utserverwhenloaded)
+                        else if (tHere.utlocal > tHere.utserverwhenloaded)
                         {
-                            updatedOnlyHereAfterLoading.Add(notNewFcHere);
+                            updatedOnlyHereAfterLoading.Add(tHere);
                         }
-                        else if (fcServer.utserverwhenloaded > notNewFcHere.utserverwhenloaded)
+                        else if (fcServer.utserverwhenloaded > tHere.utserverwhenloaded)
                         {
                             updatedOnlyOnServerAfterLoading.Add(fcServer);
                         }
@@ -206,14 +214,14 @@ namespace FlashcardMaker.Helpers
 
                 foreach (T fcServer in fcsServer.Values)
                 {
-                    if (!notNewFcsHere.Keys.Contains(fcServer.remote_id))
+                    if (!allFcsHere.Keys.Contains(fcServer.remote_id))
                     {
                         toRequestFromServer.Add(fcServer);
                     }
                 }
 
                 ////DEBUG
-                printLine("\r\nnewFcsHere : " + newFcsHere.Count() +
+                printLine("\r\nallFcsHere : " + allFcsHere.Count() +
                             "\r\ntoDeleteHere : " + toDeleteHere.Count() +
                             "\r\ntoInsertHere : " + toRequestFromServer.Count() +
                             "\r\ncontradictingHereVersion: " + contradictingHereVersion.Count() +
@@ -236,7 +244,7 @@ namespace FlashcardMaker.Helpers
                             "\r\ntoInsertOnServer: " + toInsertOnServer.Count() +
                             "\r\ntoInsertHere: " + toRequestFromServer.Count());
 
-
+                
 
             }
         }
@@ -275,54 +283,43 @@ namespace FlashcardMaker.Helpers
             }
         }
 
-        private void AssignRemoteIdsOfTheNewFcs()
-        {
-            int i = largestRemoteIdOnServer;
+        //private void AssignRemoteIdsOfTheNewFcs()
+        //{
+        //    int i = largestRemoteIdOnServer;
 
-            foreach (OnServerModel fc in newFcsHere)
-            {
-                fc.remote_id = i;
-                i++;
-            }
-        }
+        //    foreach (OnServerModel fc in newFcsHere)
+        //    {
+        //        fc.remote_id = i;
+        //        i++;
+        //    }
+        //}
 
-        private void SplitNewAndNotNew()
+        private void FillAllFcsHere()
         {
             // TRYY
-            //if (typeof(T) == typeof(Flashcard))
-            //{
-                foreach (OnServerModel fc in db.Flashcards.ToList())
+            if (typeof(T) == typeof(Flashcard))
+            {
+                foreach (Flashcard fc in db.Flashcards.ToList())
                 {
-                    if (fc.isNew)
-                    {
-                        newFcsHere.Add(fc);
-                    }
-                    else
-                    {
-                        notNewFcsHere[fc.remote_id] = fc;
-                    }
+                    allFcsHere[fc.remote_id] = fc;
                 }
-            //}
-            //else if (typeof(T) == typeof(MediaFileSegment))
-            //{
-            //    foreach (MediaFileSegment fc in db.MediaFileSegments.ToList())
-            //    {
-            //        if (fc.isNew)
-            //        {
-            //            newFcsHere.Add(fc);
-            //        }
-            //        else
-            //        {
-            //            notNewFcsHere[fc.remote_id] = fc;
-            //        }
-            //    }
-            //}
-
+            }
+            else if (typeof(T) == typeof(MediaFileSegment))
+            {
+                foreach (MediaFileSegment fc in db.MediaFileSegments.ToList())
+                {
+                    allFcsHere[fc.remote_id] = fc;
+                }
+            }
         }
 
         private void fillUpFcsServer(string response)
         {
             printLine("fillUpFcsServer response: " + response);
+
+            if (response.Equals("null")){
+                return;
+            }
 
             try
             {
@@ -345,12 +342,12 @@ namespace FlashcardMaker.Helpers
             }
             catch (Newtonsoft.Json.JsonReaderException)
             {
-                printLine("response3: " + response);
+                printLine("Failure 3, response: " + response);
                 success = false;
             }
             catch (System.NullReferenceException)
             {
-                printLine("response3: " + response);
+                printLine("Failure 4, response: " + response);
                 success = false;
             }
         }
@@ -402,6 +399,11 @@ namespace FlashcardMaker.Helpers
         {
             printLine("Starting to Make an Insert Delete Select request on server");
 
+            if (toDeleteOnServer.Count()==0 && toInsertOnServer.Count() == 0 && toRequestFromServer.Count()==0)
+            {
+                return;
+            }
+
             byte[] serverResponse = new byte[0]; ;
 
             NameValueCollection parameters = SetParameters();
@@ -413,6 +415,7 @@ namespace FlashcardMaker.Helpers
             }
             catch (WebException)
             {
+                printLine("Failure 5");
                 success = false;
                 printLine("Time out");
                 return;
@@ -431,34 +434,28 @@ namespace FlashcardMaker.Helpers
                 dynJson = JsonConvert.DeserializeObject(response);
                 foreach (var item in dynJson)
                 {
-                    int remote_id = item.remote_id;
-
-
-
                     if (typeof(T) == typeof(Flashcard))
                     {
-                        Flashcard fc = new Flashcard
-                        {
-                            remote_id = item.remote_id,
-                            question = item.question,
-                            duetime = item.duetime,
-                            utserverwhenloaded = item.updatetime,
-                            utlocal = item.updatetime,
-                            isNew = false
-                        };
+                        int remote_id = item.remote_id;
+                        string question = item.question;
+                        long duetime = item.duetime;
+                        long utserverwhenloaded = item.updatetime;
+                        long updatetime = item.updatetime;
+                        int MediaFileSegment_remote_id = item.media_file_segment_remote_id;
+
+                        Flashcard fc = Factory.InsertOrUpdateFlashcard(db, view, remote_id, updatetime, duetime, question, MediaFileSegment_remote_id, false);
+
                         toInserHere.Add(fc);
                     }
                     else if (typeof(T) == typeof(MediaFileSegment))
                     {
-                        MediaFileSegment mfs = new MediaFileSegment
-                        {
-                            remote_id = item.remote_id,
-                            utserverwhenloaded = item.updatetime,
-                            utlocal = item.updatetime,
-                            FileName = item.filename,
-                            MediaFileName = item.mediafilename,
-                            isNew = false
-                        };
+                        int remote_id = item.remote_id;
+                        long utserverwhenloaded = item.updatetime;
+                        long utlocal = item.updatetime;
+                        string FileName = item.filename;
+                        string MediaFileName = item.mediafilename;
+
+                        MediaFileSegment mfs = Factory.InsertOrUpdateMediaFileSegment(db, view, remote_id, utlocal, FileName, MediaFileName, false);
 
                         toInserHere.Add(mfs);
 
@@ -477,7 +474,7 @@ namespace FlashcardMaker.Helpers
             else
             {
                 badResponse(response);
-                requestSuccessful = false;
+                success = false;
             }
 
 
@@ -487,12 +484,14 @@ namespace FlashcardMaker.Helpers
 
         private void badResponse(string response)
         {
-            printLine("Bad response: \r\n" + response);
+            printLine("Failure 12, response: " + response);
             dbSyncSuccessful = false;
         }
 
         private void MakeLocalChangesOnSeccessfulSession()
         {
+            printLine("MakeLocalChangesOnSeccessfulSession() started");
+
             foreach (T fc in toInsertOnServer)
             {
                 fc.utserverwhenloaded = fc.utlocal;
@@ -509,35 +508,38 @@ namespace FlashcardMaker.Helpers
                 {
                     db.Flashcards.Remove(fc);
                 }
-                foreach (Flashcard fc in toInserHere)
+                foreach (Flashcard mfs in db.Flashcards.Where(c => c.isNew).ToList())
                 {
-                    db.Flashcards.Add(fc);
+                    mfs.isNew = false;
                 }
             }
             else if (typeof(T) == typeof(MediaFileSegment))
             {
                 foreach (MediaFileSegment mfs in toDeleteOnServer)
                 {
+                    SubtitleLinePack stlp = db.SubtitleLinePacks.Where(p => p.MediaFileSegments_remote_id == mfs.remote_id).SingleOrDefault();
+                    if (stlp != null)
+                    {
+                        stlp.MediaFileSegments_remote_id = 0;
+                    }
                     db.MediaFileSegments.Remove(entity: (MediaFileSegment)mfs);
                 }
                 foreach (MediaFileSegment mfs in toDeleteHere)
                 {
+                    SubtitleLinePack stlp = db.SubtitleLinePacks.Where(p => p.MediaFileSegments_remote_id == mfs.remote_id).SingleOrDefault();
+                    if (stlp != null)
+                    {
+                        stlp.MediaFileSegments_remote_id = 0;
+                    }
                     db.MediaFileSegments.Remove(entity: (MediaFileSegment)mfs);
                 }
-                foreach (MediaFileSegment mfs in toInserHere)
+                foreach(MediaFileSegment mfs in db.MediaFileSegments.Where(c => c.isNew).ToList())
                 {
-                    Factory.InsertOrUpdateMediaFileSegment(db, view, mfs);
+                    mfs.isNew = false;
                 }
-            }
-
-
-            foreach (T fc in newFcsHere)
-            {
-                fc.isNew = false;
             }
 
             db.SaveChanges();
-
         }
 
         private NameValueCollection SetParameters()
@@ -554,6 +556,7 @@ namespace FlashcardMaker.Helpers
                     parameters.Add("questions[" + i + "]", fc.question);
                     parameters.Add("duetimes[" + i + "]", fc.utlocal.ToString());
                     parameters.Add("updatetimes[" + i + "]", fc.utlocal.ToString());
+                    parameters.Add("media_file_segment_remote_ids[" + i + "]", fc.MediaFileSegment_remote_id.ToString());
 
                     i++;
                 }
@@ -606,18 +609,20 @@ namespace FlashcardMaker.Helpers
             return parameters;
         }
 
-        internal void syncronizeMediaFiles()
+        internal void SyncronizeMediaFiles()
         {
             using (OurWebClient client = new OurWebClient())
             {
-                printLine("Starting");
+                printLine("SyncronizeMediaFiles starting");
 
                 client.Credentials = new NetworkCredential(userName, password);
 
-                DeleteHere();
-                UpLoadToInsertOnServer(client);
+                DeleteMediaFilesHere();
+                UploadToServer(client);
                 DeleteOnserver(client);
                 DownloadFromServer(client);
+
+                printLine("SyncronizeMediaFiles finished");
             }
         }
 
@@ -628,7 +633,11 @@ namespace FlashcardMaker.Helpers
                 //string remoteUri = "ftp://mosar.heliohost.org/";
                 //string fileName = "xczx.php", myStringWebResource = null;
 
-                string ftpFilePath = ftpMediaFolder + "/" + mfs.MediaFile.FileName + "/" + mfs.FileName;
+                //view.printLine();
+
+                string ftpFilePath =    ftpMediaFolder + "/" 
+                                    + mfs.MediaFile.FileName + "/" 
+                                    + mfs.FileName;
                 string localFilePath = Path.Combine(Properties.Settings.Default.ApplicationsMediaFolder, mfs.MediaFile.FileName, mfs.FileName);
 
                 printLine("Downloading :" + ftpFilePath);
@@ -642,7 +651,7 @@ namespace FlashcardMaker.Helpers
                 catch (WebException)
                 {
                     //throw;
-
+                    printLine("Failure 6");
                     success = false;
                     printLine("Time out");
                     return;
@@ -673,7 +682,7 @@ namespace FlashcardMaker.Helpers
                 catch (WebException)
                 {
                     //throw;
-
+                    printLine("Failure 7");
                     success = false;
                     printLine("Time out. MediaSync not Successful");
                     return;
@@ -681,21 +690,17 @@ namespace FlashcardMaker.Helpers
             }
         }
 
-        private void DeleteHere()
+        private void DeleteMediaFilesHere()
         {
             foreach (MediaFileSegment mfs in toDeleteHere)
             {
-                // TO-DO : this is not a nice solution at all
-
                 string path = Path.Combine(applicationsMediaFolder, Path.Combine(mfs.MediaFile.FileName, mfs.FileName));
                 File.Delete(path);
                 printLine("Deleted : " + mfs.FileName);
             }
-        }
+        }        
 
-        
-
-        private void UpLoadToInsertOnServer(OurWebClient client)
+        private void UploadToServer(OurWebClient client)
         {
             foreach (MediaFileSegment mfs in toInsertOnServer)
             {
@@ -720,17 +725,32 @@ namespace FlashcardMaker.Helpers
             printLine("filePathFtp : " + filePathFtp);
 
             byte[] serverResponse = new byte[0];
-            try
-            {
-                client.Credentials = new NetworkCredential(userName, password);
-                serverResponse = client.UploadFile(filePathFtp, "STOR", fileToUpload);
 
-            }
-            catch (WebException)
+            int tries = 5;
+            while (true)
             {
-                success = false;
-                printLine("Time out");
+                try
+                {
+                    client.Credentials = new NetworkCredential(userName, password);
+                    serverResponse = client.UploadFile(filePathFtp, "STOR", fileToUpload);
+                    break;
+                }
+                catch (WebException)
+                {
+                    printLine("Failure 8, Time out");
+                    if (--tries == 0)
+                    {
+                        success = false;
+                        printLine("Achieved number of retries");
+                        break;
+                    }
+                    else
+                    {
+                        printLine("retrying");
+                    }                   
+                }
             }
+            
 
             var response = Encoding.UTF8.GetString(serverResponse);
 
@@ -756,7 +776,7 @@ namespace FlashcardMaker.Helpers
             catch (WebException)
             {
                 //throw;
-
+                printLine("Failure 9");
                 success = false;
                 printLine("Time out. MediaSync not Successful");
                 return;
@@ -791,7 +811,7 @@ namespace FlashcardMaker.Helpers
             catch (WebException)
             {
                 //throw;
-
+                printLine("Failure 10");
                 success = false;
                 printLine("Time out. MediaSync not Successful");
                 return directories;
@@ -813,9 +833,7 @@ namespace FlashcardMaker.Helpers
             }
 
             return directories;
-        }
-
-        
+        }        
 
         private void cancelSync()
         {

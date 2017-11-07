@@ -13,7 +13,7 @@ namespace FlashcardMaker.Helpers
     {
         internal static void updateDbMediaFiles(MyDbContext db, ISessionView view)
         {
-            view.printLine("Local MediaFiles Inventory");
+            view.printLine("Local MediaFiles Inventory started");
 
             List<MediaFile> mf_s = new List<MediaFile>();
 
@@ -60,21 +60,25 @@ namespace FlashcardMaker.Helpers
                 {
                     if (!fileNames.Contains(mfs.FileName))
                     {
-                        db.MediaFileSegments.Remove(mfs);
-                        db.SaveChanges();
+                        Factory.DeleteMediaFileSegment(db, view, mfs);
+                        //db.MediaFileSegments.Remove(mfs);                        
                     }
                 }
+
+                db.SaveChanges();
             }
 
             // delete db MediaFiles, that we have no File of
 
             foreach (var mf in db.MediaFiles.ToList())
             {
-                if (!directoryNames.Contains(mf.FileName))
+                if (mf.MediaFileSegments.Count()==0)
                 {
                     Factory.DeleteMediaFile(db, view, mf);
                 }
             }
+
+            view.printLine("Local MediaFiles Inventory finished");
         }
     }
 }

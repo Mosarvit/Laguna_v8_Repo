@@ -18,12 +18,10 @@ public abstract class OnServerModel extends Model {
     @Column(name = "utwhenloaded")
     public long utwhenloaded;
 
-    @Column(name = "isNew")
-    public boolean isNew;
-
     @Column(name = "toDelete")
     public boolean toDelete;
 
-
+    @Column(name = "isNew")
+    public boolean isNew;
 
 }

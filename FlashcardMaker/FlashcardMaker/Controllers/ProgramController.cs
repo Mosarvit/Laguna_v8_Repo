@@ -16,16 +16,17 @@ namespace FlashcardMaker.Controllers
         public static bool DEBUGGING = true;
         public static bool DEBUGGING_CREATEFLASHCARDS = false;
         public static bool DEBUGGING_VIDEO_EDITOR = false;
-        public static bool DEBUGGING_MEDIA_FILES = false;
+        public static bool DEBUGGING_MEDIA_FILES = true;
 
         public static int MAX_CHINESE_CHARACTERS_TO_LOAD = 15000;
         public static int MAX_CHINESE_WORDS_TO_LOAD = 15000;
         public static int MAX_SUBTITLES_TO_LOAD = 50;
         public static int MAX_SUBTITLES_TO_UPDATE_TO_USE_FOR_PACKS = 500;
-        public static int MAX_MEDIA_FILES_TO_CREATE = 1;
+        public static int MAX_MEDIA_FILES_TO_CREATE = 2;
+
+        public static int CLIENT_ID = 1;
 
         private ISessionView view;
-        private DataIOController mainFormController;
 
         public ProgramController(ISessionView view)
         {
@@ -73,7 +74,7 @@ namespace FlashcardMaker.Controllers
 
         internal static void startMediaCreationSession(ISessionView view)
         {
-            MediaFilesController mediaFilesController = new MediaFilesController(view = view);
+            MediaFilesController mediaFilesController = new MediaFilesController(view);
             mediaFilesController.creatMediaFiles();
         }
 

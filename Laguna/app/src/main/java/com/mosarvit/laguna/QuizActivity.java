@@ -1,5 +1,6 @@
 package com.mosarvit.laguna;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,15 +13,19 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import com.activeandroid.query.Select;
 
 import java.util.List;
 
+import static com.mosarvit.laguna.R.id.videoView;
+
 public class QuizActivity extends AppCompatActivity {
 
     private static TextView questionTextView;
     private static WebView webView;
+    private static android.widget.VideoView videoView;
     private static Button btnTest, btnShortest, btnMiddle, btnLongest;
     List<Flashcard> allFcs;
     Flashcard currentFc;
@@ -48,9 +53,11 @@ public class QuizActivity extends AppCompatActivity {
         btnMiddle = (Button)findViewById(R.id.btnMiddle);
         btnLongest = (Button)findViewById(R.id.btnLongest);
         webView = (WebView) findViewById(R.id.wbvQuestion);
+        videoView = (VideoView) findViewById(R.id.videoView);
 
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient());
+        webView.getSettings().setDefaultTextEncodingName("utf-8");
 
 //        questionTextView.set
 //        setContentView(webView);
@@ -116,6 +123,18 @@ public class QuizActivity extends AppCompatActivity {
 
         refreshCurrentFc();
         refreshQuestion();
+        refreshMediaFile();
+    }
+
+    private void refreshMediaFile() {
+
+        if (currentFc.mediaFileSegment != null){
+            String videopath = SharedData.FTP_MEDIA_FOLDER + "/" + currentFc.mediaFileSegment.mediaFileName + "/" + currentFc.mediaFileSegment.fileName;
+            Uri uri = Uri.parse(videopath);
+            videoView.setVideoURI(uri);
+            videoView.start();
+        }
+
     }
 
     private void refreshQuestion() {
@@ -159,7 +178,7 @@ public class QuizActivity extends AppCompatActivity {
 //            output = "";
 //        }
 
-        webView.loadData(str, "text/html", "UTF-8");
+        webView.loadData(str, "text/html; charset=utf-8", "UTF-8");
 
 //        questionTextView.setText(output+str+"\n");
     }
@@ -167,6 +186,6 @@ public class QuizActivity extends AppCompatActivity {
     private static void printToQuestionTextView(String str){
 
 //        questionTextView.setText(str);
-        webView.loadData(str, "text/html", "UTF-8");
+        webView.loadData(str, "text/html; charset=utf-8", "UTF-8");
     }
 }

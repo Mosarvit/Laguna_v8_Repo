@@ -13,7 +13,7 @@ namespace FlashcardMaker.MyDbContextMigrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201711020005131_Initial"; }
+            get { return "201711070239195_Initial"; }
         }
         
         string IMigrationMetadata.Source
