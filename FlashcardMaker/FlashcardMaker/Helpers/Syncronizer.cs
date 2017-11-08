@@ -399,6 +399,8 @@ namespace FlashcardMaker.Helpers
         {
             printLine("Starting to Make an Insert Delete Select request on server");
 
+            client.Encoding = System.Text.Encoding.UTF8;
+
             if (toDeleteOnServer.Count()==0 && toInsertOnServer.Count() == 0 && toRequestFromServer.Count()==0)
             {
                 return;

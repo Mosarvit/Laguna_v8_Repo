@@ -17,12 +17,15 @@ namespace FlashcardMaker.Controllers
         public static bool DEBUGGING_CREATEFLASHCARDS = false;
         public static bool DEBUGGING_VIDEO_EDITOR = false;
         public static bool DEBUGGING_MEDIA_FILES = true;
+        public static bool DEBUGGING_FLASHCARDS = true;
 
         public static int MAX_CHINESE_CHARACTERS_TO_LOAD = 15000;
         public static int MAX_CHINESE_WORDS_TO_LOAD = 15000;
-        public static int MAX_SUBTITLES_TO_LOAD = 50;
-        public static int MAX_SUBTITLES_TO_UPDATE_TO_USE_FOR_PACKS = 500;
-        public static int MAX_MEDIA_FILES_TO_CREATE = 2;
+        public static int MAX_SUBTITLES_TO_LOAD = 500000000;
+        public static int MAX_SUBTITLES_TO_UPDATE_TO_USE_FOR_PACKS = 50000;
+        public static int MAX_MEDIA_FILES_TO_CREATE = 10;
+        public static int MAX_SUBTITLE_LINE_PACKS_TO_CREATE = 10;
+        //public static int MAX_FLASHCARDS_TO_CREATE = 2;
 
         public static int CLIENT_ID = 1;
 

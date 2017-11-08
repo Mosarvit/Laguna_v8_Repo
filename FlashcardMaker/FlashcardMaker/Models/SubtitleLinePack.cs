@@ -18,12 +18,13 @@ namespace FlashcardMaker.Models
         public int NumberOfNotYetInTempSortWords { get; set; }
         public int NumberOfCharacters { get; set; }
         public int NumberOfToLearnWords { get; set; }
-        public double DensityOfToLearnWords { get; set; }
+        public double importance { get; set; }
         public bool AddedToFlashcards { get; set; }
         public virtual Movie Movie { get; set; }
         public int EndTime { get; set; }
         public int StartTime { get; set; }
-         
-        public virtual int MediaFileSegments_remote_id { get; set; } 
+        public int Rank { get; set; } = 0;
+
+        public virtual int MediaFileSegments_remote_id { get; set; } = 0;
     }
 }

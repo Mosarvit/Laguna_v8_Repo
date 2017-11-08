@@ -11,6 +11,6 @@ namespace FlashcardMaker.Sortin_Algorithms
 {
     interface ISortingAlgorithm<T>
     {
-        List<T> SortedSubtitleLinePackList(MyDbContext db);
+        List<T> SortedSubtitleLinePackList(MyDbContext db, int sortingAlgorithmString);
     }
 }

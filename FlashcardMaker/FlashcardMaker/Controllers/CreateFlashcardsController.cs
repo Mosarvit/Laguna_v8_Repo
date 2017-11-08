@@ -26,7 +26,7 @@ namespace FlashcardMaker.Controllers
             this.programController = programController;
         }
 
-        internal void createSubtitleLinePacks(string sortingAlgorithmString, int gapLimit, int beforeLimit, int afterLimit, int gapLimitC, int beforeLimitC, int afterLimitC, int paddingBefore, int paddingAfter)
+        internal void createSubtitleLinePacks(int gapLimit, int beforeLimit, int afterLimit, int gapLimitC, int beforeLimitC, int afterLimitC, int paddingBefore, int paddingAfter)
         {
 
             using (var db = new MyDbContext())
@@ -37,12 +37,7 @@ namespace FlashcardMaker.Controllers
 
                 view.printLine("Creating flashCards process begins");
 
-                sortingAlgorithm = new SortingAlgorithm1(this);
-
-                if (sortingAlgorithmString.Equals("SorthingAlgorythm1"))
-                {
-                    sortingAlgorithm = new SortingAlgorithm1(this);
-                }
+                
 
                 view.printLine("Deleting all SubtitleLinePacks");
 
@@ -89,40 +84,75 @@ namespace FlashcardMaker.Controllers
                 db.SaveChanges();
 
                 //CreateSubtitlePacks();
-                List<ILinePack> tempSortSubtitleLinePackList = sortingAlgorithm.SortedSubtitleLinePackList(db);
 
-                view.printLine("Number of stlps: " + tempSortSubtitleLinePackList.Count());
 
                 //flashcardcreator.CreateFlashcards(tempSortSubtitleLinePackList, this);
 
-                view.printLine("Done with creating Flashcards process!\n");
 
             }
         }
 
-        internal void createFlashcards(CreateFlashcardsView createFlashcardsView)
+        internal void SortSubtitleLinePacks(CreateFlashcardsView createFlashcardsView, String sortingAlgorithmString, int importanceOfDensity)
+        {
+            sortingAlgorithm = new SortingAlgorithm1(this);
+
+            if (sortingAlgorithmString.Equals("SorthingAlgorythm1"))
+            {
+                sortingAlgorithm = new SortingAlgorithm1(this);
+            }
+
+            using (var db = new MyDbContext())
+            {
+                List<ILinePack> tempSortSubtitleLinePackList = sortingAlgorithm.SortedSubtitleLinePackList(db, importanceOfDensity);
+
+                view.printLine("Number of stlps: " + tempSortSubtitleLinePackList.Count());
+            }
+        }
+
+        internal void CreateFlashcards(CreateFlashcardsView createFlashcardsView)
         {
             using (MyDbContext db = new MyDbContext())
             {
+
+
+
+                int counter = 0;
+
                 foreach (SubtitleLinePack stlp in db.SubtitleLinePacks.ToList())
                 {
+                    //if (counter > ProgramController.MAX_FLASHCARDS_TO_CREATE && ProgramController.DEBUGGING_FLASHCARDS)
+                    //{
+                    //    view.printLine("achieved MAX_FLASHCARDS_TO_CREATE");
+                    //    break;
+                    //}
+
+                    if (stlp.MediaFileSegments_remote_id == 0 && ProgramController.DEBUGGING_FLASHCARDS)
+                    {
+                        continue;
+                    }
+
+
                     StringBuilder sb = new StringBuilder();
                     foreach (SubtitleLine stl in stlp.SubtitleLines)
                     {
-                        sb.Append(stl.Chinese + "\n");
+                        sb.Append(" - " + stl.Chinese + "</br>");
                     }
                     String question = sb.ToString();
 
                     Flashcard fc = Factory.InsertFlashcard(db, view, question, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(), true);
-                    if (stlp.MediaFileSegments_remote_id != null)
+                    if (stlp.MediaFileSegments_remote_id != 0)
                     {
                         fc.MediaFileSegment_remote_id = stlp.MediaFileSegments_remote_id;
-                        fc.MediaFileSegment_remote_id = stlp.MediaFileSegments_remote_id;
                     }
+
+                    counter++;
                 }
+
+                db.SaveChanges();
+                printLine("Number of Flashcards created: " + counter);
             }
-            
-        }        
+
+        }
 
         private static void DeleteAllSubtitleLinePacksInDb()
         {

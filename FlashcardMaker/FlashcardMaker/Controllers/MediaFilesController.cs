@@ -28,8 +28,13 @@ namespace FlashcardMaker.Controllers
                 Updater.updateDbMediaFiles(db, view);
                 int totalCount = 0;
 
-                foreach (SubtitleLinePack stlp in db.SubtitleLinePacks.ToList())
+                foreach (SubtitleLinePack stlp in db.SubtitleLinePacks.Where(p=>p.Rank>0).ToList())
                 {
+                    if (stlp.MediaFileSegments_remote_id > 0)
+                    {
+                        continue;
+                    }
+
                     view.printLine("stlp: " + stlp.StartTime);
 
                     if (++totalCount > ProgramController.MAX_MEDIA_FILES_TO_CREATE && ProgramController.DEBUGGING_MEDIA_FILES)

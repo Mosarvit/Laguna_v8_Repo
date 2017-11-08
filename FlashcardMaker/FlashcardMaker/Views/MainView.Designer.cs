@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainView));
             this.btnBrowseAddToDatabase = new System.Windows.Forms.Button();
             this.btnAddToDatabase = new System.Windows.Forms.Button();
             this.txtbxAddToDatabase = new System.Windows.Forms.TextBox();
@@ -84,9 +85,7 @@
             this.txtbxAddToDatabase.Name = "txtbxAddToDatabase";
             this.txtbxAddToDatabase.Size = new System.Drawing.Size(423, 20);
             this.txtbxAddToDatabase.TabIndex = 2;
-            this.txtbxAddToDatabase.Text = "\"E:\\Users\\Mosarvit\\Documents\\SharedFolder\\subtitles\\SRTs\\Caught.in.the.Web.2012.s" +
-    "rt\" ; \"E:\\Users\\Mosarvit\\Documents\\SharedFolder\\subtitles\\SRTs\\Women.Who.Flirt.2" +
-    "014.1080p.BluRay.x264-WiKi.简体.srt\"";
+            this.txtbxAddToDatabase.Text = resources.GetString("txtbxAddToDatabase.Text");
             this.txtbxAddToDatabase.TextChanged += new System.EventHandler(this.txtbxAddToDatabase_TextChanged);
             // 
             // label1

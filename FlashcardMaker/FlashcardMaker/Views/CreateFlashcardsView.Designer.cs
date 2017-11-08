@@ -58,6 +58,9 @@ namespace FlashcardMaker.Views
             this.label13 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
             this.btnCreateFlashcards = new System.Windows.Forms.Button();
+            this.btnSortSubtitleLinePacks = new System.Windows.Forms.Button();
+            this.nudImportanceOfDensity = new System.Windows.Forms.NumericUpDown();
+            this.label15 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.nudBefore)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudAfter)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudGap)).BeginInit();
@@ -66,6 +69,7 @@ namespace FlashcardMaker.Views
             ((System.ComponentModel.ISupportInitialize)(this.nudAfterC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudPaddingBefore)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudPaddingAfter)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudImportanceOfDensity)).BeginInit();
             this.SuspendLayout();
             // 
             // txtbxOutput
@@ -101,7 +105,7 @@ namespace FlashcardMaker.Views
             // 
             // btnCreateSubtitleLinePacks
             // 
-            this.btnCreateSubtitleLinePacks.Location = new System.Drawing.Point(136, 298);
+            this.btnCreateSubtitleLinePacks.Location = new System.Drawing.Point(39, 298);
             this.btnCreateSubtitleLinePacks.Name = "btnCreateSubtitleLinePacks";
             this.btnCreateSubtitleLinePacks.Size = new System.Drawing.Size(175, 23);
             this.btnCreateSubtitleLinePacks.TabIndex = 24;
@@ -283,7 +287,7 @@ namespace FlashcardMaker.Views
             // 
             // btnCreateMediaFiles
             // 
-            this.btnCreateMediaFiles.Location = new System.Drawing.Point(317, 298);
+            this.btnCreateMediaFiles.Location = new System.Drawing.Point(401, 298);
             this.btnCreateMediaFiles.Name = "btnCreateMediaFiles";
             this.btnCreateMediaFiles.Size = new System.Drawing.Size(175, 23);
             this.btnCreateMediaFiles.TabIndex = 42;
@@ -344,7 +348,7 @@ namespace FlashcardMaker.Views
             // 
             // btnCreateFlashcards
             // 
-            this.btnCreateFlashcards.Location = new System.Drawing.Point(498, 298);
+            this.btnCreateFlashcards.Location = new System.Drawing.Point(582, 298);
             this.btnCreateFlashcards.Name = "btnCreateFlashcards";
             this.btnCreateFlashcards.Size = new System.Drawing.Size(175, 23);
             this.btnCreateFlashcards.TabIndex = 48;
@@ -352,11 +356,45 @@ namespace FlashcardMaker.Views
             this.btnCreateFlashcards.UseVisualStyleBackColor = true;
             this.btnCreateFlashcards.Click += new System.EventHandler(this.btnCreateFlashcards_Click_1);
             // 
+            // btnSortSubtitleLinePacks
+            // 
+            this.btnSortSubtitleLinePacks.Location = new System.Drawing.Point(220, 298);
+            this.btnSortSubtitleLinePacks.Name = "btnSortSubtitleLinePacks";
+            this.btnSortSubtitleLinePacks.Size = new System.Drawing.Size(175, 23);
+            this.btnSortSubtitleLinePacks.TabIndex = 49;
+            this.btnSortSubtitleLinePacks.Text = "Sort SubtitleLinePacks";
+            this.btnSortSubtitleLinePacks.UseVisualStyleBackColor = true;
+            this.btnSortSubtitleLinePacks.Click += new System.EventHandler(this.btnSortSubtitleLinePacks_Click);
+            // 
+            // nupImportanceOfDensity
+            // 
+            this.nudImportanceOfDensity.Location = new System.Drawing.Point(334, 186);
+            this.nudImportanceOfDensity.Name = "nupImportanceOfDensity";
+            this.nudImportanceOfDensity.Size = new System.Drawing.Size(61, 20);
+            this.nudImportanceOfDensity.TabIndex = 50;
+            this.nudImportanceOfDensity.Value = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(205, 188);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(108, 13);
+            this.label15.TabIndex = 51;
+            this.label15.Text = "Importance of density";
+            // 
             // CreateFlashcardsView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(830, 810);
+            this.Controls.Add(this.label15);
+            this.Controls.Add(this.nudImportanceOfDensity);
+            this.Controls.Add(this.btnSortSubtitleLinePacks);
             this.Controls.Add(this.btnCreateFlashcards);
             this.Controls.Add(this.label14);
             this.Controls.Add(this.label13);
@@ -396,6 +434,7 @@ namespace FlashcardMaker.Views
             ((System.ComponentModel.ISupportInitialize)(this.nudAfterC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudPaddingBefore)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudPaddingAfter)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudImportanceOfDensity)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -431,5 +470,8 @@ namespace FlashcardMaker.Views
         private Label label13;
         private Label label14;
         private Button btnCreateFlashcards;
+        private Button btnSortSubtitleLinePacks;
+        private NumericUpDown nudImportanceOfDensity;
+        private Label label15;
     }
 }

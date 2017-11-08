@@ -103,6 +103,18 @@
     <Compile Include="MyDbContextMigrations\201711070239195_Initial.Designer.cs">
       <DependentUpon>201711070239195_Initial.cs</DependentUpon>
     </Compile>
+    <Compile Include="MyDbContextMigrations\201711080507087_Initial1.cs" />
+    <Compile Include="MyDbContextMigrations\201711080507087_Initial1.Designer.cs">
+      <DependentUpon>201711080507087_Initial1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MyDbContextMigrations\201711080519181_Initial2.cs" />
+    <Compile Include="MyDbContextMigrations\201711080519181_Initial2.Designer.cs">
+      <DependentUpon>201711080519181_Initial2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MyDbContextMigrations\201711081207577_Initial3.cs" />
+    <Compile Include="MyDbContextMigrations\201711081207577_Initial3.Designer.cs">
+      <DependentUpon>201711081207577_Initial3.cs</DependentUpon>
+    </Compile>
     <Compile Include="MyDbContextMigrations\Configuration.cs" />
     <Compile Include="OtherClasses\myDbSet.cs" />
     <Compile Include="OtherClasses\OurWebClient.cs">
@@ -164,6 +176,15 @@
     </Compile>
     <EmbeddedResource Include="MyDbContextMigrations\201711070239195_Initial.resx">
       <DependentUpon>201711070239195_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MyDbContextMigrations\201711080507087_Initial1.resx">
+      <DependentUpon>201711080507087_Initial1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MyDbContextMigrations\201711080519181_Initial2.resx">
+      <DependentUpon>201711080519181_Initial2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MyDbContextMigrations\201711081207577_Initial3.resx">
+      <DependentUpon>201711081207577_Initial3.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

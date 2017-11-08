@@ -465,26 +465,7 @@ namespace FlashcardMaker.Controllers
             }
 
             printLine("All flashcards deleted");
-        }
-
-
-
-        //private void CreateFlashcards(List<SubtitleLinePack> tempSortSubtitleLinePackList, MyDbContext db)
-        //{
-        //    string str = "Creating Flashcards";
-        //    printLine(str);
-
-        //    foreach (var stlp in tempSortSubtitleLinePackList)
-        //    {
-        //        Flashcard fc = new Flashcard { };
-        //        //fc.SubtitleLinePack = stlp;
-        //        db.Flashcards.Add(fc);
-        //    }
-
-        //    db.SaveChanges();
-
-        //    printLine("Done creating Flashcards");
-        //}
+        }       
 
         public void UpdateSubtitleLines(MyDbContext db)
         {

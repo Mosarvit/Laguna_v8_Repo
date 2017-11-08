@@ -16,11 +16,11 @@ public class Flashcard extends OnServerModel {
     @Column(name = "duetime")
     private long duetime;
 
-    @Column(name = "mediaFileSegmentRemoteId")
-    public int mediaFileSegmentRemoteId;
+    @Column(name = "mfsremoteid")
+    public int mfsremoteid;
 
-    @Column(name = "mediaFileSegment", onDelete = Column.ForeignKeyAction.CASCADE)
-    public MediaFileSegment mediaFileSegment;
+//    @Column(name = "mediaFileSegment", onDelete = Column.ForeignKeyAction.CASCADE)
+//    public MediaFileSegment mediaFileSegment;
 
 
 
@@ -76,7 +76,7 @@ public class Flashcard extends OnServerModel {
         this.question = question;
     }
 
-    public Flashcard(int remote_id, String question, long duetime, long updatetime, int mediaFileSegmentRemoteId,boolean b){
+    public Flashcard(int remote_id, String question, long duetime, long updatetime, int mfsremoteid, boolean b){
         super();
         this.duetime = duetime;
         this.utwhenloaded = updatetime;
@@ -84,7 +84,7 @@ public class Flashcard extends OnServerModel {
         this.isNew = b;
         this.remote_id = remote_id;
         this.question = question;
-        this.mediaFileSegmentRemoteId = mediaFileSegmentRemoteId;
+        this.mfsremoteid = mfsremoteid;
 
     }
 
@@ -103,9 +103,9 @@ public class Flashcard extends OnServerModel {
     @Override
     public String toString(){
 
-        return "remote_id: " + this.remote_id +
+        return "\nremote_id: " + this.remote_id +
                 "\nupdatetime: " + this.updatetime +
-//                "\nmediaFileSegment.remote_id: " + this.mediaFileSegment.remote_id +
+                "\nmfsremoteid: " + this.mfsremoteid +
                 "\nduetime: " + this.duetime +
                 "\nquestion:\n " + this.question;
     }

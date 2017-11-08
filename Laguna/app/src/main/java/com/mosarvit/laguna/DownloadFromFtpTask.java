@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 
 import com.jcraft.jsch.ChannelSftp;
 
-import org.apache.commons.net.ftp.FTPClient;
 
 import java.util.Vector;
 
@@ -44,7 +43,6 @@ public class DownloadFromFtpTask extends AsyncTask<String, Void, Void> {
     @Override
     protected Void doInBackground(String... params) {
 
-        FTPClient ftp = null;
 
 
 
@@ -222,11 +220,11 @@ public class DownloadFromFtpTask extends AsyncTask<String, Void, Void> {
     protected void onPostExecute(Void aVoid) {
 
 
-        view.printLine("userName : " + userName);
-        view.printLine("password : " + password);
-        view.printLine("ftpMediaFolder : " + ftpMediaFolder);
-        view.printLine("portNumber : " + portNumber);
-        view.printLine("localPath : " + SharedData.ROOT_FOLDER + "/hello_file");
+//        view.printLine("userName : " + userName);
+//        view.printLine("password : " + password);
+//        view.printLine("ftpMediaFolder : " + ftpMediaFolder);
+//        view.printLine("portNumber : " + portNumber);
+//        view.printLine("localPath : " + SharedData.ROOT_FOLDER + "/hello_file");
 
         if (blResult) {
             view.printLine("Connect succeeded");

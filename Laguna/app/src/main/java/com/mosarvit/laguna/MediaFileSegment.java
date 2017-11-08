@@ -19,7 +19,7 @@ public class MediaFileSegment extends OnServerModel
         this.utwhenloaded = updatetime;
         this.updatetime = updatetime;
         this.remote_id = remote_id;
-        this.fileName = fileName;
+        this.fileName = filename;
         this.mediaFileName = mediaFileName;
         this.isNew = b;
     }
@@ -30,8 +30,8 @@ public class MediaFileSegment extends OnServerModel
     @Column(name = "mediafileName")
     public String mediaFileName;
 
-    @Column(name = "flashcard", onDelete = Column.ForeignKeyAction.CASCADE)
-    public Flashcard flashcard;
+//    @Column(name = "flashcard", onDelete = Column.ForeignKeyAction.CASCADE)
+//    public Flashcard flashcard;
 
 
     public static List<MediaFileSegment> getAll(){
@@ -53,7 +53,7 @@ public class MediaFileSegment extends OnServerModel
     @Override
     public String toString(){
 
-        return "remote_id: " + this.remote_id +
+        return "\nremote_id: " + this.remote_id +
                 "\nfileName: " + this.fileName +
                 "\nmediaFileName: " + this.mediaFileName +
                 "\nupdatetime: " + this.updatetime +

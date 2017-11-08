@@ -2,7 +2,6 @@ package com.mosarvit.laguna;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Handler;
 import android.widget.Toast;
 
 import com.activeandroid.query.Select;
@@ -100,6 +99,10 @@ public class Synchronizer<T extends OnServerModel> {
 
     public void synchronize() {
 
+        requestQueue = Volley.newRequestQueue(view.getApplicationContext());
+
+        requestQueue.getCache().clear();
+
         if (modelType == Flashcard.class) {
             printLine("\nSynchronizing Flashcards");
         } else if (modelType == MediaFileSegment.class) {
@@ -154,6 +157,8 @@ public class Synchronizer<T extends OnServerModel> {
 
         printLine("Starting insertDeleteSelectRequest()");
         StringRequest request = new StringRequest(Request.Method.POST, "http://mosar.heliohost.org/insert_delete_request_flashcards.php", new Response.Listener<String>() {
+
+
             @Override
             public void onResponse(String response) {
 
@@ -190,14 +195,14 @@ public class Synchronizer<T extends OnServerModel> {
                                                 "', duetime = " + duetime +
                                                 ", updatetime = " + updatetime +
                                                 ", utwhenloaded = " + updatetime +
-                                                ", mediaFileSegmentRemoteId = " + mediaFileSegmentRemoteId)
+                                                ", mfsremoteid = " + mediaFileSegmentRemoteId)
                                         .where("remote_id = " + remote_id).execute();
                                 Flashcard fc = new Select().from(Flashcard.class).where("remote_id = " + remote_id).executeSingle();
 
                                 if (mediaFileSegmentRemoteId > 0) {
                                     MediaFileSegment mfs = new Select().from(MediaFileSegment.class).where("remote_id = " + mediaFileSegmentRemoteId).executeSingle();
                                     if (mfs != null) {
-                                        fc.mediaFileSegment = mfs;
+                                        fc.mfsremoteid = mfs.remote_id;
                                     }
                                 }
                                 fc.save();
@@ -206,10 +211,9 @@ public class Synchronizer<T extends OnServerModel> {
                                 if (mediaFileSegmentRemoteId > 0) {
                                     MediaFileSegment mfs = new Select().from(MediaFileSegment.class).where("remote_id = " + mediaFileSegmentRemoteId).executeSingle();
                                     if (mfs != null) {
-                                        fc.mediaFileSegment = mfs;
+                                        fc.mfsremoteid = mfs.remote_id;
                                     }
                                 }
-                                printLine(fc.toString());
 
                                 fc.save();
 
@@ -219,6 +223,8 @@ public class Synchronizer<T extends OnServerModel> {
 
                             String mediafilename = JO.getString("mediafilename");
                             String filename = JO.getString("filename");
+
+
 
                             if (allFcsHere.keySet().contains(remote_id)) {
                                 printLine("updating");
@@ -230,9 +236,9 @@ public class Synchronizer<T extends OnServerModel> {
                                 )
                                         .where("remote_id = " + remote_id).execute();
                             } else {
-                                MediaFileSegment fc = new MediaFileSegment(remote_id, updatetime, filename, mediafilename, false);
-                                fc.save();
-                                toInsertHere.add((T) fc);
+                                MediaFileSegment mfs = new MediaFileSegment(remote_id, updatetime, filename, mediafilename, false);
+                                mfs.save();
+                                toInsertHere.add((T) mfs);
                             }
                         }
                     }
@@ -247,6 +253,9 @@ public class Synchronizer<T extends OnServerModel> {
 
                 nextTask();
             }
+
+
+
         },
                 new Response.ErrorListener() {
                     @Override
@@ -271,7 +280,7 @@ public class Synchronizer<T extends OnServerModel> {
                         parameters.put("questions[" + i + "]", fc.getQuestion());
                         parameters.put("duetimes[" + i + "]", Long.toString(fc.getDuetime()));
                         parameters.put("updatetimes[" + i + "]", Long.toString(fc.updatetime));
-                        parameters.put("media_file_segment_remote_ids[" + i + "]", Integer.toString(fc.mediaFileSegmentRemoteId));
+                        parameters.put("media_file_segment_remote_ids[" + i + "]", Integer.toString(fc.mfsremoteid));
 
                         i++;
                     }
@@ -439,14 +448,7 @@ public class Synchronizer<T extends OnServerModel> {
                 }
 
                 ////DEBUG
-                printLine("fcsServer.size(): " + fcsServer.size() +
-                        "\nallFcsHere.size(): " + allFcsHere.size() +
-                        "\ntoDeleteHere.size(): " + toDeleteHere.size() +
-                        "\ntoRequestFromServer.size(): " + toRequestFromServer.size() +
-                        "\ncontradictingHereVersion: " + contradictingHereVersion.size() +
-                        "\ncontradictingServerVersion: " + contradictingServerVersion.size() +
-                        "\nupdatedOnlyHereAfterLoading: " + updatedOnlyHereAfterLoading.size() +
-                        "\nupdatedOnlyOnServerAfterLoading: " + updatedOnlyOnServerAfterLoading.size());
+
 
                 if (contradictingHereVersion.size() > 0) {
                     view.makeADecisionsAboutTheContradictions();
@@ -510,10 +512,14 @@ public class Synchronizer<T extends OnServerModel> {
         toRequestFromServer.addAll(updatedOnlyOnServerAfterLoading);
 
         ////DEBUG
-        printLine("\ntoDeleteOnServer: " + toDeleteOnServer.size() +
-                "\ntoDeleteHere: " + toDeleteHere.size() +
-                "\ntoInsertOnServer: " + toInsertOnServer.size() +
-                "\ntoRequestFromServer: " + toRequestFromServer.size());
+        printLine(  "\nfcsServer: " + fcsServer.size() +
+                    "\nallFcsHere: " + allFcsHere.size() +
+                    "\ntoDeleteHere: " + toDeleteHere.size() +
+                    "\ntoRequestFromServer: " + toRequestFromServer.size() +
+                    "\ncontradictingHereVersion: " + contradictingHereVersion.size() +
+                    "\ncontradictingServerVersion: " + contradictingServerVersion.size() +
+                    "\nupdatedOnlyHereAfterLoading: " + updatedOnlyHereAfterLoading.size() +
+                    "\nupdatedOnlyOnServerAfterLoading: " + updatedOnlyOnServerAfterLoading.size());
 
 
         nextTask();
@@ -644,16 +650,13 @@ public class Synchronizer<T extends OnServerModel> {
 
         List<MediaFileSegment> mediaFileNames = new Select().from(MediaFileSegment.class).groupBy("mediafileName").execute();
 
-        for (MediaFileSegment mfs : mediaFileNames) {
-
-
-        }
-
         for (MediaFileSegment mfs : (List<MediaFileSegment>) this.toInsertHere) {
-            //string remoteUri = "ftp://mosar.heliohost.org/";
-            //string fileName = "xczx.php", myStringWebResource = null;
+
 
             String ftpFilePath = ftpMediaFolder + "/" + mfs.mediaFileName + "/" + mfs.fileName;
+
+            printLine("To Download: " + ftpFilePath);
+
             File localFolderPath = new File(SharedData.LOCAL_MEDIA_FOLDER + "/" + mfs.mediaFileName);
             if (!localFolderPath.exists()) {
                 localFolderPath.mkdirs();
@@ -673,8 +676,6 @@ public class Synchronizer<T extends OnServerModel> {
             printLine(Flashcard.allToString());
         } else if (modelType == MediaFileSegment.class) {
 
-            printLine("Number of MediaFileSegments in Db: " + new Select().from(MediaFileSegment.class).count());
-            printLine(MediaFileSegment.allToString());
         }
 
         syncOver = true;
@@ -727,6 +728,9 @@ public class Synchronizer<T extends OnServerModel> {
         } else if (taskCount == 5) {
 
             if (success && modelType == MediaFileSegment.class) {
+
+                printLine("Number of MediaFileSegments in Db: " + new Select().from(MediaFileSegment.class).count());
+                printLine(MediaFileSegment.allToString());
                 Synchronizer<Flashcard> sF = new Synchronizer<>(view, Flashcard.class);
                 sF.synchronize();
             } else {

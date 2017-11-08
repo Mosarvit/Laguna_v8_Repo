@@ -12,22 +12,33 @@ namespace FlashcardMaker.Sortin_Algorithms
     class SortingAlgorithm1 : ISortingAlgorithm<ILinePack>
     {
         private IController controller;
+        private int ImportanceOfDensity;
 
         public SortingAlgorithm1(IController controller)
         {
             this.controller = controller;
         }
 
-        public List<ILinePack> SortedSubtitleLinePackList(MyDbContext db)
+        public List<ILinePack> SortedSubtitleLinePackList(MyDbContext db, int importanceOfDensity)
         {
-
             controller.printLine("Sorting SubtitlelinePacks");
+
+            this.ImportanceOfDensity = importanceOfDensity;
+
+            db.SubtitleLinePacks.ToList().ForEach(delegate (SubtitleLinePack stlp) { stlp.Rank = 0; });
+
+            //foreach (SubtitleLinePack stlp in db.SubtitleLinePacks.ToList())
+            //{
+            //    stlp.Rank = 0;
+            //}
+
+            db.SaveChanges();
 
             var tempStlpList = new List<ILinePack>();
 
             UpdateStlps(db);
 
-            List<SubtitleLinePack> stlpList = db.SubtitleLinePacks.OrderByDescending(c => c.DensityOfToLearnWords).ToList();
+            List<SubtitleLinePack> stlpList = db.SubtitleLinePacks.OrderByDescending(c => c.importance).ToList();
 
             if (stlpList.Count() == 0)
             {
@@ -36,10 +47,10 @@ namespace FlashcardMaker.Sortin_Algorithms
             }
 
             SubtitleLinePack mostDenseStlp = stlpList[0];
+             
+            int rank = 1;
 
-            //int counter = 0;
-
-            while (mostDenseStlp.DensityOfToLearnWords > 0 /*&& counter++ < 10*/)
+            while (mostDenseStlp.importance > 0 && rank < ProgramController.MAX_SUBTITLE_LINE_PACKS_TO_CREATE)
             {
                 foreach (var cw in mostDenseStlp.ChineseWords)
                     cw.AddedToTempSort = true;
@@ -47,12 +58,13 @@ namespace FlashcardMaker.Sortin_Algorithms
                 db.SaveChanges();
 
                 tempStlpList.Add(mostDenseStlp);
+                mostDenseStlp.Rank = rank++;
 
                 UpdateStlps(db);
 
                 db.SaveChanges();
 
-                mostDenseStlp = db.SubtitleLinePacks.OrderByDescending(c => c.DensityOfToLearnWords).ToList()[0]; ;
+                mostDenseStlp = db.SubtitleLinePacks.OrderByDescending(c => c.importance).ToList()[0]; ;
             }
 
             foreach (var cw in db.ChineseWords.ToList())
@@ -95,11 +107,13 @@ namespace FlashcardMaker.Sortin_Algorithms
         {
             if (stlp.NumberOfCharacters != 0)
             {
-                stlp.DensityOfToLearnWords = (double)stlp.NumberOfNotYetInTempSortWords / (double)stlp.NumberOfCharacters;
+                stlp.importance = ((double)ImportanceOfDensity 
+                    * ((double)stlp.NumberOfNotYetInTempSortWords / (double)stlp.NumberOfCharacters)) 
+                    + (double)stlp.NumberOfNotYetInTempSortWords;
             }
             else
             {
-                stlp.DensityOfToLearnWords = 0;
+                stlp.importance = 0;
             }
         }
 

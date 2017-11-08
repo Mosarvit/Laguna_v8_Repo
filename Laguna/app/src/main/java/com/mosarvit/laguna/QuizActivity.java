@@ -1,34 +1,41 @@
 package com.mosarvit.laguna;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.activeandroid.query.Select;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
-
-import static com.mosarvit.laguna.R.id.videoView;
 
 public class QuizActivity extends AppCompatActivity {
 
-    private static TextView questionTextView;
+//    private static TextView questionTextView, txtTest;
     private static WebView webView;
     private static android.widget.VideoView videoView;
     private static Button btnTest, btnShortest, btnMiddle, btnLongest;
     List<Flashcard> allFcs;
     Flashcard currentFc;
+    private String videoPath;
+
+
 
 
     @Override
@@ -47,7 +54,9 @@ public class QuizActivity extends AppCompatActivity {
             }
         });
 
-//        questionTextView = (TextView) findViewById(R.remote_id.txt_Question);
+//        txtTest = (TextView) findViewById(R.id.txtTest);
+
+
         btnTest = (Button)findViewById(R.id.btnTest);
         btnShortest = (Button)findViewById(R.id.btnShortest);
         btnMiddle = (Button)findViewById(R.id.btnMiddle);
@@ -58,6 +67,28 @@ public class QuizActivity extends AppCompatActivity {
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient());
         webView.getSettings().setDefaultTextEncodingName("utf-8");
+//        webView.setOnTouchListener(new View.OnTouchListener() {
+//
+//
+//            public boolean onTouch(View v, MotionEvent event) {
+//                return (event.getAction() == MotionEvent.ACTION_MOVE);
+//            }
+//        });
+
+//        webView.getSettings().setUseWideViewPort(true);
+//        webView.getSettings().setLoadWithOverviewMode(true);
+
+//        webView.setHorizontalScrollBarEnabled(false);
+//        webView.setVerticalScrollBarEnabled(true);
+//        webView.getSettings().setLoadWithOverviewMode(true);
+//        webView.getSettings().setUseWideViewPort(true);
+
+//        webView.setInitialScale(1);
+//        webView.getSettings().setJavaScriptEnabled(true);
+//        webView.getSettings().setLoadWithOverviewMode(true);
+//        webView.getSettings().setUseWideViewPort(true);
+//        webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+//        webView.setScrollbarFadingEnabled(false);
 
 //        questionTextView.set
 //        setContentView(webView);
@@ -122,15 +153,16 @@ public class QuizActivity extends AppCompatActivity {
     private void refreshSession() {
 
         refreshCurrentFc();
-        refreshQuestion();
         refreshMediaFile();
+        refreshQuestion();
     }
 
     private void refreshMediaFile() {
 
-        if (currentFc.mediaFileSegment != null){
-            String videopath = SharedData.FTP_MEDIA_FOLDER + "/" + currentFc.mediaFileSegment.mediaFileName + "/" + currentFc.mediaFileSegment.fileName;
-            Uri uri = Uri.parse(videopath);
+        if (currentFc.mfsremoteid != 0){
+            MediaFileSegment mfs = new Select().from(MediaFileSegment.class).where("remote_id = " + currentFc.mfsremoteid).executeSingle();
+            videoPath = SharedData.LOCAL_MEDIA_FOLDER + "/" + mfs.mediaFileName + "/" + mfs.fileName;
+            Uri uri = Uri.parse(videoPath);
             videoView.setVideoURI(uri);
             videoView.start();
         }
@@ -139,7 +171,55 @@ public class QuizActivity extends AppCompatActivity {
 
     private void refreshQuestion() {
 
-        webView.loadData(currentFc.getQuestion(), "text/html", "UTF-8");
+        String cssHTMLtop = "<!DOCTYPE html>\n" +
+                "<html>\n" +
+                "<head>\n" +
+                "<style>\n" +
+                "body {" +
+                "background-color: white;" +
+                "word-wrap:break-word;" +
+                "" +
+                "}" +
+                "#maindiv{" +
+                "" +
+                "}" +
+                "h1   {color: blue;}\n" +
+                "p    {color: red;}\n" +
+                "</style>\n" +
+                "</head>" +
+                "" +
+                "<body>" +
+                "<div id=maindiv>" +
+                "";
+
+        String cssHTMLbottom = "</div ></body>\n" +
+                "</html>";
+
+        String questionString = cssHTMLtop + currentFc.getQuestion() + cssHTMLbottom;
+
+        webView.loadDataWithBaseURL (null, questionString  + videoPath, "text/html", "UTF-8", null);
+//
+//        String str = "android.resource://com.android.AndroidVideoPlayer/" + R.layout.activity_main ;
+//
+//        StringBuilder sb = new StringBuilder();
+//
+//        File parentDir = new File(str);
+//        ArrayList<File> inFiles = new ArrayList<File>();
+//        File[] files = parentDir.listFiles();
+//        for (File file : files) {
+//
+//            sb.append(file.getName());
+//        }
+//
+//
+//        webView.loadDataWithBaseURL (null, sb.toString(), "text/html", "UTF-8", null);
+
+//        String path = Environment.getRootDirectory().toString();
+//        File f = new File(path);
+//        for (File file : f.listFiles()){
+//            sb.append(file.getName()+ "</br>" );
+//        }
+//        webView.loadDataWithBaseURL (null, sb.toString(), "text/html", "UTF-8", null);
     }
 
     private void refreshCurrentFc() {
@@ -187,5 +267,14 @@ public class QuizActivity extends AppCompatActivity {
 
 //        questionTextView.setText(str);
         webView.loadData(str, "text/html; charset=utf-8", "UTF-8");
+    }
+
+
+    private int getScale(){
+        Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        int width = display.getWidth();
+        Double val = new Double(width) ;
+//        val = val * 100d;
+        return val.intValue();
     }
 }

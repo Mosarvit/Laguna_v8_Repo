@@ -31,8 +31,7 @@ namespace FlashcardMaker.Views
         }
 
         private void btnCreateSubtitleLinePacks_Click(object sender, EventArgs e)
-        {
-            string sortingAlgorithmString = cbSortinAlgorythm.Text;
+        { 
             int gapLimit = Convert.ToInt32(nudGap.Value)*1000;
             int beforeLimit = Convert.ToInt32(nudBefore.Value) * 1000;
             int afterLimit = Convert.ToInt32(nudAfter.Value) * 1000;
@@ -42,7 +41,7 @@ namespace FlashcardMaker.Views
             int beforeLimitC = Convert.ToInt32(nudBeforeC.Value);
             int afterLimitC = Convert.ToInt32(nudAfterC.Value);
 
-            createFlashcardsController.createSubtitleLinePacks(sortingAlgorithmString, gapLimit, beforeLimit, afterLimit, gapLimitC, beforeLimitC, afterLimitC, paddingBefore, paddingAfter);
+            createFlashcardsController.createSubtitleLinePacks(gapLimit, beforeLimit, afterLimit, gapLimitC, beforeLimitC, afterLimitC, paddingBefore, paddingAfter);
         }
 
         public void printLine(string v)
@@ -93,7 +92,12 @@ namespace FlashcardMaker.Views
 
         private void btnCreateFlashcards_Click_1(object sender, EventArgs e)
         {
-            createFlashcardsController.createFlashcards(this);
+            createFlashcardsController.CreateFlashcards(this);
+        }
+
+        private void btnSortSubtitleLinePacks_Click(object sender, EventArgs e)
+        {
+            createFlashcardsController.SortSubtitleLinePacks(this, cbSortinAlgorythm.Text, Convert.ToInt32(nudImportanceOfDensity.Value));
         }
     }
 }
