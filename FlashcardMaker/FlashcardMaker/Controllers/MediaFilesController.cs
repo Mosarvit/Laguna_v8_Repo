@@ -26,6 +26,9 @@ namespace FlashcardMaker.Controllers
             {
                 view.printLine("Starting creating Mediafiles");
                 Updater.updateDbMediaFiles(db, view);
+
+                //return;
+
                 int totalCount = 0;
 
                 foreach (SubtitleLinePack stlp in db.SubtitleLinePacks.Where(p=>p.Rank>0).ToList())

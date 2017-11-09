@@ -46,7 +46,7 @@ namespace FlashcardMaker.Helpers
                     fileNames.Add(fileName);
 
                     view.printLine("fileName:  " + fileName);
-                    if (mf.MediaFileSegments.Where(c => c.FileName.Equals(fileName)).Count() == 0)
+                    if (mf.MediaFileSegments.Where(c => c.FileName.Equals(fileName))==null)
                     {
                         File.Delete(file);
                         view.printLine("Deleting " + fileName);

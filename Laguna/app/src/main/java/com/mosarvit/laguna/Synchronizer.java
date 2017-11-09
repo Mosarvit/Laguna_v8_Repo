@@ -54,6 +54,7 @@ public class Synchronizer<T extends OnServerModel> {
     private ArrayList<T> toInsertHere = new ArrayList<>();
 
     private ArrayList<T> toRequestFromServer = new ArrayList<>();
+    private ArrayList<T> toUpdateOnServer = new ArrayList<>();
     private ArrayList<T> toInsertOnServer = new ArrayList<>();
 
     private ArrayList<T> toDeleteHere = new ArrayList<>();
@@ -277,13 +278,27 @@ public class Synchronizer<T extends OnServerModel> {
                     for (Flashcard fc : (ArrayList<Flashcard>) toInsertOnServer) {
 
                         parameters.put("remote_flashcard_ids_insert[" + i + "]", Integer.toString(fc.remote_id));
-                        parameters.put("questions[" + i + "]", fc.getQuestion());
-                        parameters.put("duetimes[" + i + "]", Long.toString(fc.getDuetime()));
-                        parameters.put("updatetimes[" + i + "]", Long.toString(fc.updatetime));
-                        parameters.put("media_file_segment_remote_ids[" + i + "]", Integer.toString(fc.mfsremoteid));
+                        parameters.put("questions_insert[" + i + "]", fc.getQuestion());
+                        parameters.put("duetimes_insert[" + i + "]", Long.toString(fc.getDuetime()));
+                        parameters.put("updatetimes_insert[" + i + "]", Long.toString(fc.updatetime));
+                        parameters.put("media_file_segment_remote_ids_insert[" + i + "]", Integer.toString(fc.mfsremoteid));
 
                         i++;
                     }
+
+                    i = 0;
+
+                    for (Flashcard fc : (ArrayList<Flashcard>) toUpdateOnServer) {
+
+                        parameters.put("remote_flashcard_ids_update[" + i + "]", Integer.toString(fc.remote_id));
+                        parameters.put("questions_update[" + i + "]", fc.getQuestion());
+                        parameters.put("duetimes_update[" + i + "]", Long.toString(fc.getDuetime()));
+                        parameters.put("updatetimes_update[" + i + "]", Long.toString(fc.updatetime));
+                        parameters.put("media_file_segment_remote_ids_update[" + i + "]", Integer.toString(fc.mfsremoteid));
+
+                        i++;
+                    }
+
 
                     i = 0;
 
@@ -308,9 +323,21 @@ public class Synchronizer<T extends OnServerModel> {
                     for (MediaFileSegment fc : (ArrayList<MediaFileSegment>) toInsertOnServer) {
 
                         parameters.put("remote_mediafilesegment_ids_insert[" + i + "]", Integer.toString(fc.remote_id));
-                        parameters.put("updatetimes[" + i + "]", Long.toString(fc.updatetime));
-                        parameters.put("filenames[" + i + "]", fc.fileName);
-                        parameters.put("mediafilenames[" + i + "]", fc.mediaFileName);
+                        parameters.put("updatetimes_insert[" + i + "]", Long.toString(fc.updatetime));
+                        parameters.put("filenames_insert[" + i + "]", fc.fileName);
+                        parameters.put("mediafilenames_insert[" + i + "]", fc.mediaFileName);
+
+                        i++;
+                    }
+
+                    i = 0;
+
+                    for (MediaFileSegment fc : (ArrayList<MediaFileSegment>) toUpdateOnServer) {
+
+                        parameters.put("remote_mediafilesegment_ids_update[" + i + "]", Integer.toString(fc.remote_id));
+                        parameters.put("updatetimes_update[" + i + "]", Long.toString(fc.updatetime));
+                        parameters.put("filenames_update[" + i + "]", fc.fileName);
+                        parameters.put("mediafilenames_update[" + i + "]", fc.mediaFileName);
 
                         i++;
                     }
@@ -357,13 +384,16 @@ public class Synchronizer<T extends OnServerModel> {
             fc.save();
         }
 
-        printLine("deleting toDeleteOnServer");
+        for (T fc : toUpdateOnServer) {
+            fc.utwhenloaded = fc.updatetime;
+            fc.save();
+        }
+
 
         for (T fc : toDeleteOnServer) {
             fc.delete();
         }
 
-        printLine("deleting toDeleteHere");
 
         for (T fc : toDeleteHere) {
             fc.delete();
@@ -372,7 +402,6 @@ public class Synchronizer<T extends OnServerModel> {
         for (T t : notNewFcsHere.values()){
             t.isNew = false;
         }
-        printLine("deleting toDeleteHere finished");
         nextTask();
     }
 
@@ -547,7 +576,7 @@ public class Synchronizer<T extends OnServerModel> {
                 toDeleteOnServer.add(fc);
             } else {
 
-                toInsertOnServer.add(fc);
+                toUpdateOnServer.add(fc);
             }
         }
     }
@@ -699,7 +728,7 @@ public class Synchronizer<T extends OnServerModel> {
         } else if (taskCount == 2) {
             view.printLine("fillUpCollections finished");
 
-            if ((toRequestFromServer.size() > 0 || toDeleteOnServer.size() > 0 || toInsertOnServer.size() > 0) && success) {
+            if ((toRequestFromServer.size() > 0 || toDeleteOnServer.size() > 0 || toInsertOnServer.size() > 0 || toUpdateOnServer.size() > 0) && success) {
                 view.printLine("insertDeleteSelectRequest starting");
                 insertDeleteSelectRequest();
             } else

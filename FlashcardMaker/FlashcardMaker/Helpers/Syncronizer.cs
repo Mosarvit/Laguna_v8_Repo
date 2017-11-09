@@ -31,8 +31,9 @@ namespace FlashcardMaker.Helpers
         private Dictionary<int, OnServerModel> fcsServer = new Dictionary<int, OnServerModel>();
 
         private List<OnServerModel> toRequestFromServer = new List<OnServerModel>();
-        private List<OnServerModel> toInserHere = new List<OnServerModel>();
+        private List<OnServerModel> toInsertHere = new List<OnServerModel>();
         private List<OnServerModel> toInsertOnServer = new List<OnServerModel>();
+        private List<OnServerModel> toUpdateOnServer = new List<OnServerModel>();
 
         private List<OnServerModel> toDeleteHere = new List<OnServerModel>();
 
@@ -220,14 +221,9 @@ namespace FlashcardMaker.Helpers
                     }
                 }
 
-                ////DEBUG
-                printLine("\r\nallFcsHere : " + allFcsHere.Count() +
-                            "\r\ntoDeleteHere : " + toDeleteHere.Count() +
-                            "\r\ntoInsertHere : " + toRequestFromServer.Count() +
-                            "\r\ncontradictingHereVersion: " + contradictingHereVersion.Count() +
-                            "\r\ncontradictingServerVersion: " + contradictingServerVersion.Count() +
-                            "\r\nmoreRecentHereVersion: " + updatedOnlyHereAfterLoading.Count() +
-                            "\r\nmoreRecentServerVersion: " + updatedOnlyOnServerAfterLoading.Count());
+ 
+
+                
 
                 if (contradictingHereVersion.Count() > 0)
                 {
@@ -238,13 +234,15 @@ namespace FlashcardMaker.Helpers
 
                 toRequestFromServer.AddRange(updatedOnlyOnServerAfterLoading);
 
-                ////DEBUG
-                printLine("\r\ntoDeleteOnServer: " + toDeleteOnServer.Count() +
-                            "\r\ntoDeleteHere: " + toDeleteHere.Count() +
+                //DEBUG
+                printLine("\r\nallFcsHere : " + allFcsHere.Count() +
+                            "\r\ntoDeleteHere : " + toDeleteHere.Count() +
+                            "\r\ntoInsertHere : " + toInsertHere.Count() +
                             "\r\ntoInsertOnServer: " + toInsertOnServer.Count() +
-                            "\r\ntoInsertHere: " + toRequestFromServer.Count());
+                            "\r\ntoUpdateOnserver: " + toUpdateOnServer.Count() +
+                            "\r\ntoDeleteOnServer: " + toDeleteOnServer.Count());
 
-                
+
 
             }
         }
@@ -260,7 +258,7 @@ namespace FlashcardMaker.Helpers
                 }
                 else
                 {
-                    toInsertOnServer.Add(fcHere);
+                    toUpdateOnServer.Add(fcHere);
                 }
             }
         }
@@ -447,7 +445,7 @@ namespace FlashcardMaker.Helpers
 
                         Flashcard fc = Factory.InsertOrUpdateFlashcard(db, view, remote_id, updatetime, duetime, question, MediaFileSegment_remote_id, false);
 
-                        toInserHere.Add(fc);
+                        toInsertHere.Add(fc);
                     }
                     else if (typeof(T) == typeof(MediaFileSegment))
                     {
@@ -459,7 +457,7 @@ namespace FlashcardMaker.Helpers
 
                         MediaFileSegment mfs = Factory.InsertOrUpdateMediaFileSegment(db, view, remote_id, utlocal, FileName, MediaFileName, false);
 
-                        toInserHere.Add(mfs);
+                        toInsertHere.Add(mfs);
 
                         printLine("creating mfs");
 
@@ -495,6 +493,11 @@ namespace FlashcardMaker.Helpers
             printLine("MakeLocalChangesOnSeccessfulSession() started");
 
             foreach (T fc in toInsertOnServer)
+            {
+                fc.utserverwhenloaded = fc.utlocal;
+            }
+
+            foreach (T fc in toUpdateOnServer)
             {
                 fc.utserverwhenloaded = fc.utlocal;
             }
@@ -555,10 +558,22 @@ namespace FlashcardMaker.Helpers
                 foreach (Flashcard fc in toInsertOnServer)
                 {
                     parameters.Add("remote_flashcard_ids_insert[" + i + "]", fc.remote_id.ToString());
-                    parameters.Add("questions[" + i + "]", fc.question);
-                    parameters.Add("duetimes[" + i + "]", fc.utlocal.ToString());
-                    parameters.Add("updatetimes[" + i + "]", fc.utlocal.ToString());
-                    parameters.Add("media_file_segment_remote_ids[" + i + "]", fc.MediaFileSegment_remote_id.ToString());
+                    parameters.Add("questions_insert[" + i + "]", fc.question);
+                    parameters.Add("duetimes_insert[" + i + "]", fc.utlocal.ToString());
+                    parameters.Add("updatetimes_insert[" + i + "]", fc.utlocal.ToString());
+                    parameters.Add("media_file_segment_remote_ids_insert[" + i + "]", fc.MediaFileSegment_remote_id.ToString());
+
+                    i++;
+                }
+
+                i = 0;
+                foreach (Flashcard fc in toUpdateOnServer)
+                {
+                    parameters.Add("remote_flashcard_ids_update[" + i + "]", fc.remote_id.ToString());
+                    parameters.Add("questions_update[" + i + "]", fc.question);
+                    parameters.Add("duetimes_update[" + i + "]", fc.utlocal.ToString());
+                    parameters.Add("updatetimes_update[" + i + "]", fc.utlocal.ToString());
+                    parameters.Add("media_file_segment_remote_ids_update[" + i + "]", fc.MediaFileSegment_remote_id.ToString());
 
                     i++;
                 }
@@ -582,12 +597,23 @@ namespace FlashcardMaker.Helpers
             }
             else if (typeof(T) == typeof(MediaFileSegment))
             {
+                i = 0;
                 foreach (MediaFileSegment fc in toInsertOnServer)
                 {
                     parameters.Add("remote_mediafilesegment_ids_insert[" + i + "]", fc.remote_id.ToString());
-                    parameters.Add("updatetimes[" + i + "]", fc.utlocal.ToString());
-                    parameters.Add("filenames[" + i + "]", fc.FileName);
-                    parameters.Add("mediafilenames[" + i + "]", fc.MediaFileName);
+                    parameters.Add("updatetimes_insert[" + i + "]", fc.utlocal.ToString());
+                    parameters.Add("filenames_insert[" + i + "]", fc.FileName);
+                    parameters.Add("mediafilenames_insert[" + i + "]", fc.MediaFileName);
+                    i++;
+                }
+
+                i = 0;
+                foreach (MediaFileSegment fc in toUpdateOnServer)
+                {
+                    parameters.Add("remote_mediafilesegment_ids_update[" + i + "]", fc.remote_id.ToString());
+                    parameters.Add("updatetimes_update[" + i + "]", fc.utlocal.ToString());
+                    parameters.Add("filenames_update[" + i + "]", fc.FileName);
+                    parameters.Add("mediafilenames_update[" + i + "]", fc.MediaFileName);
                     i++;
                 }
 
@@ -630,7 +656,7 @@ namespace FlashcardMaker.Helpers
 
         private void DownloadFromServer(OurWebClient client)
         {
-            foreach (MediaFileSegment mfs in toInserHere)
+            foreach (MediaFileSegment mfs in toInsertHere)
             {
                 //string remoteUri = "ftp://mosar.heliohost.org/";
                 //string fileName = "xczx.php", myStringWebResource = null;
