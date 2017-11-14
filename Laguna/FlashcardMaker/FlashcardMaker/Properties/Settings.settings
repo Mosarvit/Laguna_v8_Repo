@@ -18,7 +18,7 @@
       <Value Profile="(Default)">Fahrenheit</Value>
     </Setting>
     <Setting Name="ApplicationsMediaFolder" Type="System.String" Scope="User">
-      <Value Profile="(Default)">E:\Users\Mosarvit\Documents\GitHubRepos\Laguna_v8_Repo\Laguna\FlashcardMaker\FlashcardMaker\MediaFiles</Value>
+      <Value Profile="(Default)">E:\Users\Mosarvit\Documents\MediaFiles</Value>
     </Setting>
     <Setting Name="FtpMediaFolder" Type="System.String" Scope="User">
       <Value Profile="(Default)">ftp://mosar.heliohost.org/mediafiles</Value>
@@ -37,6 +37,9 @@
     </Setting>
     <Setting Name="DEBUG_ONLY_CREATE_FLASHCARDS_WITH_MEDIAFILES" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="DEBUG_MAX_CCS_TO_LOAD" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
     </Setting>
   </Settings>
 </SettingsFile>

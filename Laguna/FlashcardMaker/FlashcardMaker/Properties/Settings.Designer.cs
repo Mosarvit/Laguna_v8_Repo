@@ -85,8 +85,7 @@ namespace FlashcardMaker.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("E:\\Users\\Mosarvit\\Documents\\GitHubRepos\\Laguna_v8_Repo\\Laguna\\FlashcardMaker\\Flas" +
-            "hcardMaker\\MediaFiles")]
+        [global::System.Configuration.DefaultSettingValueAttribute("E:\\Users\\Mosarvit\\Documents\\MediaFiles")]
         public string ApplicationsMediaFolder {
             get {
                 return ((string)(this["ApplicationsMediaFolder"]));
@@ -165,6 +164,18 @@ namespace FlashcardMaker.Properties {
             }
             set {
                 this["DEBUG_ONLY_CREATE_FLASHCARDS_WITH_MEDIAFILES"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int DEBUG_MAX_CCS_TO_LOAD {
+            get {
+                return ((int)(this["DEBUG_MAX_CCS_TO_LOAD"]));
+            }
+            set {
+                this["DEBUG_MAX_CCS_TO_LOAD"] = value;
             }
         }
     }

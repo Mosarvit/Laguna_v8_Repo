@@ -18,6 +18,7 @@ using System.Globalization;
 using FlashcardMaker.Helpers;
 using System.Net;
 using System.Web;
+using System.Text.RegularExpressions;
 
 namespace FlashcardMaker.Controllers
 {
@@ -166,35 +167,46 @@ namespace FlashcardMaker.Controllers
             using (OurWebClient client = new OurWebClient())
             using (MyDbContext db = new MyDbContext())
             {
-                string result = "";
+                //string result = "";
 
-                string url = String.Format("http://www.google.com/translate_t?hl=en&ie=UTF8&text={0}&langpair={1}", "你放屁了吗", "de#zh-CN");
-                WebClient webClient = new WebClient();
-                webClient.Encoding = System.Text.Encoding.UTF8;
-                string answer = webClient.DownloadString(url);
+                //string url = String.Format("http://www.google.com/translate_t?hl=en&ie=UTF8&text={0}&langpair={1}", "你放屁了吗", "de#zh-CN");
+                //WebClient webClient = new WebClient();
+                //webClient.Encoding = System.Text.Encoding.UTF8;
+                //string answer = webClient.DownloadString(url);
 
-                HttpDownloader hd = new HttpDownloader(url, "", "");
-                answer = hd.GetPage();
-
-
-                printLine(answer);
-                result = answer.Substring(answer.IndexOf("<span title=\"") + "<span title=\"".Length);
-                result = result.Substring(result.IndexOf(">") + 1);
-                result = result.Substring(0, result.IndexOf("</span>"));
+                //HttpDownloader hd = new HttpDownloader(url, "", "");
+                //answer = hd.GetPage();
 
 
+                //printLine(answer);
+                //result = answer.Substring(answer.IndexOf("<span title=\"") + "<span title=\"".Length);
+                //result = result.Substring(result.IndexOf(">") + 1);
+                //result = result.Substring(0, result.IndexOf("</span>"));
 
 
 
-                printLine(result.Trim());
 
-                result = answer.Substring(answer.IndexOf("src-translit") + "< div id=src-translit".Length);
-                result = result.Substring(result.IndexOf(">") + 1);
-                result = result.Substring(0, result.IndexOf("</div>"));
 
-                printLine(HttpUtility.HtmlDecode(result.Trim()));
+                //printLine(result.Trim());
 
-                Flashcard fc = Factory.InsertFlashcard(db, view, HttpUtility.HtmlDecode(result.Trim()), 354, true);
+                //result = answer.Substring(answer.IndexOf("src-translit") + "< div id=src-translit".Length);
+                //result = result.Substring(result.IndexOf(">") + 1);
+                //result = result.Substring(0, result.IndexOf("</div>"));
+
+                //printLine(HttpUtility.HtmlDecode(result.Trim()));
+
+                //Flashcard fc = Factory.InsertFlashcard(db, view, HttpUtility.HtmlDecode(result.Trim()), 354, true);
+                int tone;
+
+                string toneString = Regex.Match("zhao4", @"\d+").Value;
+                printLine(toneString);
+
+                if (!Int32.TryParse(toneString, out tone))
+                {
+                    tone = 5;
+                }
+
+                printLine(""+tone);
 
             }
 
@@ -232,26 +244,63 @@ namespace FlashcardMaker.Controllers
             {
                 view.printStatusLabel("\nReading from Excel. Row: " + i.ToString() + "\nTime elapsed: " + stopWatch.Elapsed);
 
+                if(Properties.Settings.Default.DEBUG_MAX_CCS_TO_LOAD>0 && totalCount > Properties.Settings.Default.DEBUG_MAX_CCS_TO_LOAD)
+                {
+                    printLine("Achieved MAX_CCS_TO_LOAD");
+                    break;
+                }
+
                 if (typeof(fieldClass) == typeof(ChineseCharacter))
                 {
                     if (ProgramController.DEBUGGING == true && ++totalCount > ProgramController.MAX_CHINESE_CHARACTERS_TO_LOAD) break;
 
-                    var chineseCharacter = new ChineseCharacter { };
+                    var cc = new ChineseCharacter { };
 
-                    chineseCharacter.Rank = Int32.Parse(xlRange.Cells[i, 1].Value2.ToString());
-                    chineseCharacter.Chinese = xlRange.Cells[i, 2].Value2.ToString();
+                    cc.Rank = Int32.Parse(xlRange.Cells[i, 1].Value2.ToString());
+                    cc.Chinese = xlRange.Cells[i, 2].Value2.ToString();
 
                     if (xlRange.Cells[i, 5].Value2 != null)
                     {
-                        chineseCharacter.PinYin = xlRange.Cells[i, 5].Value2.ToString();
+                        string pinYinFromCell = xlRange.Cells[i, 5].Value2.ToString();
+
+                        string[] pinYins = pinYinFromCell.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+
+                        PinYin py;
+
+                        foreach (string pinYin in pinYins)
+                        {
+                            string plain = Regex.Replace(pinYin, @"[\d-]", string.Empty);
+                            int tone;
+                            string toneString = Regex.Match(pinYin, @"\d+").Value;
+
+                            if (!Int32.TryParse(toneString, out tone))
+                            {
+                                tone = 5;
+                            }
+
+                            printLine(pinYin + "," + toneString + "," + tone);
+
+                            py = db.PinYins.Where(p => p.Plain == plain && p.Tone == tone).SingleOrDefault();
+
+                            if (py == null)
+                            {
+                                py = new PinYin();
+                                py.Tone = tone;
+                                py.Plain = plain;
+                                db.PinYins.Add(py);
+                            }
+
+                            cc.PinYins.Add(py);
+                            db.SaveChanges();
+                        }
                     }
 
                     if (xlRange.Cells[i, 6].Value2 != null)
                     {
-                        chineseCharacter.English = xlRange.Cells[i, 6].Value2.ToString();
+                        cc.English = xlRange.Cells[i, 6].Value2.ToString();
                     }
 
-                    db.ChineseCharacters.AddOrUpdate(p => p.Chinese, chineseCharacter);
+                    db.ChineseCharacters.AddOrUpdate(p => p.Chinese, cc);
                 }
                 else if (typeof(fieldClass) == typeof(ChineseWord))
                 {
@@ -313,6 +362,15 @@ namespace FlashcardMaker.Controllers
         {
             //UpdateToLearnWordsAndCharNumber();
             UpdateTranslationAndTranslit();
+            RelateAllSubtitlesToWords();
+        }
+
+        private void RelateAllSubtitlesToWords()
+        {
+            using (MyDbContext db = new MyDbContext())
+            {
+
+            }
         }
 
         private void UpdateTranslationAndTranslit()
@@ -322,7 +380,7 @@ namespace FlashcardMaker.Controllers
             {
                 int counter = 0;
 
-                foreach (SubtitleLine stl in db.SubtitleLines.Where(p=>p.English == null && p.Translit == null).ToList())
+                foreach (SubtitleLine stl in db.SubtitleLines.Where(p => p.English == null && p.Translit == null).ToList())
                 {
                     printStatusLabel("Updating: " + ++counter);
                     //if (counter++ > 20)

@@ -109,31 +109,35 @@ namespace FlashcardMaker.Views
         {
             Properties.Settings.Default.DEBUG_MAX_CREATE_SUBTITLE_LINEPACKS = (int)nudMaxCreateSubtitleLinePacks.Value;
             Properties.Settings.Default.Save();
+            Properties.Settings.Default.Upgrade();
         }
 
         private void nudMaxSortSubtitleLinePacks_ValueChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.DEBUG_MAX_SORT_SUBTITLE_LINEPACKS = (int)nudMaxSortSubtitleLinePacks.Value;
             Properties.Settings.Default.Save();
-            printLine("saved: " + Properties.Settings.Default.DEBUG_MAX_SORT_SUBTITLE_LINEPACKS);
+            Properties.Settings.Default.Upgrade();
         }
 
         private void nudMaxMediaFiles_ValueChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.DEBUG_MAX_CREATE_MEDIA_FILES = (int)nudMaxMediaFiles.Value;
             Properties.Settings.Default.Save();
+            Properties.Settings.Default.Upgrade();
         }
 
         private void nudMaxFlashcards_ValueChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.DEBUG_MAX_CREATE_FLASHCARDS = (int)nudMaxFlashcards.Value;
             Properties.Settings.Default.Save();
+            Properties.Settings.Default.Upgrade();
         }
 
         private void cbOnlyWithMediaFiles_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.DEBUG_ONLY_CREATE_FLASHCARDS_WITH_MEDIAFILES = cbOnlyWithMediaFiles.Checked;
             Properties.Settings.Default.Save();
+            Properties.Settings.Default.Upgrade();
         }
     }
 }

@@ -185,6 +185,8 @@ namespace FlashcardMaker
                 btnCreateFlashcards.PerformClick();
             }
 
+            nudMaxCCsToLoad.Value = Properties.Settings.Default.DEBUG_MAX_CCS_TO_LOAD;
+
         }
 
         private void label2_Click_1(object sender, EventArgs e)
@@ -284,6 +286,13 @@ namespace FlashcardMaker
         private void btnDeleteAllMediaFiles_Click(object sender, EventArgs e)
         {
             dataIOController.DeleteAllMediaFiles();
+        }
+
+        private void nudMaxCCsToLoad_ValueChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.DEBUG_MAX_CCS_TO_LOAD = (int)nudMaxCCsToLoad.Value;
+            Properties.Settings.Default.Save();
+            Properties.Settings.Default.Upgrade();
         }
     }
 }

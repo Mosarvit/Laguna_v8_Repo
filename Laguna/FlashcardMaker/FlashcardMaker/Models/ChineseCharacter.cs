@@ -16,7 +16,7 @@ namespace FlashcardMaker.Models
 
         public int KnowLevel { get; set; }
 
-        public string PinYin { get; set; }
+        public List<PinYin> PinYins { get; set; } = new List<PinYin>();
 
         public string English { get; set; }
 

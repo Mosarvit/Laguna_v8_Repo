@@ -67,10 +67,6 @@ E:\Users\Mosarvit\Documents\GitHubRepos\Laguna_v8_Repo\Laguna\FlashcardMaker\Fla
 E:\Users\Mosarvit\Documents\GitHubRepos\Laguna_v8_Repo\Laguna\FlashcardMaker\FlashcardMaker\bin\Debug\Newtonsoft.Json.xml
 E:\Users\Mosarvit\Documents\GitHubRepos\Laguna_v8_Repo\Laguna\FlashcardMaker\FlashcardMaker\bin\Debug\NReco.VideoConverter.xml
 E:\Users\Mosarvit\Documents\GitHubRepos\Laguna_v8_Repo\Laguna\FlashcardMaker\FlashcardMaker\obj\Debug\FlashcardMaker.csprojResolveAssemblyReference.cache
-E:\Users\Mosarvit\Documents\GitHubRepos\Laguna_v8_Repo\Laguna\FlashcardMaker\FlashcardMaker\obj\Debug\FlashcardMaker.MyDbContextMigrations.Initial.resources
-E:\Users\Mosarvit\Documents\GitHubRepos\Laguna_v8_Repo\Laguna\FlashcardMaker\FlashcardMaker\obj\Debug\FlashcardMaker.MyDbContextMigrations.Initial1.resources
-E:\Users\Mosarvit\Documents\GitHubRepos\Laguna_v8_Repo\Laguna\FlashcardMaker\FlashcardMaker\obj\Debug\FlashcardMaker.MyDbContextMigrations.Initial2.resources
-E:\Users\Mosarvit\Documents\GitHubRepos\Laguna_v8_Repo\Laguna\FlashcardMaker\FlashcardMaker\obj\Debug\FlashcardMaker.MyDbContextMigrations.Initial3.resources
 E:\Users\Mosarvit\Documents\GitHubRepos\Laguna_v8_Repo\Laguna\FlashcardMaker\FlashcardMaker\obj\Debug\FlashcardMaker.Properties.Resources.resources
 E:\Users\Mosarvit\Documents\GitHubRepos\Laguna_v8_Repo\Laguna\FlashcardMaker\FlashcardMaker\obj\Debug\FlashcardMaker.Views.CreateFlashcardsView.resources
 E:\Users\Mosarvit\Documents\GitHubRepos\Laguna_v8_Repo\Laguna\FlashcardMaker\FlashcardMaker\obj\Debug\FlashcardMaker.Views.DecisionAboutContradictionsView.resources
@@ -81,6 +77,4 @@ E:\Users\Mosarvit\Documents\GitHubRepos\Laguna_v8_Repo\Laguna\FlashcardMaker\Fla
 E:\Users\Mosarvit\Documents\GitHubRepos\Laguna_v8_Repo\Laguna\FlashcardMaker\FlashcardMaker\obj\Debug\FlashcardMaker.csproj.CoreCompileInputs.cache
 E:\Users\Mosarvit\Documents\GitHubRepos\Laguna_v8_Repo\Laguna\FlashcardMaker\FlashcardMaker\obj\Debug\FlashcardMaker.exe
 E:\Users\Mosarvit\Documents\GitHubRepos\Laguna_v8_Repo\Laguna\FlashcardMaker\FlashcardMaker\obj\Debug\FlashcardMaker.pdb
-E:\Users\Mosarvit\Documents\GitHubRepos\Laguna_v8_Repo\Laguna\FlashcardMaker\FlashcardMaker\obj\Debug\FlashcardMaker.MyDbContextMigrations.Initial4.resources
-E:\Users\Mosarvit\Documents\GitHubRepos\Laguna_v8_Repo\Laguna\FlashcardMaker\FlashcardMaker\obj\Debug\FlashcardMaker.MyDbContextMigrations.Initial5.resources
-E:\Users\Mosarvit\Documents\GitHubRepos\Laguna_v8_Repo\Laguna\FlashcardMaker\FlashcardMaker\obj\Debug\FlashcardMaker.MyDbContextMigrations.Initial6.resources
+E:\Users\Mosarvit\Documents\GitHubRepos\Laguna_v8_Repo\Laguna\FlashcardMaker\FlashcardMaker\obj\Debug\FlashcardMaker.MyDbContextMigrations.Initial.resources

@@ -59,6 +59,8 @@
             this.label4 = new System.Windows.Forms.Label();
             this.btnRefreshSubtitleLines = new System.Windows.Forms.Button();
             this.btnDeleteAllMediaFiles = new System.Windows.Forms.Button();
+            this.nudMaxCCsToLoad = new System.Windows.Forms.NumericUpDown();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMaxCCsToLoad)).BeginInit();
             this.SuspendLayout();
             // 
             // btnBrowseAddToDatabase
@@ -208,7 +210,7 @@
             // 
             // btnRefresh
             // 
-            this.btnRefresh.Location = new System.Drawing.Point(727, 162);
+            this.btnRefresh.Location = new System.Drawing.Point(849, 162);
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(116, 23);
             this.btnRefresh.TabIndex = 16;
@@ -279,7 +281,7 @@
             // 
             // btnClearCharacters
             // 
-            this.btnClearCharacters.Location = new System.Drawing.Point(727, 107);
+            this.btnClearCharacters.Location = new System.Drawing.Point(849, 107);
             this.btnClearCharacters.Name = "btnClearCharacters";
             this.btnClearCharacters.Size = new System.Drawing.Size(116, 23);
             this.btnClearCharacters.TabIndex = 23;
@@ -289,7 +291,7 @@
             // 
             // btnClearWords
             // 
-            this.btnClearWords.Location = new System.Drawing.Point(727, 133);
+            this.btnClearWords.Location = new System.Drawing.Point(849, 133);
             this.btnClearWords.Name = "btnClearWords";
             this.btnClearWords.Size = new System.Drawing.Size(116, 23);
             this.btnClearWords.TabIndex = 24;
@@ -344,11 +346,20 @@
             this.btnDeleteAllMediaFiles.UseVisualStyleBackColor = true;
             this.btnDeleteAllMediaFiles.Click += new System.EventHandler(this.btnDeleteAllMediaFiles_Click);
             // 
+            // nudMaxCCsToLoad
+            // 
+            this.nudMaxCCsToLoad.Location = new System.Drawing.Point(727, 106);
+            this.nudMaxCCsToLoad.Name = "nudMaxCCsToLoad";
+            this.nudMaxCCsToLoad.Size = new System.Drawing.Size(75, 20);
+            this.nudMaxCCsToLoad.TabIndex = 30;
+            this.nudMaxCCsToLoad.ValueChanged += new System.EventHandler(this.nudMaxCCsToLoad_ValueChanged);
+            // 
             // MainView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1382, 670);
+            this.Controls.Add(this.nudMaxCCsToLoad);
             this.Controls.Add(this.btnDeleteAllMediaFiles);
             this.Controls.Add(this.btnRefreshSubtitleLines);
             this.Controls.Add(this.label4);
@@ -381,6 +392,7 @@
             this.Name = "MainView";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.MainView_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.nudMaxCCsToLoad)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -418,6 +430,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button btnRefreshSubtitleLines;
         private System.Windows.Forms.Button btnDeleteAllMediaFiles;
+        private System.Windows.Forms.NumericUpDown nudMaxCCsToLoad;
     }
 }
 

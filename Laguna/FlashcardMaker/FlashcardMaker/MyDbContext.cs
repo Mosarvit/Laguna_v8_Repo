@@ -9,6 +9,7 @@ namespace FlashcardMaker
     public partial class MyDbContext : DbContext
     {
         public DbSet<SubtitleLine> SubtitleLines { get; set; }
+        public DbSet<PinYin> PinYins { get; set; }
         public DbSet<Movie> Movies { get; set; }
         public DbSet<ChineseCharacter> ChineseCharacters { get; set; }
         public DbSet<NoneChineseCharacter> NoneChineseCharacters { get; set; }
